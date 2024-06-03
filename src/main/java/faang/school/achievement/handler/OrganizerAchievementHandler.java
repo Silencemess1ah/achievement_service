@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OrganizerAchievementHandler {
+public class OrganizerAchievementHandler implements EventHandler<InviteSentEvent> {
 
     private static final String ACHIEVEMENT = "COLLECTOR";
     private final AchievementRepository achievementRepository;
