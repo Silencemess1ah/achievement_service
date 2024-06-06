@@ -15,6 +15,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class AchievementCache {
+
     private final AchievementRepository achievementRepository;
     private final AchievementValidator achievementValidator;
 
