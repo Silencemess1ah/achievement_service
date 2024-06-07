@@ -15,7 +15,7 @@ public class InviteEventRedisConfig {
 
     @Bean
     public Pair<Topic, MessageListenerAdapter> getCompleteGoalListenerAdapterPair(
-            @Value("${spring.data.redis.channel.goal-complete.name}") String channelTopicName,
+            @Value("${spring.data.redis.channel.invitation}") String channelTopicName,
             @Qualifier("inviteEventMessageAdapter") MessageListenerAdapter messageListenerAdapter) {
 
         return Pair.of(new ChannelTopic(channelTopicName), messageListenerAdapter);

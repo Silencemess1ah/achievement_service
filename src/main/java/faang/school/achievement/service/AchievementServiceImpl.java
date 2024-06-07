@@ -5,6 +5,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
+import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementRepository achievementRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -51,5 +53,12 @@ public class AchievementServiceImpl implements AchievementService {
         userAchievementRepository.save(userAchievement);
 
         log.info("Achievement with achievementId={} was given to user with userId={}", achievement.getId(), userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Achievement getAchievementByTitle(String title) {
+        return achievementRepository.findByTitle(title)
+                .orElseThrow(() -> new NotFoundException("Achievement with title=" + title + " not found"));
     }
 }

@@ -12,4 +12,6 @@ public interface AchievementService {
     AchievementProgress getProgress(long userId, long achievementId);
 
     void giveAchievement(long userId, Achievement achievement);
+
+    Achievement getAchievementByTitle(String title);
 }
