@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -23,7 +24,7 @@ public class AchievementCache {
 
     @PostConstruct
     public void init() {
-        Iterable<Achievement> allAchievements = achievementRepository.findAll();
+        List<Achievement> allAchievements = achievementRepository.findAll();
         allAchievements.forEach(achievement -> achievements.put(achievement.getTitle(), achievement));
     }
 
