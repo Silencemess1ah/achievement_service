@@ -1,31 +1,19 @@
 package faang.school.achievement.repository;
 
+import faang.school.achievement.jpa.AchievementProgressJpaRepository;
 import faang.school.achievement.model.AchievementProgress;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
-public interface AchievementProgressRepository extends CrudRepository<AchievementProgress, Long> {
+@RequiredArgsConstructor
+public class AchievementProgressRepository {
 
-    @Query(value = """
-            SELECT ap
-            FROM AchievementProgress ap
-            WHERE ap.userId = :userId AND ap.achievement.id = :achievementId
-    """)
-    Optional<AchievementProgress> findByUserIdAndAchievementId(long userId, long achievementId);
+    private final AchievementProgressJpaRepository achievementProgressJpaRepository;
 
-    @Query(nativeQuery = true, value = """
-            INSERT INTO user_achievement_progress (user_id, achievement_id, current_points)
-            VALUES (:userId, :achievementId, 0)
-            ON CONFLICT DO NOTHING
-    """)
-    @Modifying
-    void createProgressIfNecessary(long userId, long achievementId);
-
-    List<AchievementProgress> findByUserId(long userId);
+    public AchievementProgress findByUserIdAndAchievementId(long userId, long achievementId) {
+        return achievementProgressJpaRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Achievement progress with ID: %d for user with ID: %d not found", achievementId, userId)));
+    }
 }
