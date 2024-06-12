@@ -27,6 +27,7 @@ public class SkillEventListener implements MessageListener {
             SkillAcquiredEvent skillAcquiredEvent = objectMapper.readValue(message.getBody(), SkillAcquiredEvent.class);
             handlers.stream().forEach(handler -> handler.handleAchievement(skillAcquiredEvent));
         } catch (IOException e) {
+            log.error(e.getMessage());
             throw new RuntimeException(e);
         }
     }

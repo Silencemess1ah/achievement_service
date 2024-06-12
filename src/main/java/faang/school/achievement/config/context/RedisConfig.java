@@ -42,7 +42,7 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory);
 
         MessageListenerAdapter messageListenerAdapterForSkillAcquiredEvent = new MessageListenerAdapter(skillEventListener);
-        container.addMessageListener(messageListenerAdapterForSkillAcquiredEvent, new ChannelTopic(skillChannel));
+        container.addMessageListener(messageListenerAdapterForSkillAcquiredEvent, skillTopic());
 
         return container;
     }
