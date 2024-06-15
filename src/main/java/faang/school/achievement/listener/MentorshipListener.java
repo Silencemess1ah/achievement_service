@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-@Slf4j
 public class MentorshipListener extends AbstractEventListener<MentorshipStartEvent>{
 
     public MentorshipListener(ObjectMapper objectMapper,

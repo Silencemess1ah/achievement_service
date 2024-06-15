@@ -22,7 +22,7 @@ public class AchievementService {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }

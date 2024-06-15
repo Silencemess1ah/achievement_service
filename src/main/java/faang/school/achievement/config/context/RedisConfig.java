@@ -52,7 +52,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter mentorshipListener(MentorshipListener mentorshipListener) {
+    public MessageListenerAdapter mentorshipListenerAdapter(MentorshipListener mentorshipListener) {
         return new MessageListenerAdapter(mentorshipListener);
     }
 
