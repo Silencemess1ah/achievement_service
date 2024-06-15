@@ -37,8 +37,9 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new NotFoundException("Achievement progress with userId=" + userId +
-                                                         " and achievementId=" + achievementId + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Achievement progress with userId: %d " +
+                                      "and achievementId: %d not found", userId, achievementId)));
     }
 
     @Override
@@ -59,6 +60,7 @@ public class AchievementServiceImpl implements AchievementService {
     @Transactional(readOnly = true)
     public Achievement getAchievementByTitle(String title) {
         return achievementRepository.findByTitle(title)
-                .orElseThrow(() -> new NotFoundException("Achievement with title=" + title + " not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Achievement with title: %s not found", title)));
     }
 }

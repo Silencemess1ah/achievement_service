@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
 
     @Value("${achievements.title.sensei}")
-    private String ACHIEVEMENT;
+    private String achievement;
 
     private final AchievementService achievementService;
 
     @Async("achievementExecutorService")
     public void handle(MentorshipStartEvent event) {
-        Achievement achievement = achievementService.getAchievementByTitle(ACHIEVEMENT);
+        Achievement achievement = achievementService.getAchievementByTitle(this.achievement);
 
         if (!achievementService.hasAchievement(event.getMentorId(), achievement.getId())) {
             achievementService.createProgressIfNecessary(event.getMentorId(), achievement.getId());

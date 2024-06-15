@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis.mentorship;
 
 import faang.school.achievement.listener.mentorship.MentorshipStartEventListener;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +15,13 @@ public class MentorshipStartRedisConfig {
     @Bean
     public Pair<Topic, MessageListenerAdapter> getMentorshipStartListenerAdapterPair(
             @Value("${spring.data.redis.channel.mentorship}") String channelTopicName,
-            @Qualifier("MentorshipStartMessageAdapter") MessageListenerAdapter messageListenerAdapter) {
+            MessageListenerAdapter mentorshipStartMessageAdapter) {
 
-        return Pair.of(new ChannelTopic(channelTopicName), messageListenerAdapter);
+        return Pair.of(new ChannelTopic(channelTopicName), mentorshipStartMessageAdapter);
     }
 
     @Bean
-    public MessageListenerAdapter MentorshipStartMessageAdapter(MentorshipStartEventListener listener) {
+    public MessageListenerAdapter mentorshipStartMessageAdapter(MentorshipStartEventListener listener) {
         return new MessageListenerAdapter(listener);
     }
 }
