@@ -55,7 +55,7 @@ public class AchievementProgressServiceImpl implements AchievementProgressServic
 
         achievementProgress.increment();
 
-        //achievementProgressRepository.save(achievementProgress);
+        achievementProgressRepository.save(achievementProgress);
 
         return achievementProgress.getCurrentPoints();
     }

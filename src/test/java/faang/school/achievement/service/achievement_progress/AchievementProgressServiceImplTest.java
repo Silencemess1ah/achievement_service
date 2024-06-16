@@ -100,4 +100,17 @@ class AchievementProgressServiceImplTest {
         NotFoundException e = assertThrows(NotFoundException.class, () -> achievementProgressService.getProgress(userId, achievementId));
         assertEquals("Achievement progress with userId=" + userId + " and achievementId=" + achievementId + " not found", e.getMessage());
     }
+
+    @Test
+    void incrementAndGetProgress() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
+
+        long actual = achievementProgressService.incrementAndGetProgress(userId, achievementId);
+        assertEquals(11L, actual);
+        assertEquals(11L, achievementProgress.getCurrentPoints());
+
+        InOrder inOrder = inOrder(achievementProgressRepository);
+        inOrder.verify(achievementProgressRepository).findByUserIdAndAchievementId(userId, achievementId);
+        inOrder.verify(achievementProgressRepository).save(achievementProgress);
+    }
 }
