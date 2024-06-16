@@ -6,4 +6,10 @@ import java.util.List;
 
 public interface AchievementProgressService {
     List<AchievementProgressDto> getAchievementProgressesByUserId(long userId);
+
+    void createProgressIfNecessary(long userId, long achievementId);
+
+    AchievementProgressDto getProgress(long userId, long achievementId);
+
+    long incrementAndGetProgress(long userId, long achievementId);
 }

@@ -38,6 +38,7 @@ class AchievementServiceImplTest {
     private AchievementServiceImpl achievementService;
 
     private final long achievementId = 1L;
+    private final String title = "title";
     private Achievement achievement;
     private AchievementDto achievementDto;
 
@@ -45,7 +46,7 @@ class AchievementServiceImplTest {
     void setUp() {
         achievement = Achievement.builder()
                 .id(achievementId)
-                .title("title")
+                .title(title)
                 .description("description")
                 .points(10L)
                 .rarity(Rarity.RARE)
@@ -53,7 +54,7 @@ class AchievementServiceImplTest {
 
         achievementDto = AchievementDto.builder()
                 .id(achievementId)
-                .title("title")
+                .title(title)
                 .description("description")
                 .points(10L)
                 .rarity(Rarity.RARE)
@@ -94,5 +95,26 @@ class AchievementServiceImplTest {
 
         NotFoundException e = assertThrows(NotFoundException.class, () -> achievementService.getAchievementByAchievementId(achievementId));
         assertEquals("Achievement with achievementId " + achievementId + " not found", e.getMessage());
+    }
+
+    @Test
+    void getAchievementByTitle() {
+        when(achievementRepository.findByTitle(title)).thenReturn(Optional.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+
+        AchievementDto actual = achievementService.getAchievementByTitle(title);
+        assertEquals(achievementDto, actual);
+
+        InOrder inOrder = inOrder(achievementRepository);
+        inOrder.verify(achievementRepository).findByTitle(title);
+    }
+
+    @Test
+    void getAchievementByTitleNotFound() {
+        when(achievementRepository.findByTitle(title)).thenReturn(Optional.empty());
+
+
+        NotFoundException e = assertThrows(NotFoundException.class, () -> achievementService.getAchievementByTitle(title));
+        assertEquals("Achievement with title=" + title + " not found", e.getMessage());
     }
 }

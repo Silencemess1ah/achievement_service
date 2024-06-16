@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InviteSentEvent implements Event {
+public class InviteSentEvent {
     private Long userId;
     private Long receiverId;
     private Long projectId;

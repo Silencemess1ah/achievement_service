@@ -2,6 +2,7 @@ package faang.school.achievement.service.achievement_progress;
 
 import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.AchievementProgressDto;
+import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -15,8 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
@@ -32,13 +36,14 @@ class AchievementProgressServiceImplTest {
     private AchievementProgressServiceImpl achievementProgressService;
 
     private final long userId = 1L;
+    private final long achievementId = 2L;
     private AchievementProgress achievementProgress;
     private AchievementProgressDto achievementProgressDto;
 
     @BeforeEach
     void setUp() {
-        Achievement achievement = Achievement.builder().id(2L).build();
-        AchievementDto achievementDto = AchievementDto.builder().id(2L).build();
+        Achievement achievement = Achievement.builder().id(achievementId).build();
+        AchievementDto achievementDto = AchievementDto.builder().id(achievementId).build();
 
         achievementProgress = AchievementProgress.builder()
                 .id(1L)
@@ -66,5 +71,33 @@ class AchievementProgressServiceImplTest {
         InOrder inOrder = inOrder(achievementProgressRepository, achievementProgressMapper);
         inOrder.verify(achievementProgressRepository).findByUserId(userId);
         inOrder.verify(achievementProgressMapper).toDto(achievementProgress);
+    }
+
+    @Test
+    void createProgressIfNecessary() {
+        achievementProgressService.createProgressIfNecessary(userId, achievementId);
+
+        InOrder inOrder = inOrder(achievementProgressRepository);
+        inOrder.verify(achievementProgressRepository).createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Test
+    void getProgress() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
+        when(achievementProgressMapper.toDto(achievementProgress)).thenReturn(achievementProgressDto);
+
+        AchievementProgressDto actual = achievementProgressService.getProgress(userId, achievementId);
+        assertEquals(achievementProgressDto, actual);
+
+        InOrder inOrder = inOrder(achievementProgressRepository);
+        inOrder.verify(achievementProgressRepository).findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    void getProgressNotFound() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.empty());
+
+        NotFoundException e = assertThrows(NotFoundException.class, () -> achievementProgressService.getProgress(userId, achievementId));
+        assertEquals("Achievement progress with userId=" + userId + " and achievementId=" + achievementId + " not found", e.getMessage());
     }
 }

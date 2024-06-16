@@ -1,9 +1,10 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.event.InviteSentEvent;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
+import faang.school.achievement.service.achievement_progress.AchievementProgressService;
+import faang.school.achievement.service.user_achievement.UserAchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -16,22 +17,23 @@ public class OrganizerAchievementHandler implements EventHandler<InviteSentEvent
     @Value("${achievements.organizer.name}")
     private String achievementName;
     private final AchievementService achievementService;
+    private final AchievementProgressService achievementProgressService;
+    private final UserAchievementService userAchievementService;
 
+    @Override
     @Async("organizerAchievementExecutorService")
     public void handle(InviteSentEvent event) {
 
-        Achievement achievement = achievementService.getAchievementByTitle(achievementName);
+        AchievementDto achievement = achievementService.getAchievementByTitle(achievementName);
 
-        if (!achievementService.hasAchievement(event.getUserId(), achievement.getId())) {
-            achievementService.createProgressIfNecessary(event.getUserId(), achievement.getId());
+        if (!userAchievementService.hasAchievement(event.getUserId(), achievement.getId())) {
+            achievementProgressService.createProgressIfNecessary(event.getUserId(), achievement.getId());
         }
 
-        AchievementProgress progress = achievementService.getProgress(event.getUserId(), achievement.getId());
+        long points = achievementProgressService.incrementAndGetProgress(event.getUserId(), achievement.getId());
 
-        progress.setCurrentPoints(progress.getCurrentPoints() + 1);
-
-        if (progress.getCurrentPoints() >= achievement.getPoints()) {
-            achievementService.giveAchievement(event.getUserId(), achievement);
+        if (points >= achievement.getPoints()) {
+            userAchievementService.giveAchievement(event.getUserId(), achievement);
         }
     }
 }
