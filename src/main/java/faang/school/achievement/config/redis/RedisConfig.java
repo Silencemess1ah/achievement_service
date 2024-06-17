@@ -53,6 +53,7 @@ public class RedisConfig {
         return container;
     }
 
+    @Bean
     public ChannelTopic channelTopic(@Value("${spring.data.redis.channel.achievement}") String topicName) {
         return new ChannelTopic(topicName);
     }
