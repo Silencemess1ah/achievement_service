@@ -1,10 +1,10 @@
 package faang.school.achievement.handler;
 
-import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.event.InviteSentEvent;
-import faang.school.achievement.service.achievement.AchievementService;
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.achievement_progress.AchievementProgressService;
 import faang.school.achievement.service.user_achievement.UserAchievementService;
+import faang.school.achievement.util.cache.AchievementCache;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,11 +21,11 @@ import static org.mockito.Mockito.when;
 class OrganizerAchievementHandlerTest {
 
     @Mock
-    private AchievementService achievementService;
-    @Mock
     private AchievementProgressService achievementProgressService;
     @Mock
     private UserAchievementService userAchievementService;
+    @Mock
+    private AchievementCache achievementCache;
 
     @InjectMocks
     private OrganizerAchievementHandler organizerAchievementHandler;
@@ -33,7 +33,7 @@ class OrganizerAchievementHandlerTest {
     private final long userId = 1L;
     private final long achievementId = 4L;
     private InviteSentEvent inviteSentEvent;
-    private AchievementDto achievementDto;
+    private Achievement achievement;
 
     @BeforeEach
     void setUp() {
@@ -43,7 +43,7 @@ class OrganizerAchievementHandlerTest {
                 .receiverId(3L)
                 .build();
 
-        achievementDto = AchievementDto.builder()
+        achievement = Achievement.builder()
                 .id(achievementId)
                 .title("title")
                 .points(100L)
@@ -52,16 +52,16 @@ class OrganizerAchievementHandlerTest {
 
     @Test
     void handle() {
-        when(achievementService.getAchievementByTitle(any())).thenReturn(achievementDto);
+        when(achievementCache.get(any())).thenReturn(achievement);
         when(userAchievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementProgressService.incrementAndGetProgress(userId, achievementId)).thenReturn(100L);
 
         organizerAchievementHandler.handle(inviteSentEvent);
 
-        InOrder inOrder = inOrder(achievementService, achievementProgressService, userAchievementService);
-        inOrder.verify(achievementService).getAchievementByTitle(any());
+        InOrder inOrder = inOrder(achievementCache, achievementProgressService, userAchievementService);
+        inOrder.verify(achievementCache).get(any());
         inOrder.verify(userAchievementService).hasAchievement(userId, achievementId);
         inOrder.verify(achievementProgressService).createProgressIfNecessary(userId, achievementId);
-        inOrder.verify(userAchievementService).giveAchievement(userId, achievementDto);
+        inOrder.verify(userAchievementService).giveAchievement(userId, achievement);
     }
 }

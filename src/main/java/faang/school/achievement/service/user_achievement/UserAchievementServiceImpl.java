@@ -1,8 +1,6 @@
 package faang.school.achievement.service.user_achievement;
 
-import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
-import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
@@ -21,7 +19,6 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final UserAchievementMapper userAchievementMapper;
-    private final AchievementMapper achievementMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -33,13 +30,11 @@ public class UserAchievementServiceImpl implements UserAchievementService {
 
     @Override
     @Transactional
-    public void giveAchievement(long userId, AchievementDto achievement) {
-
-        Achievement achievementEntity = achievementMapper.toEntity(achievement);
+    public void giveAchievement(long userId, Achievement achievement) {
 
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
-                .achievement(achievementEntity)
+                .achievement(achievement)
                 .build();
 
         userAchievementRepository.save(userAchievement);
