@@ -14,7 +14,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 @SpringBootTest
 public abstract class IntegrationTestBase {
-
+  
     @Container
     static RedisContainer REDIS_CONTAINER = new RedisContainer(DockerImageName.parse("redis:6.2.6-alpine")).withExposedPorts(6379);
 
