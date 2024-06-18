@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 @AllArgsConstructor
-public abstract class SkillAchievementHandler implements EventHandler {
+public abstract class SkillAchievementHandler implements EventHandler<SkillAcquiredEvent> {
 
     private String achieveName;
 
@@ -20,7 +20,7 @@ public abstract class SkillAchievementHandler implements EventHandler {
     @Async
     @Transactional
     @Override
-    public void handleAchievement(SkillAcquiredEvent event) {
+    public void handleEvent(SkillAcquiredEvent event) {
         Achievement achievement = achievementCache.get(achieveName);
         long achievementId = achievement.getId();
         long userId = event.getActorId();
@@ -28,7 +28,7 @@ public abstract class SkillAchievementHandler implements EventHandler {
         if (!achievementService.hasAchievement(userId, achievement.getId())) {
             achievementService.createProgressIfNecessary(userId, achievementId);
 
-            AchievementProgress progress = achievementService.getProgress(userId,achievementId);
+            AchievementProgress progress = achievementService.getProgress(userId, achievementId);
             progress.increment();
             achievementService.updateProgress(progress);
 

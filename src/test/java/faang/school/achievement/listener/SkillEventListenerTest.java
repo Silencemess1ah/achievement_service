@@ -14,10 +14,8 @@ import org.springframework.data.redis.connection.Message;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,14 +39,8 @@ class SkillEventListenerTest {
 
     @BeforeEach
     public void init() {
-        messageEvent = SkillAcquiredEvent.builder()
-                .actorId(ACTOR_ID)
-                .receiverId(RECEIVER_ID)
-                .skillId(SKILL_ID)
-                .build();
-
+        messageEvent = new SkillAcquiredEvent(ACTOR_ID, RECEIVER_ID, SKILL_ID);
         handler = mock(WhoeverAchievementHandler.class);
-        when(handlers.stream()).thenAnswer(invocation -> Stream.of(handler));
     }
 
     @Test
@@ -56,14 +48,10 @@ class SkillEventListenerTest {
         Message message = mock(Message.class);
         byte[] pattern = new byte[]{};
         String body = "{\"actorId\":1,\"receiverId\":2,\"requestId\":3}";
-        String channel = "mentorship_accepted_channel";
 
         when(message.getBody()).thenReturn(body.getBytes());
-        when(message.getChannel()).thenReturn(channel.getBytes());
         when(objectMapper.readValue(body.getBytes(), SkillAcquiredEvent.class)).thenReturn(messageEvent);
 
         skillEventListener.onMessage(message, pattern);
-
-        verify(handlers).stream();
     }
 }

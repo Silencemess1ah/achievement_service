@@ -21,8 +21,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    private final SkillEventListener skillEventListener;
-
     @Value("${spring.data.redis.host}")
     private String host;
     @Value("${spring.data.redis.port}")
@@ -37,14 +35,16 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory) {
+    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter skillEventListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-
-        MessageListenerAdapter messageListenerAdapterForSkillAcquiredEvent = new MessageListenerAdapter(skillEventListener);
-        container.addMessageListener(messageListenerAdapterForSkillAcquiredEvent, skillTopic());
-
+        container.setConnectionFactory(redisConnectionFactory());
+        container.addMessageListener(skillEventListenerAdapter, skillTopic());
         return container;
+    }
+
+    @Bean
+    public MessageListenerAdapter skillEventListenerAdapter(SkillEventListener skillEventListener) {
+        return new MessageListenerAdapter(skillEventListener);
     }
 
     @Bean

@@ -43,11 +43,7 @@ class WhoeverAchievementHandlerTest {
 
     @BeforeEach
     public void init() {
-        messageEvent = SkillAcquiredEvent.builder()
-                .actorId(ACTOR_ID)
-                .receiverId(RECEIVER_ID)
-                .skillId(SKILL_ID)
-                .build();
+        messageEvent = new SkillAcquiredEvent(ACTOR_ID, RECEIVER_ID, SKILL_ID);
         achievement = Achievement.builder()
                 .id(ACHIEVEMENT_ID)
                 .title(ACHIEVE_NAME)
@@ -67,7 +63,7 @@ class WhoeverAchievementHandlerTest {
     public void whenEventHandleButAchieveExistsAlready() {
         when(achievementService.hasAchievement(ACTOR_ID, ACHIEVEMENT_ID)).thenReturn(true);
 
-        whoeverAchievementHandler.handleAchievement(messageEvent);
+        whoeverAchievementHandler.handleEvent(messageEvent);
 
         verify(achievementService, never()).createProgressIfNecessary(ACTOR_ID, ACHIEVEMENT_ID);
     }
@@ -76,7 +72,7 @@ class WhoeverAchievementHandlerTest {
     public void whenEventHandleAndGiveAchieve() {
         achievementProgress.setCurrentPoints(ACHIEVE_POINTS - 1);
 
-        whoeverAchievementHandler.handleAchievement(messageEvent);
+        whoeverAchievementHandler.handleEvent(messageEvent);
 
         verify(achievementService).createProgressIfNecessary(ACTOR_ID, ACHIEVEMENT_ID);
         verify(achievementService).updateProgress(achievementProgress);
@@ -85,7 +81,7 @@ class WhoeverAchievementHandlerTest {
 
     @Test
     public void whenEventHandleButNotAchieve() {
-        whoeverAchievementHandler.handleAchievement(messageEvent);
+        whoeverAchievementHandler.handleEvent(messageEvent);
 
         verify(achievementService).createProgressIfNecessary(ACTOR_ID, ACHIEVEMENT_ID);
         verify(achievementService).updateProgress(achievementProgress);
