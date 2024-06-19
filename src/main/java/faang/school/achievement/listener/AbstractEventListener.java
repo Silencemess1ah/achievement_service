@@ -2,7 +2,7 @@ package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.Event;
-import faang.school.achievement.exception.DeserializeException;
+import faang.school.achievement.exception.JsonDeserializeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -22,10 +22,10 @@ public abstract class AbstractEventListener<T extends Event> implements MessageL
         try {
             T event = objectMapper.readValue(message.getBody(), type);
             consumer.accept(event);
-            log.info("Received event from channel: {}", new String(message.getChannel(), StandardCharsets.UTF_8));
+            log.info("Received event message from channel: {}", new String(message.getChannel(), StandardCharsets.UTF_8));
         } catch (IOException e) {
             log.error("Error deserializing JSON to object: ", e);
-            throw new DeserializeException("Error deserializing JSON to object: " + e.getMessage());
+            throw new JsonDeserializeException("Error deserializing JSON to object: " + e.getMessage());
         }
     }
 }
