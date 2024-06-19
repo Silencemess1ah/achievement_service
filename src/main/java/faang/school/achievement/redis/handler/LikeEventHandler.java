@@ -1,42 +1,36 @@
 package faang.school.achievement.redis.handler;
 
 import faang.school.achievement.dto.LikeEventDto;
-import faang.school.achievement.exception.DataNotFoundException;
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public abstract class LikeEventHandler implements EventHandler<LikeEventDto> {
     protected final AchievementService achievementService;
+    protected Achievement achievement;
 
-
+    @Async(value = "cachedPool")
     public void handleEvent(LikeEventDto event) {
         log.info("Received an like event from like_topic for user with id: {}", event.getAuthorId());
 
         createProgressIfNecessary(event.getAuthorId());
 
-        List<AchievementProgress> achievementProgresses = achievementService.incrementProgressPoints(event.getAuthorId());
-        log.info("All existing achievements progresses have been incremented");
+        AchievementProgress achievementProgress = achievementService
+                .incrementProgressPoints(event.getAuthorId(), achievement.getId());
 
-        tryGiveAchievement(achievementProgresses);
+        log.info("All like achievements progresses have been incremented");
+
+        tryGiveAchievement(achievementProgress);
     }
 
-    protected abstract void tryGiveAchievement(List<AchievementProgress> achievementProgresses);
+    protected abstract void tryGiveAchievement(AchievementProgress achievementProgress);
 
     protected abstract void createProgressIfNecessary(long userId);
-
-    protected Supplier<DataNotFoundException> getAchievementProgressNotFoundException(long achievementId) {
-        return () -> {
-            String message = String.format("Achievement progress for achievement with id: %s not found", achievementId);
-            return new DataNotFoundException(message);
-        };
-    }
 }

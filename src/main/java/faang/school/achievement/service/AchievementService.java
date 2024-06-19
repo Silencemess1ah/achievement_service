@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +20,7 @@ public class AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
 
+
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
@@ -27,27 +28,22 @@ public class AchievementService {
     public Achievement getAchievement(long achievementId) {
         return achievementRepository
                 .findById(achievementId)
-                .orElseThrow(() -> {
-                    String message = String.format("Achievement with id: %s not found", achievementId);
-                    return new DataNotFoundException(message);
-                });
+                .orElseThrow(getAchievementNotFoundExceptionSupplier(achievementId));
     }
 
     @Transactional
-    public void createProgressIfNecessary(long userId, Long achievementId) {
+    public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-
     @Transactional
-    public List<AchievementProgress> incrementProgressPoints(long userId) {
-        List<AchievementProgress> userAchievementsProgress = achievementProgressRepository
-                .findByUserId(userId);
+    public AchievementProgress incrementProgressPoints(long userId, long achievementId) {
+        AchievementProgress userAchievementProgress = achievementProgressRepository
+                .findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(getAchievementNotFoundExceptionSupplier(achievementId));
 
-        return userAchievementsProgress.stream()
-                .peek(AchievementProgress::increment)
-                .peek(achievementProgressRepository::save)
-                .toList();
+        userAchievementProgress.increment();
+        return achievementProgressRepository.save(userAchievementProgress);
     }
 
     @Transactional
@@ -58,5 +54,12 @@ public class AchievementService {
                 .build();
 
         userAchievementRepository.save(userAchievement);
+    }
+
+    private Supplier<DataNotFoundException> getAchievementNotFoundExceptionSupplier(long achievementId) {
+        return () -> {
+            String message = String.format("Achievement with id: %s not found", achievementId);
+            return new DataNotFoundException(message);
+        };
     }
 }

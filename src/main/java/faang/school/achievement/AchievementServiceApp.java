@@ -29,7 +29,7 @@ public class AchievementServiceApp {
     }
 
     @Bean
-    public ExecutorService executorService() {
+    public ExecutorService cachedPool() {
         return Executors.newCachedThreadPool();
     }
 }
