@@ -1,6 +1,8 @@
 package faang.school.achievement.config.redis;
 
 import faang.school.achievement.redis.listener.LikeEventListener;
+import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,13 +19,11 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Setter
 @Configuration
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "spring.data.redis.channels")
+@ConfigurationProperties(prefix = "spring.data.redis")
 public class RedisContext {
-    @Value("${spring.data.redis.port}")
     private int port;
-    @Value("${spring.data.redis.host}")
     private String host;
-    private String like;
+    private Channels channels;
     private final LikeEventListener likeEventListener;
 
 
@@ -39,12 +39,17 @@ public class RedisContext {
         var container = new RedisMessageListenerContainer();
 
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(messageListenerAdapter, createTopic(like));
+        container.addMessageListener(messageListenerAdapter, createTopic(channels.getLike()));
 
         return container;
     }
 
     private ChannelTopic createTopic(String topicName) {
         return new ChannelTopic(topicName);
+    }
+
+    @Data
+    private static class Channels {
+        private String like;
     }
 }
