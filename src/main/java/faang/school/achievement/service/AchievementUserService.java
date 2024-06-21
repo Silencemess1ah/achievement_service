@@ -6,7 +6,6 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 

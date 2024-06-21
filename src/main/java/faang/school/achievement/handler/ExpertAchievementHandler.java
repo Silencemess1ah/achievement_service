@@ -8,6 +8,7 @@ import faang.school.achievement.service.AchievementService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,16 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
 
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
-
-    @Value("${handlers.expert-achievement-handler.title}")
     private String expertAchievementTittle;
+
+    @Autowired
+    public ExpertAchievementHandler(AchievementCache achievementCache,
+                                    AchievementService achievementService,
+                                    @Value("${handlers.expert-achievement-handler.title}") String expertAchievementTittle) {
+        this.achievementCache = achievementCache;
+        this.achievementService = achievementService;
+        this.expertAchievementTittle = expertAchievementTittle;
+    }
 
     @Async
     @Override
