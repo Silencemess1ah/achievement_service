@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
@@ -38,12 +40,13 @@ class AchievementServiceImplTest {
     private AchievementServiceImpl achievementService;
 
     private final long achievementId = 1L;
-    private final String title = "title";
     private Achievement achievement;
     private AchievementDto achievementDto;
 
     @BeforeEach
     void setUp() {
+        String title = "title";
+
         achievement = Achievement.builder()
                 .id(achievementId)
                 .title(title)
@@ -95,26 +98,5 @@ class AchievementServiceImplTest {
 
         NotFoundException e = assertThrows(NotFoundException.class, () -> achievementService.getAchievementByAchievementId(achievementId));
         assertEquals("Achievement with achievementId " + achievementId + " not found", e.getMessage());
-    }
-
-    @Test
-    void getAchievementByTitle() {
-        when(achievementRepository.findByTitle(title)).thenReturn(Optional.of(achievement));
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        AchievementDto actual = achievementService.getAchievementByTitle(title);
-        assertEquals(achievementDto, actual);
-
-        InOrder inOrder = inOrder(achievementRepository);
-        inOrder.verify(achievementRepository).findByTitle(title);
-    }
-
-    @Test
-    void getAchievementByTitleNotFound() {
-        when(achievementRepository.findByTitle(title)).thenReturn(Optional.empty());
-
-
-        NotFoundException e = assertThrows(NotFoundException.class, () -> achievementService.getAchievementByTitle(title));
-        assertEquals("Achievement with title=" + title + " not found", e.getMessage());
     }
 }

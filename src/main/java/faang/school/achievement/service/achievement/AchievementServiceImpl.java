@@ -44,14 +44,4 @@ public class AchievementServiceImpl implements AchievementService {
 
         return achievementMapper.toDto(achievement);
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public AchievementDto getAchievementByTitle(String title) {
-
-        Achievement achievement = achievementRepository.findByTitle(title)
-                .orElseThrow(() -> new NotFoundException("Achievement with title=" + title + " not found"));
-
-        return achievementMapper.toDto(achievement);
-    }
 }
