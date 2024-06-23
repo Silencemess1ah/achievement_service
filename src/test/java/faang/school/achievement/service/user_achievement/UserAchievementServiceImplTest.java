@@ -2,7 +2,6 @@ package faang.school.achievement.service.user_achievement;
 
 import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
-import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.Rarity;
@@ -31,8 +30,6 @@ class UserAchievementServiceImplTest {
     private UserAchievementRepository userAchievementRepository;
     @Mock
     private UserAchievementMapper userAchievementMapper;
-    @Mock
-    private AchievementMapper achievementMapper;
 
     @InjectMocks
     private UserAchievementServiceImpl userAchievementService;
@@ -86,14 +83,6 @@ class UserAchievementServiceImplTest {
 
     @Test
     void giveAchievement() {
-        AchievementDto achievementDto = AchievementDto.builder()
-                .id(achievementId)
-                .title("title")
-                .description("description")
-                .points(10L)
-                .rarity(Rarity.RARE)
-                .build();
-
         Achievement achievement = Achievement.builder()
                 .id(achievementId)
                 .title("title")
@@ -102,9 +91,7 @@ class UserAchievementServiceImplTest {
                 .rarity(Rarity.RARE)
                 .build();
 
-        when(achievementMapper.toEntity(achievementDto)).thenReturn(achievement);
-
-        userAchievementService.giveAchievement(userId, achievementDto);
+        userAchievementService.giveAchievement(userId, achievement);
 
         InOrder inOrder = inOrder(userAchievementRepository);
         inOrder.verify(userAchievementRepository).save(any(UserAchievement.class));
