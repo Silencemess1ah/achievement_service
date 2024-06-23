@@ -2,10 +2,12 @@ package faang.school.achievement.service.user_achievement;
 
 import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
+import faang.school.achievement.event.AchievementReceivedEvent;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class UserAchievementServiceImpl implements UserAchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementMapper achievementMapper;
+    private final AchievementPublisher achievementPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -43,6 +46,9 @@ public class UserAchievementServiceImpl implements UserAchievementService {
                 .build();
 
         userAchievementRepository.save(userAchievement);
+
+        AchievementReceivedEvent event = achievementMapper.toEvent(userId, achievement);
+        achievementPublisher.publish(event);
 
         log.info("Achievement with achievementId={} was given to user with userId={}", achievement.getId(), userId);
     }
