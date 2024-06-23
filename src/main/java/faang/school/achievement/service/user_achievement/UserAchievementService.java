@@ -1,17 +1,15 @@
 package faang.school.achievement.service.user_achievement;
 
-import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
-import org.springframework.transaction.annotation.Transactional;
+import faang.school.achievement.model.Achievement;
 
 import java.util.List;
 
 public interface UserAchievementService {
+
     List<UserAchievementDto> getAchievementsByUserId(long userId);
 
-    @Transactional
-    void giveAchievement(long userId, AchievementDto achievement);
+    void giveAchievement(long userId, Achievement achievement);
 
-    @Transactional(readOnly = true)
     boolean hasAchievement(long userId, long achievementId);
 }
