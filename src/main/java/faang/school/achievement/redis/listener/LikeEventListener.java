@@ -24,7 +24,7 @@ public class LikeEventListener implements MessageListener {
         try {
             likeEvent = objectMapper.readValue(message.getBody(), LikeEventDto.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("Received message decoding failed: %s", e));
         }
 
         handlers.forEach(handler -> handler.handleEvent(likeEvent));

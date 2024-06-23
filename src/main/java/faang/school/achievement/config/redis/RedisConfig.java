@@ -2,10 +2,8 @@ package faang.school.achievement.config.redis;
 
 import faang.school.achievement.redis.listener.LikeEventListener;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +18,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Configuration
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "spring.data.redis")
-public class RedisContext {
+public class RedisConfig {
     private int port;
     private String host;
     private Channels channels;
@@ -34,20 +32,29 @@ public class RedisContext {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer() {
-        var messageListenerAdapter = new MessageListenerAdapter(likeEventListener);
+    public MessageListenerAdapter likeEventListenerAdapter() {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
+    public ChannelTopic likeTopic() {
+        return new ChannelTopic(channels.getLike());
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisContainer() {
         var container = new RedisMessageListenerContainer();
 
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(messageListenerAdapter, createTopic(channels.getLike()));
+        container.addMessageListener(likeEventListenerAdapter(), likeTopic());
 
         return container;
     }
 
-    private ChannelTopic createTopic(String topicName) {
-        return new ChannelTopic(topicName);
-    }
-
+    /**
+     * В этом классе хранятся названия всех топиков (каналов) редиса,
+     * получаемые из application.yaml по пути spring.data.redis.channels
+     */
     @Data
     private static class Channels {
         private String like;

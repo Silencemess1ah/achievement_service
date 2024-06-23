@@ -21,10 +21,12 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
 
 
+    @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
+    @Transactional(readOnly = true)
     public Achievement getAchievement(long achievementId) {
         return achievementRepository
                 .findById(achievementId)
