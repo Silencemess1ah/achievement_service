@@ -2,10 +2,12 @@ package faang.school.achievement.handler.mentorship;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.event.mentorship.MentorshipStartEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,17 +26,21 @@ class SenseiAchievementHandlerTest {
     @Mock
     private AchievementService achievementService;
 
+    @Mock
+    private AchievementMapper achievementMapper;
+
     @InjectMocks
     private SenseiAchievementHandler senseiAchievementHandler;
 
     private final long mentorId = 2L;
     private final long achievementId = 4L;
 
-    @Value("${achievements.title.sensei}")
+    @Value("${achievements.sensei.name}")
     private String ACHIEVEMENT;
     private MentorshipStartEvent mentorshipStartEvent;
     private AchievementProgress achievementProgress;
     private Achievement achievement;
+    private AchievementDto achievementDto;
 
     @BeforeEach
     void setUp() {
@@ -44,6 +50,12 @@ class SenseiAchievementHandlerTest {
                 .build();
 
         achievement = Achievement.builder()
+                .id(achievementId)
+                .title(ACHIEVEMENT)
+                .points(20L)
+                .build();
+
+        achievementDto = AchievementDto.builder()
                 .id(achievementId)
                 .title(ACHIEVEMENT)
                 .points(20L)
@@ -59,7 +71,8 @@ class SenseiAchievementHandlerTest {
 
     @Test
     void handle() {
-        when(achievementService.getAchievementByTitle(ACHIEVEMENT)).thenReturn(achievement);
+        when(achievementService.getAchievementByTitle(ACHIEVEMENT)).thenReturn(achievementDto);
+        when(achievementMapper.toEntity(achievementDto)).thenReturn(achievement);
         when(achievementService.hasAchievement(mentorId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(mentorId, achievementId)).thenReturn(achievementProgress);
 

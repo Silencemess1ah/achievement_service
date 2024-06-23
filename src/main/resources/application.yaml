@@ -39,7 +39,7 @@ project-service:
   port: 8082
 
 achievements:
-  title:
-    sensei: SENSEI
+  sensei:
+    name: SENSEI
   organizer:
     name: ORGANIZER
