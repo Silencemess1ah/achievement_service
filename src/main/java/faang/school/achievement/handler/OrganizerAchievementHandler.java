@@ -1,10 +1,12 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.event.InviteSentEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.achievement_progress.AchievementProgressService;
 import faang.school.achievement.service.user_achievement.UserAchievementService;
-import faang.school.achievement.util.cache.AchievementCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -19,6 +21,7 @@ public class OrganizerAchievementHandler implements EventHandler<InviteSentEvent
     private final AchievementProgressService achievementProgressService;
     private final UserAchievementService userAchievementService;
     private final AchievementCache achievementCache;
+    private final AchievementMapper achievementMapper;
 
     @Override
     @Async("organizerAchievementExecutorService")
@@ -32,8 +35,9 @@ public class OrganizerAchievementHandler implements EventHandler<InviteSentEvent
 
         long points = achievementProgressService.incrementAndGetProgress(event.getUserId(), achievement.getId());
 
+        AchievementDto achievementDto = achievementMapper.toDto(achievement);
         if (points >= achievement.getPoints()) {
-            userAchievementService.giveAchievement(event.getUserId(), achievement);
+            userAchievementService.giveAchievement(event.getUserId(), achievementDto);
         }
     }
 }
