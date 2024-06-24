@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
         invitation: invitation_channel
 
 server:
@@ -38,5 +39,7 @@ project-service:
   port: 8082
 
 achievements:
+  sensei:
+    name: SENSEI
   organizer:
     name: ORGANIZER
