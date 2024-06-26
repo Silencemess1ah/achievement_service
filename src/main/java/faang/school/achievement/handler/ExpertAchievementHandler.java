@@ -34,7 +34,7 @@ public class ExpertAchievementHandler implements EventHandler<CommentEvent> {
 
     @Async
     @Override
-    public boolean checkHandler(CommentEvent event) {
+    public boolean canHandle(CommentEvent event) {
         return true;
     }
 

@@ -13,11 +13,11 @@ import java.util.List;
 @Component
 public class CommentEventListener extends AbstractListener<CommentEvent>{
     public CommentEventListener(List<EventHandler<CommentEvent>> eventHandlers, ObjectMapper objectMapper) {
-        super(eventHandlers, objectMapper);
+        super(objectMapper, eventHandlers);
     }
 
     @Override
-    CommentEvent listenEvent(Message message) throws IOException {
+    protected CommentEvent listenEvent(Message message) throws IOException {
         return objectMapper.readValue(message.getBody(), CommentEvent.class);
     }
 }

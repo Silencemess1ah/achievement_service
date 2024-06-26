@@ -26,6 +26,8 @@ spring:
         follower: follower_channel
         comment_channel:
           name: comment_channel
+        mentorship_channel:
+          name: mentorship_channel
 
 server:
   port: 8085
@@ -44,3 +46,5 @@ user-service:
 handlers:
   expert-achievement-handler:
     title: EXPERT
+  sensei_achievement_handler:
+    title: SENSEI

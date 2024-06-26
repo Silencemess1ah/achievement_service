@@ -24,7 +24,7 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.comment_channel.name}")
     private String commentChannelName;
 
-    @Value("${spring.data.redis.channels.mentorship_channel.name}")
+    @Value("${spring.data.redis.channel.mentorship_channel.name}")
     private String mentorshipTopicName;
 
     @Bean

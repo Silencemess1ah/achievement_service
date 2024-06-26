@@ -27,7 +27,7 @@ public class SenseiAchievementHandler implements EventHandler<MentorshipStartEve
     private final UserAchievementService userAchievementService;
     private final AchievementProgressService achievementProgressService;
 
-    @Value("${event_handlers.sensei_achievement_handler.achievement_title}")
+    @Value("${handlers.sensei_achievement_handler.title}")
     private String achievementTitle;
 
     @Override

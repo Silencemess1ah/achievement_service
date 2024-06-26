@@ -51,7 +51,7 @@ class ExpertAchievementHandlerTest {
 
     @Test
     void testCheckHandler() {
-        assertTrue(expertAchievementHandler.checkHandler(event));
+        assertTrue(expertAchievementHandler.canHandle(event));
     }
 
     @Test
@@ -59,7 +59,7 @@ class ExpertAchievementHandlerTest {
         when(achievementCache.get("EXPERT")).thenReturn(Optional.of(achievement));
         when(achievementService.hasAchievement(1L, 1L)).thenReturn(false);
         AchievementProgress progress = new AchievementProgress();
-        progress.setCurrentPoints(150L); // Достаточно очков для получения достижения
+        progress.setCurrentPoints(150L);
         when(achievementService.getProgress(1L, 1L)).thenReturn(progress);
         expertAchievementHandler.handle(event);
         verify(achievementService, times(1)).createProgressIfNecessary(1L, 1L);
