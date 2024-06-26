@@ -14,7 +14,7 @@ import java.util.concurrent.Executor;
 
 @SpringBootApplication
 @EnableFeignClients("faang.school.achievement.client")
-@EnableAsync
+@EnableAsync(proxyTargetClass = true)
 @EnableRetry
 public class AchievementServiceApp {
     public static void main(String[] args) {

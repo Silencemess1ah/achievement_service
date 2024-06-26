@@ -2,6 +2,7 @@ package faang.school.achievement.redis.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.LikeEventDto;
+import faang.school.achievement.redis.handler.AllLoveAchievementHandler;
 import faang.school.achievement.redis.handler.LikeEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
@@ -17,7 +18,6 @@ import java.util.concurrent.Executor;
 public class LikeEventListener implements MessageListener {
     private final List<LikeEventHandler> handlers;
     private final ObjectMapper objectMapper;
-    private final Executor taskExecutor;
 
 
     @Override
@@ -29,6 +29,6 @@ public class LikeEventListener implements MessageListener {
             throw new RuntimeException(String.format("Received message decoding failed: %s", e));
         }
 
-        handlers.forEach(handler -> taskExecutor.execute(() -> handler.handleEvent(likeEvent)));
+        handlers.forEach(handler -> handler.handleEvent(likeEvent));
     }
 }
