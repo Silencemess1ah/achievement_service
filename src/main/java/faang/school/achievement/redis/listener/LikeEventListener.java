@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 @Component
 @RequiredArgsConstructor
 public class LikeEventListener implements MessageListener {
     private final List<LikeEventHandler> handlers;
     private final ObjectMapper objectMapper;
+    private final Executor taskExecutor;
 
 
     @Override
@@ -27,6 +29,6 @@ public class LikeEventListener implements MessageListener {
             throw new RuntimeException(String.format("Received message decoding failed: %s", e));
         }
 
-        handlers.forEach(handler -> handler.handleEvent(likeEvent));
+        handlers.forEach(handler -> taskExecutor.execute(() -> handler.handleEvent(likeEvent)));
     }
 }

@@ -44,7 +44,7 @@ class AllLoveAchievementHandlerTest {
         userAchievement = testData.getUserAchievement();
         achievementProgress = testData.getAchievementProgress();
 
-        changeField(achievementHandler, "achievementId", achievement.getId(), false);
+        changeField(achievementHandler, "achievementTitle", achievement.getTitle(), false);
         changeField(achievementHandler, "achievement", achievement, true);
     }
 

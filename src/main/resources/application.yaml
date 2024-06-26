@@ -27,7 +27,7 @@ spring:
         like: likes_channel
 
 server:
-  port: 8085
+  port: 8086
 
 logging:
   level:
@@ -35,8 +35,8 @@ logging:
 
 project-service:
   host: localhost
-  port: 8082
+  port: 8083
 
 achievement:
   all-love:
-    id: 9
+    title: ALL LOVE

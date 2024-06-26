@@ -10,6 +10,8 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.Executor;
+
 @SpringBootApplication
 @EnableFeignClients("faang.school.achievement.client")
 @EnableAsync
@@ -27,7 +29,13 @@ public class AchievementServiceApp {
     }
 
     @Bean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(2);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("AsyncThread-");
+        executor.initialize();
+        return executor;
     }
 }
