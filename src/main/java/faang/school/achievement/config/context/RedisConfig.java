@@ -2,6 +2,7 @@ package faang.school.achievement.config.context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.SkillAcquiredEvent;
+import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.SkillEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,8 @@ public class RedisConfig {
     private int port;
     @Value("${spring.data.redis.channel.skill}")
     private String skillChannel;
+    @Value("${spring.data.redis.channel.profile}")
+    private String profilePicChannel;
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
@@ -35,11 +38,18 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter skillEventListenerAdapter) {
+    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter skillEventListenerAdapter,
+                                                                       MessageListenerAdapter profilePicListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory());
         container.addMessageListener(skillEventListenerAdapter, skillTopic());
+        container.addMessageListener(profilePicListenerAdapter, profilePicTopic());
         return container;
+    }
+
+    @Bean
+    public MessageListenerAdapter profilePicListenerAdapter(ProfilePicEventListener profilePicEventListener) {
+        return new MessageListenerAdapter(profilePicEventListener);
     }
 
     @Bean
@@ -60,5 +70,10 @@ public class RedisConfig {
     @Bean
     ChannelTopic skillTopic() {
         return new ChannelTopic(skillChannel);
+    }
+
+    @Bean
+    ChannelTopic profilePicTopic() {
+        return new ChannelTopic(profilePicChannel);
     }
 }
