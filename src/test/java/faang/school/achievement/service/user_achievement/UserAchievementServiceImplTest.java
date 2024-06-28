@@ -2,10 +2,13 @@ package faang.school.achievement.service.user_achievement;
 
 import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
+import faang.school.achievement.event.AchievementReceivedEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
@@ -30,6 +34,10 @@ class UserAchievementServiceImplTest {
     private UserAchievementRepository userAchievementRepository;
     @Mock
     private UserAchievementMapper userAchievementMapper;
+    @Mock
+    private AchievementMapper achievementMapper;
+    @Mock
+    private AchievementPublisher achievementPublisher;
 
     @InjectMocks
     private UserAchievementServiceImpl userAchievementService;
@@ -83,6 +91,14 @@ class UserAchievementServiceImplTest {
 
     @Test
     void giveAchievement() {
+        AchievementDto achievementDto = AchievementDto.builder()
+                .id(achievementId)
+                .title("title")
+                .description("description")
+                .points(10L)
+                .rarity(Rarity.RARE)
+                .build();
+
         Achievement achievement = Achievement.builder()
                 .id(achievementId)
                 .title("title")
@@ -91,9 +107,21 @@ class UserAchievementServiceImplTest {
                 .rarity(Rarity.RARE)
                 .build();
 
-        userAchievementService.giveAchievement(userId, achievement);
+        AchievementReceivedEvent event = AchievementReceivedEvent.builder()
+                .userId(userId)
+                .achievement(achievementDto)
+                .receivedAt(LocalDateTime.now())
+                .build();
 
-        InOrder inOrder = inOrder(userAchievementRepository);
+        when(achievementMapper.toEntity(achievementDto)).thenReturn(achievement);
+        when(achievementMapper.toEvent(userId, achievementDto)).thenReturn(event);
+
+        userAchievementService.giveAchievement(userId, achievementDto);
+
+        InOrder inOrder = inOrder(achievementMapper, userAchievementRepository, achievementPublisher);
+        inOrder.verify(achievementMapper).toEntity(achievementDto);
         inOrder.verify(userAchievementRepository).save(any(UserAchievement.class));
+        inOrder.verify(achievementMapper).toEvent(userId, achievementDto);
+        inOrder.verify(achievementPublisher).publish(event);
     }
 }
