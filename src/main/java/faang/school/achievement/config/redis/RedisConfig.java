@@ -1,5 +1,6 @@
 package faang.school.achievement.config.redis;
 
+import faang.school.achievement.redis.listener.GoalEventListener;
 import faang.school.achievement.redis.listener.LikeEventListener;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class RedisConfig {
     private String host;
     private Channels channels;
     private final LikeEventListener likeEventListener;
+    private final GoalEventListener goalEventListener;
 
 
     @Bean
@@ -37,8 +39,18 @@ public class RedisConfig {
     }
 
     @Bean
+    public MessageListenerAdapter goalEventListenerAdapter() {
+        return new MessageListenerAdapter(goalEventListener);
+    }
+
+    @Bean
     public ChannelTopic likeTopic() {
         return new ChannelTopic(channels.getLike());
+    }
+
+    @Bean
+    public ChannelTopic goalTopic() {
+        return new ChannelTopic(channels.getGoal());
     }
 
     @Bean
@@ -47,6 +59,7 @@ public class RedisConfig {
 
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(likeEventListenerAdapter(), likeTopic());
+        container.addMessageListener(goalEventListenerAdapter(), goalTopic());
 
         return container;
     }
@@ -58,5 +71,6 @@ public class RedisConfig {
     @Data
     private static class Channels {
         private String like;
+        private String goal;
     }
 }

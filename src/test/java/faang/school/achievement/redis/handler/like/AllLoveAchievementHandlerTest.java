@@ -1,4 +1,4 @@
-package faang.school.achievement.redis.handler;
+package faang.school.achievement.redis.handler.like;
 
 import faang.school.achievement.TestData;
 import faang.school.achievement.model.Achievement;
@@ -18,12 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AllLoveAchievementHandlerTest {
