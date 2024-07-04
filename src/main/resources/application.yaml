@@ -39,7 +39,16 @@ project-service:
   port: 8083
 
 achievement:
-  all-love:
-    title: ALL LOVE
-  collector:
-    title: COLLECTOR
+  like-achievement:
+    type: like
+    achievements:
+      all-love:
+        title: ALL LOVE
+      mega-love:
+        title: MEGA LOVE
+
+  goal-achievement:
+    type: goal
+      achievements:
+        collector:
+          title: COLLECTOR

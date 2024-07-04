@@ -1,5 +1,7 @@
 package faang.school.achievement.redis.handler.like;
 
+import faang.school.achievement.dto.LikeEventDto;
+import faang.school.achievement.redis.handler.EventHandler;
 import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
 import jakarta.annotation.PostConstruct;
@@ -9,14 +11,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class AllLoveAchievementHandler extends LikeEventHandler {
+public class AllLoveAchievementHandler extends EventHandler {
     @Value("${achievement.all-love.title}")
     private String achievementTitle;
-    private final AchievementCache achievementCache;
 
     public AllLoveAchievementHandler(AchievementService achievementService, AchievementCache achievementCache) {
-        super(achievementService);
-        this.achievementCache = achievementCache;
+        super(achievementService, achievementCache);
     }
 
     @PostConstruct
@@ -24,4 +24,8 @@ public class AllLoveAchievementHandler extends LikeEventHandler {
         achievement = achievementCache.get(achievementTitle);
     }
 
+    @Override
+    public Class<LikeEventDto> getHandledEventType() {
+        return LikeEventDto.class;
+    }
 }

@@ -3,6 +3,7 @@ package faang.school.achievement.redis.handler;
 import faang.school.achievement.dto.EventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,12 @@ import org.springframework.scheduling.annotation.Async;
 @RequiredArgsConstructor
 public abstract class EventHandler {
     protected final AchievementService achievementService;
+    protected final AchievementCache achievementCache;
     protected Achievement achievement;
     protected String type;
+
+
+    public abstract Class<? extends EventDto> getHandledEventType();
 
     @Async(value = "taskExecutor")
     public void handleEvent(EventDto event) {
@@ -28,7 +33,6 @@ public abstract class EventHandler {
 
         tryGiveAchievement(achievementProgress);
     }
-
 
     public void tryGiveAchievement(AchievementProgress achievementProgress) {
         long userId = achievementProgress.getUserId();
