@@ -1,27 +1,29 @@
-package faang.school.achievement.handler;
+package faang.school.achievement.redis.handler;
 
-import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.event.MentorshipStartEvent;
-import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SenseyAchievementHandler implements EventHandler {
+public class SenseyAchievementHandler implements EventHandler<MentorshipStartEvent> {
 
-    private String achievement;
+    @Value("{achievement.sensey.title}")
+    private String achievementName;
 
     private final AchievementService achievementService;
 
-    private final AchievementMapper achievementMapper;
+    private final AchievementCache achievementCache;
 
+    @Override
     public void handleEvent(MentorshipStartEvent event) {
-        AchievementDto achievementDto = achievementService.getAchievementByTitle(achievement);
-        Achievement achievement = achievementMapper.toEntity(achievementDto);
+
+        Achievement achievement = achievementCache.get(achievementName);
 
         if (!achievementService.hasAchievement(event.getMentorId(), achievement.getId())) {
             achievementService.createProgressIfNecessary(event.getMentorId(), achievement.getId());
@@ -30,8 +32,8 @@ public class SenseyAchievementHandler implements EventHandler {
         AchievementProgress progress = achievementService.getProgress(event.getMentorId(), achievement.getId());
         progress.setCurrentPoints(progress.getCurrentPoints() + 1);
 
-        if (progress.getCurrentPoints() >= achievement.getPoints()) {
-            achievementService.giveAchievement(event.getMentorId(), achievement);
+        if (progress.getCurrentPoints() == achievement.getPoints()) {
+            achievementService.giveAchievement(achievement, event.getMentorId());
         }
     }
 }

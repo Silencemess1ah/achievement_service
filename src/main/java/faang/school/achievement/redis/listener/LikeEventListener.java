@@ -2,7 +2,6 @@ package faang.school.achievement.redis.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.LikeEventDto;
-import faang.school.achievement.redis.handler.AllLoveAchievementHandler;
 import faang.school.achievement.redis.handler.LikeEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 @Component
 @RequiredArgsConstructor
