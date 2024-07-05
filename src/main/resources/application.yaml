@@ -21,12 +21,13 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
+      channels:
         achievement: achievement_channel
         follower: follower_channel
+        like: likes_channel
 
 server:
-  port: 8085
+  port: 8086
 
 logging:
   level:
@@ -34,4 +35,8 @@ logging:
 
 project-service:
   host: localhost
-  port: 8082
+  port: 8083
+
+achievement:
+  all-love:
+    title: ALL LOVE
