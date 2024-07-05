@@ -51,7 +51,7 @@ public class RedisConfig {
 
     @Bean
     public ChannelTopic mentorshipTopic() {
-        return new ChannelTopic(channels.getLike());
+        return new ChannelTopic(channels.getMentorship());
     }
 
     @Bean
@@ -60,7 +60,7 @@ public class RedisConfig {
 
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(likeEventListenerAdapter(), likeTopic());
-        container.addMessageListener(mentorshipEventListener, mentorshipTopic());
+        container.addMessageListener(mentorshipEventListenerAdapter(), mentorshipTopic());
 
         return container;
     }
@@ -72,5 +72,6 @@ public class RedisConfig {
     @Data
     private static class Channels {
         private String like;
+        private String mentorship;
     }
 }

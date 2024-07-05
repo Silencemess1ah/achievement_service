@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SenseyAchievementHandler implements EventHandler<MentorshipStartEvent> {
+public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
 
-    @Value("{achievement.sensey.title}")
+    @Value("${achievement.sensei.title}")
     private String achievementName;
 
     private final AchievementService achievementService;
@@ -22,7 +22,6 @@ public class SenseyAchievementHandler implements EventHandler<MentorshipStartEve
 
     @Override
     public void handleEvent(MentorshipStartEvent event) {
-
         Achievement achievement = achievementCache.get(achievementName);
 
         if (!achievementService.hasAchievement(event.getMentorId(), achievement.getId())) {
@@ -30,7 +29,9 @@ public class SenseyAchievementHandler implements EventHandler<MentorshipStartEve
         }
 
         AchievementProgress progress = achievementService.getProgress(event.getMentorId(), achievement.getId());
-        progress.setCurrentPoints(progress.getCurrentPoints() + 1);
+        if (progress.getCurrentPoints() < 30) {
+            progress = achievementService.incrementProgressPoints(event.getMentorId(), achievement.getId());
+        }
 
         if (progress.getCurrentPoints() == achievement.getPoints()) {
             achievementService.giveAchievement(achievement, event.getMentorId());
