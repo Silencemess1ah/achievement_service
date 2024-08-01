@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         like: likes_channel
+        mentorship: mentorship_channel
 
 server:
   port: 8086
@@ -38,5 +39,7 @@ project-service:
   port: 8083
 
 achievement:
-  all-love:
+ all-love:
     title: ALL LOVE
+ sensei:
+   title: SENSEI

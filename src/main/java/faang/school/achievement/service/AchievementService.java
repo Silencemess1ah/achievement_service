@@ -58,6 +58,12 @@ public class AchievementService {
         userAchievementRepository.save(userAchievement);
     }
 
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(long mentorId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(mentorId, achievementId).orElseThrow(
+                getAchievementNotFoundExceptionSupplier(achievementId));
+    }
+
     private Supplier<DataNotFoundException> getAchievementNotFoundExceptionSupplier(long achievementId) {
         return () -> {
             String message = String.format("Achievement with id: %s not found", achievementId);

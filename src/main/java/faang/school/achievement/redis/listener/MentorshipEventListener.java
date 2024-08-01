@@ -1,32 +1,30 @@
 package faang.school.achievement.redis.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.LikeEventDto;
-import faang.school.achievement.redis.handler.LikeEventHandler;
+import faang.school.achievement.event.MentorshipStartEvent;
+import faang.school.achievement.redis.handler.SenseiAchievementHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class LikeEventListener implements MessageListener {
-    private final List<LikeEventHandler> handlers;
+public class MentorshipEventListener implements MessageListener {
+
     private final ObjectMapper objectMapper;
 
+    private final SenseiAchievementHandler senseiAchievementHandler;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        LikeEventDto likeEvent;
         try {
-            likeEvent = objectMapper.readValue(message.getBody(), LikeEventDto.class);
+            MentorshipStartEvent mentorshipStartEvent = objectMapper.readValue(message.getBody(), MentorshipStartEvent.class);
+            senseiAchievementHandler.handleEvent(mentorshipStartEvent);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Received message decoding failed: %s", e));
+            throw new RuntimeException(e);
         }
-
-        handlers.forEach(handler -> handler.handleEvent(likeEvent));
     }
 }
