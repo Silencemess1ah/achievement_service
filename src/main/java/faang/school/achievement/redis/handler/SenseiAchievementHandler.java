@@ -16,6 +16,8 @@ public class SenseiAchievementHandler implements EventHandler<MentorshipStartEve
     @Value("${achievement.sensei.title}")
     private String achievementName;
 
+    private static final int POINTS_TO_SENSEI = 30;
+
     private final AchievementService achievementService;
 
     private final AchievementCache achievementCache;
@@ -29,7 +31,7 @@ public class SenseiAchievementHandler implements EventHandler<MentorshipStartEve
         }
 
         AchievementProgress progress = achievementService.getProgress(event.getMentorId(), achievement.getId());
-        if (progress.getCurrentPoints() < 30) {
+        if (progress.getCurrentPoints() < POINTS_TO_SENSEI) {
             progress = achievementService.incrementProgressPoints(event.getMentorId(), achievement.getId());
         }
 
