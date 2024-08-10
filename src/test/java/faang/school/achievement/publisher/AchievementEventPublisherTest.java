@@ -13,13 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AchievementPublisherTest {
+class AchievementEventPublisherTest {
 
     @Mock
     private ObjectMapper objectMapper;
@@ -31,7 +30,7 @@ class AchievementPublisherTest {
     private RedisTemplate<String, Object> redisTemplate;
 
     @InjectMocks
-    private AchievementPublisher achievementPublisher;
+    private AchievementEventPublisher achievementEventPublisher;
 
     private String achievementEventJson;
     private String channelName;
@@ -49,7 +48,7 @@ class AchievementPublisherTest {
     void publish() throws JsonProcessingException {
         when(objectMapper.writeValueAsString(achievementEvent)).thenReturn(achievementEventJson);
         when(achievementChannel.getTopic()).thenReturn(channelName);
-        achievementPublisher.publish(achievementEvent);
+        achievementEventPublisher.publish(achievementEvent);
         verify(objectMapper, times(1)).writeValueAsString(achievementEvent);
         verify(redisTemplate, times(1))
                 .convertAndSend(achievementChannel.getTopic(), achievementEventJson);
