@@ -26,7 +26,7 @@ spring:
         follower: follower_channel
 
 server:
-  port: 8085
+  port: 8095
 
 logging:
   level:
@@ -35,3 +35,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+cache:
+    achievement:
+      update-schedule : "@hourly"
