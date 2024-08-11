@@ -5,7 +5,7 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
-import faang.school.achievement.filter.AchievementFilter;
+import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
@@ -47,13 +47,14 @@ public class AchievementService {
                             Stream::concat)
                     .toList();
         }
+
         log.info("Received all achievements");
         return achievementMapper.toDtoList(achievements);
     }
 
-    public List <UserAchievementDto> getAchievementsByUserId(Long userId) {
+    public List<UserAchievementDto> getAchievementsByUserId(Long userId) {
         List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
-        if(userAchievements == null){
+        if (userAchievements == null) {
             throw new NotFoundException("No achievements found for user with ID = " + userId);
         }
         log.info("Received achievements for user with ID = {}", userId);
@@ -62,14 +63,14 @@ public class AchievementService {
 
     public AchievementDto getAchievement(Long id) {
         Achievement achievement = achievementRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Achievement with ID = " + id + " does not found"));
+                .orElseThrow(() -> new NotFoundException("Achievement with ID = " + id + " not found"));
         log.info("Found achievement with ID = {}", id);
         return achievementMapper.toDto(achievement);
     }
 
-    public List <AchievementProgressDto> getAllAchievementsProgressForUser(Long userId) {
+    public List<AchievementProgressDto> getAllAchievementsProgressForUser(Long userId) {
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
-        if(achievementProgresses == null){
+        if (achievementProgresses == null) {
             throw new NotFoundException("No achievements in progress found for user with ID = " + userId);
         }
         log.info("Found achievements in progress for user with ID = {}", userId);

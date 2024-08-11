@@ -1,4 +1,4 @@
-package faang.school.achievement.filter;
+package faang.school.achievement.util.filter;
 
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.model.Achievement;
