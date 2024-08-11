@@ -26,7 +26,7 @@ public class AchievementCache {
                         Achievement::getTitle,
                         achievement -> achievement
                 ));
-        log.info("Achievement cache has been initialized/updated. Cache size = {}" , achievementsCacheMap.size());
+        log.info("Achievement cache has been initialized/updated. Cache size = {}", achievementsCacheMap.size());
     }
 
     public Achievement getAchievementByTitle(String title) {
