@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
@@ -31,6 +32,7 @@ public class AchievementService {
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> achievementFilters;
+    private final UserContext userContext;
 
     @Transactional(readOnly = true)
     public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto achievementFilterDto) {
@@ -43,7 +45,8 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserAchievementDto> getAchievementsByUserId(long userId) {
+    public List<UserAchievementDto> getAchievementsByUserId() {
+        long userId = userContext.getUserId();
         List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
         return userAchievements.stream()
             .map(userAchievementMapper::toDto)
@@ -57,7 +60,8 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public List<AchievementProgressDto> getAchievementProgressByUserId(long userId) {
+    public List<AchievementProgressDto> getAchievementProgressByUserId() {
+        long userId = userContext.getUserId();
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
         return achievementProgresses.stream()
             .map(achievementProgressMapper::toDto)

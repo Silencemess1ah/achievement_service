@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
@@ -53,6 +54,9 @@ class AchievementServiceTest {
     @Mock
     AchievementFilter achievementFilter;
 
+    @Mock
+    UserContext userContext;
+
     @InjectMocks
     AchievementService achievementService;
 
@@ -81,7 +85,8 @@ class AchievementServiceTest {
             achievementMapper,
             userAchievementMapper,
             achievementProgressMapper,
-            List.of(achievementFilter)
+            List.of(achievementFilter),
+            userContext
         );
 
         userId = 1;
@@ -122,10 +127,11 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return list of UserAchievementDto when retrieving achievements by user ID")
     void getAchievementsByUserId() {
+        when(userContext.getUserId()).thenReturn(userId);
         when(userAchievementRepository.findByUserId(userId)).thenReturn(userAchievements);
         when(userAchievementMapper.toDto(userAchievement)).thenReturn(userAchievementDto);
 
-        List<UserAchievementDto> result = achievementService.getAchievementsByUserId(userId);
+        List<UserAchievementDto> result = achievementService.getAchievementsByUserId();
 
         verify(userAchievementRepository).findByUserId(userId);
         verify(userAchievementMapper).toDto(userAchievement);
@@ -150,10 +156,11 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return list of AchievementProgressDto when retrieving achievement progress by user ID")
     void getAchievementProgressByUserId() {
+        when(userContext.getUserId()).thenReturn(userId);
         when(achievementProgressRepository.findByUserId(userId)).thenReturn(achievementProgresses);
         when(achievementProgressMapper.toDto(achievementProgress)).thenReturn(achievementProgressDto);
 
-        List<AchievementProgressDto> result = achievementService.getAchievementProgressByUserId(userId);
+        List<AchievementProgressDto> result = achievementService.getAchievementProgressByUserId();
 
         verify(achievementProgressRepository).findByUserId(userId);
         verify(achievementProgressMapper).toDto(achievementProgress);
