@@ -62,7 +62,7 @@ public class AchievementService {
     public List<AchievementDto> getFilteredAchievements(AchievementFilterDto achievementFilterDto) {
         Stream<Achievement> achievementStream = StreamSupport.stream(achievementRepository.findAll().spliterator(), false);
         return filters.stream()
-                .filter(filter-> filter.isApplicable(achievementFilterDto))
+                .filter(filter -> filter.isApplicable(achievementFilterDto))
                 .flatMap(filter -> filter.applyFilter(achievementStream, achievementFilterDto))
                 .map(achievementMapper::toDto)
                 .toList();

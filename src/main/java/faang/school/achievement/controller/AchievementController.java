@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AchievementController {
     private final AchievementService achievementService;
+
     @GetMapping("users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<UserAchievementDto> getAllUserAchievements(@PathVariable long userId) {
@@ -41,7 +42,7 @@ public class AchievementController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<AchievementDto> getFilteredAchievements(@RequestBody AchievementFilterDto filter){
+    public List<AchievementDto> getFilteredAchievements(@RequestBody AchievementFilterDto filter) {
         return achievementService.getFilteredAchievements(filter);
     }
 

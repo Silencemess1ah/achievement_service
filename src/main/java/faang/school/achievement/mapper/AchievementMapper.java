@@ -11,5 +11,6 @@ import org.mapstruct.ReportingPolicy;
         uses = {UserAchievementMapper.class, AchievementProgressMapper.class})
 public interface AchievementMapper {
     AchievementDto toDto(Achievement achievement);
+
     Achievement toEntity(AchievementDto achievementDto);
 }

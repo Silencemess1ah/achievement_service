@@ -23,6 +23,7 @@ public class RedisConfig {
 
     @Value("${data.redis.chanel.achievement}")
     private String achievementTopic;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
@@ -33,6 +34,7 @@ public class RedisConfig {
     ChannelTopic achievementTopic() {
         return new ChannelTopic(achievementTopic);
     }
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
