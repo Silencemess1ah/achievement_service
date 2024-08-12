@@ -9,8 +9,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public abstract class RedisMessagePublisher<T> {
     protected final RedisTemplate<String, Object> redisTemplate;
+    protected final ChannelTopic topic;
 
-    public void publish(T event, ChannelTopic topic) {
+    public void publish(T event) {
         redisTemplate.convertAndSend(topic.getTopic(), event);
     }
 }
