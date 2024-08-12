@@ -3,7 +3,6 @@ package faang.school.achievement.cache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -11,10 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@RequiredArgsConstructor
 public class AchievementCache {
     private final Map<String, Achievement> cachedAchievements = new HashMap<>();
     private final AchievementRepository achievementRepository;
+
+    public AchievementCache(AchievementRepository achievementRepository) {
+        this.achievementRepository = achievementRepository;
+    }
 
     public Achievement getAchievement(String title) {
         return cachedAchievements.get(title);
