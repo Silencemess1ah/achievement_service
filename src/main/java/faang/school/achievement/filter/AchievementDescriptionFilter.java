@@ -5,7 +5,7 @@ import faang.school.achievement.model.Achievement;
 
 import java.util.stream.Stream;
 
-public class AchievementDescription implements AchievementFilter {
+public class AchievementDescriptionFilter implements AchievementFilter {
     @Override
     public boolean isApplicable(AchievementFilterDto achievementFilterDto) {
         return achievementFilterDto.getDescription() != null;
