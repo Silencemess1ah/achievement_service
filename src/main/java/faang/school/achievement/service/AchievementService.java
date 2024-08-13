@@ -60,7 +60,7 @@ public class AchievementService {
     @Transactional
     public List<AchievementDto> getAchievement(Long achievementId) {
         Optional<Achievement> achievements = achievementRepository.findById(achievementId);
-        if(!achievements.isEmpty()){
+        if (!achievements.isEmpty()) {
             return achievements.stream().map(achievementMapper::toDto).toList();
         }
         return new ArrayList<AchievementDto>();
@@ -74,11 +74,14 @@ public class AchievementService {
                 .map(achievementProgresse ->
                         achievements.add(achievementRepository.findById(achievementProgresse.getAchievement().getId())))
                 .collect(Collectors.toList());
-        List<Achievement> result = new ArrayList<>();
-        return achievements.stream().map(achievement -> {
-            if (achievement.isPresent()) {
-                result.add(achievement.get());
-            }
-            return result;
-        }).toList();
+        List<AchievementDto> result = new ArrayList<>();
+        achievements.stream()
+                .forEach(achievement -> {
+                    if (achievement.isPresent()) {
+                        result.add(achievementMapper.toDto(achievement.get()));
+                    }
+                }
+        );
+        return result;
     }
+}
