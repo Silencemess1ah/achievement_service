@@ -36,3 +36,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+cache:
+    achievement:
+      update-schedule : "@hourly"
