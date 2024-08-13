@@ -17,7 +17,7 @@ public class RedisListenerConfig {
     private String host;
     @Value("${spring.data.redis.port}")
     private int port;
-    @Value("${spring.data.redis.host.channels.mentorship}")
+    @Value("${spring.data.redis.channel.mentorship}")
     private String mentorshipChannelName;
 
     @Bean

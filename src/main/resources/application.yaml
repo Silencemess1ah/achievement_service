@@ -27,7 +27,7 @@ spring:
         mentorship: mentorship_check_channel
 
 server:
-  port: 8085
+  port: 8095
 
 logging:
   level:

@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-abstract public class AbstractEventListener<T> implements MessageListener{
+abstract public class AbstractEventListener<T>{
     protected final ObjectMapper objectMapper;
     protected final List<EventHandler<T>> eventHandlers;
 
