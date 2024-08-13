@@ -16,12 +16,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig {
-    @Value("%{data.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String host;
-    @Value("%{data.redis.port}")
+    @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("${data.redis.chanel.achievement}")
+    @Value("${spring.data.redis.channel.achievement}")
     private String achievementTopic;
 
     @Bean
