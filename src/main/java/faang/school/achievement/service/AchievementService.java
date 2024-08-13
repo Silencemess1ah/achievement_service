@@ -29,60 +29,9 @@ import java.util.stream.StreamSupport;
 public class AchievementService {
 
     private final AchievementRepository achievementRepository;
-    private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementMapper achievementMapper;
-    private final UserContext userContext;
     private final List<AchievementFilter> achievementsFilter;
-
-    public AchievementDto createAchievement(AchievementDto achievementDto) {
-        Achievement achievement = achievementMapper.toEntity(achievementDto);
-        if (!achievementRepository.existsByTitle(achievement.getTitle())) {
-            return achievementMapper.toDto(achievementRepository.save(achievement));
-        } else {
-            log.error("achievement is not exist for title and userId");
-            throw new IllegalArgumentException("achievement is not exist for title and userId");
-        }
-    }
-
-    public Achievement deleteAchievement(Long achievementId) {
-        Optional<Achievement> achievement = achievementRepository.findById(achievementId);
-        if (!achievement.isEmpty()) {
-            achievementRepository.delete(achievement.get());
-            return achievement.get();
-        } else {
-            log.error("achievement is not exist");
-            throw new IllegalArgumentException("achievement is not exist");
-        }
-    }
-
-    @Transactional
-    public UserAchievement createAchievementForUser(Long achievementId) {
-        Optional<Achievement> achievement = achievementRepository.findById(achievementId);
-        UserAchievement userAchievement = new UserAchievement();
-        if (achievement.isPresent()) {
-            userAchievement.setAchievement(achievement.get());
-            userAchievement.setUserId(userContext.getUserId());
-            userAchievementRepository.save(userAchievement);
-            return userAchievement;
-        } else {
-            log.error("achievement is not exist for title and userId");
-            throw new IllegalArgumentException("achievement is not exist for title and userId");
-        }
-    }
-
-    @Transactional
-    public Achievement deleteAchievementForUser(Long achievementId) {
-        Optional<Achievement> achievement = achievementRepository.findById(achievementId);
-        Optional<UserAchievement> userAchievement = userAchievementRepository.findByAchievement(achievementId);
-        if (!achievement.isEmpty() && !userAchievement.isEmpty()) {
-            userAchievementRepository.delete(userAchievement.get());
-        } else {
-            log.error("achievement or user achievement is not exist");
-            throw new IllegalArgumentException("achievement or user achievement is not exist");
-        }
-        return achievement.get();
-    }
 
     @Transactional
     public List<AchievementDto> getAllAchievement(AchievementFilterDto achievementFilterDto) {
@@ -103,23 +52,33 @@ public class AchievementService {
     }
 
     @Transactional
-    public Optional<Achievement> getAllAchievementForUser(Long userId) {
-        return achievementRepository.findAllAchievementForUser(userId);
+    public List<AchievementDto> getAllAchievementForUser(Long userId) {
+        List<Achievement> achievements = achievementRepository.findAllAchievementForUser(userId);
+        return achievements.stream().map(achievementMapper::toDto).toList();
     }
 
     @Transactional
-    public Optional<Achievement> getAchievement(Long achievementId) {
-        return achievementRepository.findById(achievementId);
+    public List<AchievementDto> getAchievement(Long achievementId) {
+        Optional<Achievement> achievements = achievementRepository.findById(achievementId);
+        if(!achievements.isEmpty()){
+            return achievements.stream().map(achievementMapper::toDto).toList();
+        }
+        return new ArrayList<AchievementDto>();
     }
 
     @Transactional
-    public List<Optional<Achievement>> getNoAchievement(Long userId) {
+    public List<AchievementDto> getNoAchievement(Long userId) {
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
         List<Optional<Achievement>> achievements = new ArrayList<>();
         achievementProgresses.stream()
                 .map(achievementProgresse ->
                         achievements.add(achievementRepository.findById(achievementProgresse.getAchievement().getId())))
                 .collect(Collectors.toList());
-        return achievements;
+        List<Achievement> result = new ArrayList<>();
+        return achievements.stream().map(achievement -> {
+            if (achievement.isPresent()) {
+                result.add(achievement.get());
+            }
+            return result;
+        }).toList();
     }
-}
