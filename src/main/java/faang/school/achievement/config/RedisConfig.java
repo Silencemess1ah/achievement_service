@@ -1,7 +1,6 @@
 package faang.school.achievement.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -23,8 +22,7 @@ public class RedisConfig {
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 
-    @Bean
-    @Qualifier("achievementTopic")
+    @Bean("achievementTopic")
     public ChannelTopic achievementTopic() {
         return new ChannelTopic(redisCredentials.getChannel().getAchievement());
     }
