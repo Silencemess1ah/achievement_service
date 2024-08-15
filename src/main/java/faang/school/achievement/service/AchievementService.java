@@ -18,10 +18,6 @@ public class AchievementService {
     private final AchievementCache achievementCache;
     private final AchievementMapper achievementMapper;
 
-    public List<Achievement> getAchievements() {
-        return achievementRepository.findAll();
-    }
-
     @PostConstruct
     public void createAchievementCache() {
         achievementCache.createCache(getAchievements());
@@ -30,5 +26,9 @@ public class AchievementService {
     public AchievementDto getAchievementFromCache(String achievementTitle) {
         Achievement achievement = achievementCache.getAchievement(achievementTitle);
         return achievementMapper.mapToDto(achievement);
+    }
+
+    private List<Achievement> getAchievements() {
+        return achievementRepository.findAll();
     }
 }
