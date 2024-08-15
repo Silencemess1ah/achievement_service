@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/achievement")
+@RequestMapping("/api/v1/achievement")
 @RequiredArgsConstructor
 public class AchievementController {
 
@@ -37,13 +37,13 @@ public class AchievementController {
 
     @GetMapping("/{achievementId}")
     @ResponseStatus(HttpStatus.OK)
-    public AchievementDto getAchievement(@PathVariable Long achievementId){
+    public AchievementDto getAchievement(@PathVariable Long achievementId) {
         return achievementService.getAchievementById(achievementId);
     }
 
     @GetMapping("/user/not-attained/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<AchievementProgressDto> getUserNotAttainedAchievements(@PathVariable Long userId){
+    public List<AchievementProgressDto> getUserNotAttainedAchievements(@PathVariable Long userId) {
         return achievementService.getUserNotAttainedAchievements(userId);
     }
 }

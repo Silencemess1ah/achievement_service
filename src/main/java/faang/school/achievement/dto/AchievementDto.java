@@ -20,7 +20,6 @@ public class AchievementDto {
     private String description;
     private Rarity rarity;
     private long points;
-    private long progress;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

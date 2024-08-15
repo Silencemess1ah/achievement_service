@@ -12,18 +12,21 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
+@Builder
 public class AchievementService {
-
-    private final String ACHIEVEMENT_NOT_FOUND_MSG = "Could not find achievement with ID: %s";
 
     private final AchievementMapper achievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
@@ -51,8 +54,7 @@ public class AchievementService {
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementById(long achievementId) {
-        Achievement achievementById = achievementRepository.findById(achievementId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ACHIEVEMENT_NOT_FOUND_MSG, achievementId)));
+        Achievement achievementById = getOrThrowException(achievementId);
         return achievementMapper.toDto(achievementById);
     }
 
@@ -67,5 +69,15 @@ public class AchievementService {
                 .filter(achievementProgress -> !userAttainedAchievements.contains(achievementProgress.getAchievement()))
                 .map(achievementProgressMapper::toDto)
                 .toList();
+    }
+
+    private Achievement getOrThrowException(long achievementId) {
+        Optional<Achievement> achievement = achievementRepository.findById(achievementId);
+        return achievement.orElseThrow(() -> {
+            String errMessage = String.format("Could not find Achievement with ID: %d", achievementId);
+            EntityNotFoundException exception = new EntityNotFoundException(errMessage);
+            log.error(errMessage, exception);
+            return exception;
+        });
     }
 }
