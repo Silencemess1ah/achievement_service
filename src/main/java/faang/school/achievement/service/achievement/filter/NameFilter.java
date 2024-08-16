@@ -17,6 +17,6 @@ public class NameFilter implements AchievementFilter {
 
     @Override
     public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto filter) {
-       return achievements.filter(achievement -> achievement.getTitle().equals(filter.getTitle()));
+        return achievements.filter(achievement -> achievement.getTitle().toLowerCase().contains(filter.getTitle().toLowerCase()));
     }
 }

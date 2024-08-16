@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
-public class RarityFilter implements AchievementFilter{
+public class RarityFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filter) {

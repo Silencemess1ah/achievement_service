@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Stream;
 
 @Component
-public class DescriptionFilter implements AchievementFilter{
+public class DescriptionFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filter) {
@@ -16,6 +16,6 @@ public class DescriptionFilter implements AchievementFilter{
 
     @Override
     public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto filter) {
-        return achievements.filter(achievement -> achievement.getDescription().equals(filter.getDescription()));
+        return achievements.filter(achievement -> achievement.getDescription().toLowerCase().contains(filter.getDescription().toLowerCase()));
     }
 }

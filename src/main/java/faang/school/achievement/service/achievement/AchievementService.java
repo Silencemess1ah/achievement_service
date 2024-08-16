@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.MissingFormatArgumentException;
-import java.util.MissingResourceException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -53,14 +51,14 @@ public class AchievementService {
     }
 
     public AchievementDto getAchievementById(long achievementId) {
-        var achi = achievementRepository.findById(achievementId).orElseThrow(() -> new IllegalArgumentException("Achievement with id " + achievementId + " doesn't exist"));
-        return achievementMapper.toDto(achi);
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> new IllegalArgumentException("Achievement with id " + achievementId + " doesn't exist"));
+        return achievementMapper.toDto(achievement);
     }
 
     public List<AchievementProgressDto> getInProgressUserAchievementsByUserId() {
         long userId = userContext.getUserId();
         return achievementProgressRepository.findByUserId(userId).stream()
-                .filter(achi -> achi.getCurrentPoints() >= achi.getAchievement().getPoints())
                 .map(achievementMapper::toDto)
                 .collect(Collectors.toList());
     }
