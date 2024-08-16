@@ -19,6 +19,4 @@ public interface UserAchievementRepository extends CrudRepository<UserAchievemen
     boolean existsByUserIdAndAchievementId(long userId, long achievementId);
 
     List<UserAchievement> findByUserId(long userId);
-
-    Optional<UserAchievement> findByAchievement(long achievementId);
 }
