@@ -74,7 +74,7 @@ public class AchievementTest {
     @Test
     void getAllAchievement() {
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-        when(achievementRepository.findAll()).thenReturn(achievements);
+        when(achievementRepository.findAll()).thenReturn((List<Achievement>) achievements);
 
         achievementService.getAllAchievement(achievementFilterDto);
 
