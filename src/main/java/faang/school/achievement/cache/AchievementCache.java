@@ -23,7 +23,7 @@ public class AchievementCache {
     }
 
     @PostConstruct
-    public void fillAchievementCache() {
+    void fillAchievementCache() {
         List<Achievement> achievements = achievementRepository.findAll();
         achievements.forEach(achievement -> {
                 String title = achievement.getTitle();
