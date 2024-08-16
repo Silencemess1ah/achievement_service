@@ -10,7 +10,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 @RequiredArgsConstructor
 public class AchievementRedisConfig {
 
-    @Value("${spring.data.redis.channels.post_comment_channel.name}")
+    @Value("${spring.data.redis.channel.achievement}")
     private String channelTopic;
 
     @Bean
