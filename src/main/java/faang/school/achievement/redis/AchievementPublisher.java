@@ -2,7 +2,6 @@ package faang.school.achievement.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import faang.school.achievement.model.AchievementEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +18,9 @@ public class AchievementPublisher implements MessagePublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic topic;
+    private final ObjectMapper objectMapper;
 
     public void publishMessage(AchievementEvent achievementEvent) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
         String message = null;
         try {
             message = objectMapper.writeValueAsString(achievementEvent);
