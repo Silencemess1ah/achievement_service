@@ -11,13 +11,13 @@ import org.springframework.data.redis.listener.ChannelTopic;
 @RequiredArgsConstructor
 public abstract class EventPublisher<T> {
 
-    private final ObjectMapper objectMapper;
-    private final ChannelTopic achievementChannel;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ObjectMapper objectMapper;
+    private final ChannelTopic channelTopic;
 
     public void publish(T event) {
         try {
-            redisTemplate.convertAndSend(achievementChannel.getTopic(), objectMapper.writeValueAsString(event));
+            redisTemplate.convertAndSend(channelTopic.getTopic(), objectMapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {
             String errorMessage = "Could not parse event: " + event;
             log.error(errorMessage, e);
