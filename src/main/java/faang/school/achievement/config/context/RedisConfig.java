@@ -1,6 +1,5 @@
 package faang.school.achievement.config.context;
 
-import faang.school.achievement.listener.CommentEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +8,9 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.util.Pair;
+
+import java.util.List;
 
 @Configuration
 public class RedisConfig {
@@ -17,8 +19,6 @@ public class RedisConfig {
     private String host;
     @Value("${spring.data.redis.port}")
     private int port;
-    @Value("${spring.data.redis.channel.comment}")
-    private String commentChannelName;
 
     @Bean
     public JedisConnectionFactory redisConnectionFactory() {
@@ -27,20 +27,12 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter commentListener(CommentEventListener commentEventListener) {
-        return new MessageListenerAdapter(commentEventListener);
-    }
-
-    @Bean
-    public ChannelTopic commentTopic() {
-        return new ChannelTopic(commentChannelName);
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEventListener) {
+    public RedisMessageListenerContainer redisContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> requesters) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(redisConnectionFactory());
-        container.addMessageListener(commentEventListener, commentTopic());
+        for (Pair<MessageListenerAdapter, ChannelTopic> requester : requesters) {
+            container.addMessageListener(requester.getFirst(), requester.getSecond());
+        }
         return container;
     }
 }
