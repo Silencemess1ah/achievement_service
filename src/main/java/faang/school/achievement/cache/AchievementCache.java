@@ -9,10 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class AchievementCache {
-
     private final AchievementRepository achievementRepository;
     private final Map<String, Achievement> achievementMap = new HashMap<>();
 
