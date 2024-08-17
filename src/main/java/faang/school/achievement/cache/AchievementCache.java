@@ -3,24 +3,28 @@ package faang.school.achievement.cache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Component
 @RequiredArgsConstructor
+@Data
 public class AchievementCache {
 
-    private final Map<String, Achievement> achievements = new HashMap<>();
     private final AchievementRepository achievementRepository;
+    private final ConcurrentMap<String, Achievement> achievements = new ConcurrentHashMap<>();
+
 
     @PostConstruct
-    public void init() {
-        for (Achievement achievement : achievementRepository.findAll()) {
-            achievements.put(achievement.getTitle(), achievement);
+    public void initCache() {
+        Iterable<Achievement> allAchievements = achievementRepository.findAll();
+        for (Achievement achievement : allAchievements) {
+            achievements.putIfAbsent(achievement.getTitle(), achievement);
         }
     }
 
@@ -31,5 +35,4 @@ public class AchievementCache {
     public Collection<Achievement> getAll() {
         return achievements.values();
     }
-
 }
