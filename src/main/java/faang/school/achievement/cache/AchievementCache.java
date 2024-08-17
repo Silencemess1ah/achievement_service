@@ -1,26 +1,27 @@
 package faang.school.achievement.cache;
 
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.repository.AchievementRepository;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class AchievementCache {
-    private static Map<String, Achievement> achievementMap;
+    private final AchievementRepository achievementRepository;
+    private final Map<String, Achievement> achievementMap = new HashMap<>();
 
-
-    public void createCache(List<Achievement> achievements) {
-        achievementMap = achievements.stream()
-                .collect(Collectors.toMap(Achievement::getTitle, value -> value));
+    @PostConstruct
+    private void createCache() {
+        achievementRepository.findAll()
+                .forEach(achievement -> achievementMap.put(achievement.getTitle(), achievement));
     }
 
     public Achievement getAchievement(String achievementTitle) {
         return achievementMap.get(achievementTitle);
-
     }
-
-
 }
