@@ -9,6 +9,8 @@ import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -66,5 +68,31 @@ public class AchievementService {
                 .flatMap(filter -> filter.applyFilter(achievementStream, achievementFilterDto))
                 .map(achievementMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public boolean hasAchievement(long userId, Achievement achievement) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievement.getId());
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    public AchievementProgress getAchievementProgress(long userId, Achievement achievement) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievement.getId()).orElseThrow(() -> {
+            String errorMessage = "Couldn't find Achievement Progress entity. User ID = "
+                    + userId + " Achievement ID = " + achievement.getId();
+            log.error(errorMessage);
+            return new EntityNotFoundException(errorMessage);
+        });
+    }
+
+    public UserAchievement giveAchievement(Achievement achievement, AchievementProgress achievementProgress) {
+        UserAchievement userAchievement = UserAchievement.builder().userId(achievementProgress.getUserId())
+                .achievement(achievement)
+                .build();
+        return userAchievementRepository.save(userAchievement);
     }
 }

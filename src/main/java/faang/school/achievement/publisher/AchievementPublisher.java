@@ -31,7 +31,5 @@ public class AchievementPublisher implements MessagePublisher<UserAchievement> {
             log.error("Failed to serialize message : User Achievement Event");
             throw new SerializationException("Failed to serialize message : User Achievement Event", e);
         }
-
-
     }
 }

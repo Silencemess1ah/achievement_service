@@ -26,6 +26,6 @@ public class MentorshipStartEventListener
     @Override
     public void onMessage(@NonNull Message message, byte[] pattern) {
         MentorshipStartEvent mentorshipStartEvent = mapEvent(message, MentorshipStartEvent.class);
-        eventHandlers.forEach(evenHandler->evenHandler.handle(mentorshipStartEvent.getMentorId()));
+        eventHandlers.forEach(evenHandler -> evenHandler.handle(mentorshipStartEvent.getMentorId()));
     }
 }
