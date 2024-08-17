@@ -4,6 +4,7 @@ import faang.school.achievement.dto.CommentEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,7 @@ public abstract class CommentEventHandler {
 
     public abstract void handle(CommentEventDto event);
 
+    @Async("commentEventPool")
     protected void handleProgress(CommentEventDto event, Achievement achievement) {
         long userId = event.getCommentAuthorId();
         if (!achievementService.hasAchievement(userId, achievement.getId())) {
