@@ -29,8 +29,9 @@ public class AchievementController {
     public AchievementDto getAchievementById(@PathVariable Long id){
         return achievementService.getAchievement(id);
     }
+
     @GetMapping("/user/{userId}/missed")
     public List<AchievementProgressDto> getMissedUserAchievements(@PathVariable Long userId){
-        return achievementService.getMissedUserAchievements(userId);
+        return achievementService.getUnfinishedAchievements(userId);
     }
 }
