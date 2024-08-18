@@ -1,0 +1,16 @@
+package faang.school.achievement.mapper;
+
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.model.Achievement;
+import org.mapstruct.Mapper;
+
+import java.util.List;
+
+@Mapper(componentModel = "Spring")
+public interface AchievementMapper {
+
+
+    AchievementDto toDto(Achievement achievement);
+
+    List<AchievementDto> toDtoList(List<Achievement> list);
+}
