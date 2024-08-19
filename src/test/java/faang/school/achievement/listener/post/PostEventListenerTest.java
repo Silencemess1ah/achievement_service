@@ -40,9 +40,6 @@ class PostEventListenerTest {
                 .id(1L)
                 .authorId(2L)
                 .build();
-
-        when(postEventHandlers.iterator())
-                .thenReturn(List.of(opinionLeaderAchievementHandler).iterator());
     }
 
     @Test
@@ -59,6 +56,8 @@ class PostEventListenerTest {
 
     @Test
     void testHandle() throws IOException {
+        when(postEventHandlers.iterator())
+                .thenReturn(List.of(opinionLeaderAchievementHandler).iterator());
         when(message.getBody()).thenReturn(jsonString.getBytes());
         when(objectMapper.readValue(any(byte[].class), eq(PostEvent.class)))
                 .thenReturn(postEvent);
