@@ -14,6 +14,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,12 +33,13 @@ public class AchievementService {
     public List<AchievementDto> getAchievementsWithFilter(AchievementFilterDto achievementFilterDto) {
         return achievementMapper.toDtos(achievementFilters.stream()
                 .filter(achievementFilter -> achievementFilter.isApplicable(achievementFilterDto))
-                .reduce(getAllAchievements(), (filtered, filter) ->
+                .reduce(achievementRepository.findAll(), (filtered, filter) ->
                         filter.apply(filtered.stream(), achievementFilterDto).toList(), (a, b) -> b));
     }
 
-    public List<AchievementDto> getAllAchievementDtos() {
-        return achievementMapper.toDtos(getAllAchievements());
+    public List<AchievementDto> getAllAchievement(int page, int size) {
+        return achievementMapper.toDtos(achievementRepository.findAll(
+                PageRequest.of(page, size)).getContent());
     }
 
     public List<AchievementDto> getUserAchievements(Long userId) {
@@ -52,10 +54,6 @@ public class AchievementService {
 
     public List<AchievementProgressDto> getAchievementProgressByUserId(Long userId) {
         return achievementProgressMapper.toDtos(achievementProgressRepository.findByUserId(userId));
-    }
-
-    private List<Achievement> getAllAchievements() {
-        return achievementRepository.findAll();
     }
 
     private List<UserAchievement> getReceivedUserAchievements(Long userId) {

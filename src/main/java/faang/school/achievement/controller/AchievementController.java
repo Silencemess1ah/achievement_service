@@ -5,6 +5,7 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,9 @@ public class AchievementController {
     }
 
     @GetMapping
-    public List<AchievementDto> getAchievements(@RequestParam int page, @RequestParam int size) {
+    public List<AchievementDto> getAchievements(
+            @RequestParam(defaultValue = "${spring.achievement.pagination.page}") int page,
+            @RequestParam(defaultValue = "${spring.achievement.pagination.size}") int size) {
         return achievementService.getAllAchievement(page, size);
     }
 

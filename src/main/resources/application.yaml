@@ -25,6 +25,11 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
 
+  achievement:
+    pagination:
+      page: 0
+      size: 8
+
 server:
   port: 8085
 
