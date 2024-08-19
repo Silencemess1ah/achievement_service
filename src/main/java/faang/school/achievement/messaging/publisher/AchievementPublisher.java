@@ -1,4 +1,4 @@
-package faang.school.achievement.redis;
+package faang.school.achievement.messaging.publisher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.model.AchievementEvent;

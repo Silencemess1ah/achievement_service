@@ -1,4 +1,4 @@
-package faang.school.achievement.config;
+package faang.school.achievement.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 @Configuration
 public class AchievementRedisConfig {
 
-    @Value("${spring.data.redis.channel.achievement }")
+    @Value("${spring.data.redis.channel.achievement}")
     private String achievementChannel;
 
     @Bean
