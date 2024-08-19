@@ -26,6 +26,18 @@ spring:
         follower: follower_channel
         post: post_channel
 
+listener:
+  type:
+    achievements:
+      opinion_leader: OPINION LEADER
+
+handler:
+  executor_pool_parameters:
+    core_pool_size: 10
+    max_pool_capacity: 20
+    queue_capacity: 40
+    thread_name_prefix: AchievementHandlerThread-
+
 server:
   port: 8085
 

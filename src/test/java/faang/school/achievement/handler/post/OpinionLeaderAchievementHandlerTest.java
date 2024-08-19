@@ -4,6 +4,7 @@ import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.post.PostEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,20 +23,22 @@ class OpinionLeaderAchievementHandlerTest {
     private AchievementCache achievementCache;
     @Mock
     private AchievementService achievementService;
+    @Mock
+    private AchievementProgressRepository achievementProgressRepository;
     @InjectMocks
     private OpinionLeaderAchievementHandler opinionLeaderAchievementHandler;
     private String title = "OPINION LEADER";
     private Achievement achievement;
     private PostEvent postEvent;
     private AchievementProgress achievementProgress;
-//    private long target = 1000L;
 
     @BeforeEach
     void init() {
         opinionLeaderAchievementHandler = new OpinionLeaderAchievementHandler(
                 achievementCache,
                 achievementService,
-                title);
+                title,
+                achievementProgressRepository);
 
         postEvent = PostEvent.builder()
                 .id(1L)

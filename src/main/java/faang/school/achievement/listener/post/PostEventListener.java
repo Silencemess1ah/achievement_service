@@ -3,7 +3,7 @@ package faang.school.achievement.listener.post;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.post.PostEvent;
 import faang.school.achievement.exception.ExceptionMessage;
-import faang.school.achievement.handler.post.PostEventHandler;
+import faang.school.achievement.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PostEventListener implements MessageListener {
-    private final List<PostEventHandler> postEventHandlers;
+    private final List<EventHandler<PostEvent>> postEventHandlers;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -25,7 +25,7 @@ public class PostEventListener implements MessageListener {
         try {
             PostEvent postEvent = objectMapper.readValue(message.getBody(), PostEvent.class);
             log.info("Received message: {}", message.getBody());
-            for (PostEventHandler postEventHandler : postEventHandlers) {
+            for (var postEventHandler : postEventHandlers) {
                 postEventHandler.handle(postEvent);
             }
             log.info("Achievement {} sent for processing", postEvent);
