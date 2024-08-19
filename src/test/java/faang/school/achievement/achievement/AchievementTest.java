@@ -102,22 +102,27 @@ public class AchievementTest {
     }
 
     @Test
-    public void testStageInvitationFilterNull() {
-        AchievementFilterDto achievementFilterDto = null;
-
-        try {
-            if (achievementFilterDto == null) {
-                throw new IllegalArgumentException("filter is null");
-            }
-            fail("Expected IllegalArgumentException to be thrown");
-        } catch (IllegalArgumentException e) {
-            assertEquals("filter is null", e.getMessage());
-        }
-    }
-
-    @Test
     public void getNoAchievementTest() {
+        AchievementProgress achievementProgress1 = new AchievementProgress();
+        achievementProgress1.setAchievement(new Achievement());
+        AchievementProgress achievementProgress2 = new AchievementProgress();
+        achievementProgress2.setAchievement(new Achievement());
+
+        when(achievementProgressRepository.findByUserId(1L))
+                .thenReturn(List.of(achievementProgress1, achievementProgress2));
+
+        AchievementDto achievementDto1 = new AchievementDto();
+        AchievementDto achievementDto2 = new AchievementDto();
+
+        when(achievementMapper.toDto(achievementProgress1.getAchievement()))
+                .thenReturn(achievementDto1);
+        when(achievementMapper.toDto(achievementProgress2.getAchievement()))
+                .thenReturn(achievementDto2);
+
         List<AchievementDto> result = achievementService.getNoAchievement(1L);
-        assertNotNull(result);
+
+        assertEquals(2, result.size());
+        assertEquals(achievementDto1, result.get(0));
+        assertEquals(achievementDto2, result.get(1));
     }
 }

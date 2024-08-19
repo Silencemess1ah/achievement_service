@@ -69,19 +69,9 @@ public class AchievementService {
     @Transactional
     public List<AchievementDto> getNoAchievement(Long userId) {
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
-        List<Optional<Achievement>> achievements = new ArrayList<>();
-        achievementProgresses.stream()
-                .map(achievementProgresse ->
-                        achievements.add(achievementRepository.findById(achievementProgresse.getAchievement().getId())))
-                .collect(Collectors.toList());
-        List<AchievementDto> result = new ArrayList<>();
-        achievements.stream()
-                .forEach(achievement -> {
-                    if (achievement.isPresent()) {
-                        result.add(achievementMapper.toDto(achievement.get()));
-                    }
-                }
-        );
-        return result;
+        return achievementProgresses.stream()
+                .map(AchievementProgress::getAchievement)
+                .map(achievementMapper::toDto)
+                .toList();
     }
 }

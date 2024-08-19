@@ -27,8 +27,8 @@ public class AchievementController {
 
     @Operation(summary = "Получить достижения",
             description = "Получить все достижения")
-    @GetMapping("/getAllAchievement")
-    public List<AchievementDto> getAllAchievement(AchievementFilterDto achievementFilterDto) {
+    @PostMapping("/filter")
+    public List<AchievementDto> getAllAchievement(@RequestBody AchievementFilterDto achievementFilterDto) {
         return achievementService.getAllAchievement(achievementFilterDto);
     }
 
