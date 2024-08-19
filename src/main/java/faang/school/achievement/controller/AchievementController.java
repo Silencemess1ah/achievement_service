@@ -21,8 +21,8 @@ public class AchievementController {
     }
 
     @GetMapping
-    public List<AchievementDto> getAchievements() {
-        return achievementService.getAllAchievementDtos();
+    public List<AchievementDto> getAchievements(@RequestParam int page, @RequestParam int size) {
+        return achievementService.getAllAchievement(page, size);
     }
 
     @GetMapping("/user/{userId}")
