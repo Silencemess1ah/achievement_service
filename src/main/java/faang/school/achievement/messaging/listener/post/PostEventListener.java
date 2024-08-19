@@ -1,9 +1,9 @@
-package faang.school.achievement.listener.post;
+package faang.school.achievement.messaging.listener.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.post.PostEvent;
 import faang.school.achievement.exception.ExceptionMessage;
-import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.messaging.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;

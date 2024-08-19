@@ -2,6 +2,7 @@ package faang.school.achievement.handler.post;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.post.PostEvent;
+import faang.school.achievement.messaging.handler.post.OpinionLeaderAchievementHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
@@ -72,7 +73,7 @@ class OpinionLeaderAchievementHandlerTest {
     }
 
     @Test
-    void testProcessEvent() {
+    void testProcessEvent() throws InterruptedException {
         when(achievementCache.getAchievement(anyString())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(false);
         doNothing().when(achievementService)
@@ -82,6 +83,8 @@ class OpinionLeaderAchievementHandlerTest {
         doNothing().when(achievementService).giveAchievement(anyLong(), any(Achievement.class));
 
         opinionLeaderAchievementHandler.processEvent(postEvent);
+
+        Thread.sleep(100);
 
         verify(achievementService).giveAchievement(anyLong(), any(Achievement.class));
     }

@@ -1,4 +1,4 @@
-package faang.school.achievement.handler.post;
+package faang.school.achievement.messaging.handler.post;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.post.PostEvent;

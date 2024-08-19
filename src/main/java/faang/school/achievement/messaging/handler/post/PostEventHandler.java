@@ -1,8 +1,8 @@
-package faang.school.achievement.handler.post;
+package faang.school.achievement.messaging.handler.post;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.post.PostEvent;
-import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.messaging.handler.EventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
@@ -20,7 +20,7 @@ public abstract class PostEventHandler implements EventHandler<PostEvent> {
     private final AchievementProgressRepository achievementProgressRepository;
 
     @Async("achievementHandlerTaskExecutor")
-    protected void processEvent(PostEvent postEvent) {
+    public void processEvent(PostEvent postEvent) {
         long userId = postEvent.getAuthorId();
         Achievement achievement = achievementCache.getAchievement(title);
         if (!achievementService.hasAchievement(userId, achievement.getId())) {
