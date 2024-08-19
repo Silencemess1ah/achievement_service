@@ -1,6 +1,5 @@
 package faang.school.achievement;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -18,10 +17,5 @@ public class AchievementServiceApp {
         new SpringApplicationBuilder(AchievementServiceApp.class)
                 .bannerMode(Banner.Mode.OFF)
                 .run(args);
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 }

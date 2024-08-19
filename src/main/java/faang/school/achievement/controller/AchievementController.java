@@ -35,4 +35,9 @@ public class AchievementController {
     public List<AchievementProgressDto> getAchievementProgressByUserId() {
         return achievementService.getAchievementProgressByUserId();
     }
+    
+    @GetMapping("/title")
+    public AchievementDto getAchievementByTitle(@RequestParam String title) {
+        return achievementService.getAchievementByTitle(title);
+    }
 }

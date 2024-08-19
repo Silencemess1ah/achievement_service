@@ -15,6 +15,12 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.mapper.AchievementMapper;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.repository.AchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,9 +33,10 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
@@ -57,6 +64,12 @@ class AchievementServiceTest {
 
     @Mock
     UserContext userContext;
+  
+    @Mock
+    AchievementMapper achievementMapper;
+
+    @Mock
+    AchievementCache achievementCache;
 
     @InjectMocks
     AchievementService achievementService;
@@ -76,6 +89,9 @@ class AchievementServiceTest {
     List<UserAchievementDto> userAchievementsDto;
     List<AchievementProgress> achievementProgresses;
     List<AchievementProgressDto> achievementProgressesDto;
+    String achievementTitle;
+    Achievement achievement;
+    AchievementDto achievementDto;
 
     @BeforeEach
     void setUp() {
@@ -105,6 +121,9 @@ class AchievementServiceTest {
         userAchievementsDto = List.of(userAchievementDto);
         achievementProgresses = List.of(achievementProgress);
         achievementProgressesDto = List.of(achievementProgressDto);
+        achievementTitle = "title";
+        achievement = new Achievement();
+        achievementDto = AchievementDto.builder().build();
     }
 
     @Test
@@ -153,8 +172,8 @@ class AchievementServiceTest {
         assertNotNull(result);
         assertEquals(achievementDto, result);
     }
-
-    @Test
+    
+    @Test  
     @DisplayName("Should return list of AchievementProgressDto when retrieving achievement progress by user ID")
     void getAchievementProgressByUserId() {
         when(userContext.getUserId()).thenReturn(userId);
@@ -167,5 +186,41 @@ class AchievementServiceTest {
         verify(achievementProgressMapper).toDto(achievementProgress);
         assertNotNull(result);
         assertEquals(achievementProgressesDto, result);
+    }
+
+    @Test
+    @DisplayName("Should return AchievementDto when achievement is found in cache")
+    void getAchievementByTitle_FoundInCache() {
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+
+        AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);
+
+        verify(achievementCache).getAchievementByTitle(achievementTitle);
+        verify(achievementMapper).toDto(achievement);
+        assertNotNull(result);
+        assertEquals(achievementDto, result);
+    }
+
+    @Test
+    @DisplayName("Should return AchievementDto when achievement is found in repository after cache miss")
+    void getAchievementByTitle_NotFoundInCache() {
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
+        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+
+        AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);
+
+        verify(achievementCache).getAchievementByTitle(achievementTitle);
+        verify(achievementRepository).findByTitle(achievementTitle);
+    }
+    
+      @Test
+      @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
+    void getAchievementByTitle_NotFound() {
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
+        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
     }
 }

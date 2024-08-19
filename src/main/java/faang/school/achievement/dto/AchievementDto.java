@@ -9,5 +9,6 @@ public record AchievementDto(
     String title,
     String description,
     Rarity rarity,
-    long points) {
+    long points
+) {
 }
