@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -142,12 +143,12 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return AchievementDto when retrieving achievement by ID")
     void getAchievementById() {
-        when(achievementRepository.getById(achievementId)).thenReturn(achievement);
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
         AchievementDto result = achievementService.getAchievementById(achievementId);
 
-        verify(achievementRepository).getById(achievementId);
+        verify(achievementRepository).findById(achievementId);
         verify(achievementMapper).toDto(achievement);
         assertNotNull(result);
         assertEquals(achievementDto, result);

@@ -5,6 +5,7 @@ import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -55,7 +56,8 @@ public class AchievementService {
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementById(long id) {
-        Achievement achievement = achievementRepository.getById(id);
+        Achievement achievement = achievementRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(String.format("Achievement with ID: %d not found", id)));
         return achievementMapper.toDto(achievement);
     }
 
