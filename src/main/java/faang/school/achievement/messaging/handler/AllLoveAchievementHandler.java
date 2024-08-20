@@ -2,36 +2,21 @@ package faang.school.achievement.messaging.handler;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.LikeEvent;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class AllLoveAchievementHandler extends LikeEventHandler {
 
-    private final AchievementCache achievementCache;
-    private final AchievementService achievementService;
+    public AllLoveAchievementHandler(AchievementService achievementService,
+                                     AchievementCache achievementCache,
+                                     @Value("${achievement.all_love}") String achievementTitle) {
+        super(achievementService, achievementCache, achievementTitle);
+    }
 
     @Override
-    @Async
     public void handle(LikeEvent event) {
-        Achievement achievement = achievementCache.getAchievement("AllLove");
-        long userId = event.getAuthorId();
-        long achievementId = achievement.getId();
-
-        if (!achievementService.hasAchievement(userId, achievementId)) {
-            achievementService.createProgressIfNecessary(userId, achievementId);
-            AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
-            achievementProgress.increment();
-            achievementService.saveAchievementProgress(achievementProgress);
-
-            if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
-                achievementService.giveAchievement(userId, achievement);
-            }
-        }
+        processEvent(event);
     }
 }

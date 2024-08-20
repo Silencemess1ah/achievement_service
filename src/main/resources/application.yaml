@@ -36,3 +36,13 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievement:
+  all_love: ALL LOVE
+
+handler:
+  executor_pool_parameters:
+    core_pool_size: 10
+    max_pool_capacity: 20
+    queue_capacity: 40
+    thread_name_prefix: AchievementHandlerThread-
