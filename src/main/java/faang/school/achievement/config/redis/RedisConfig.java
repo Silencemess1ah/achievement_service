@@ -28,7 +28,6 @@ public class RedisConfig {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
         return new JedisConnectionFactory(config);
     }
-
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -39,10 +38,10 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> redisEventListener,
-                                                 JedisConnectionFactory redisConnectionFactory) {
+    public RedisMessageListenerContainer redisContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> redisEventListener,
+                                                        JedisConnectionFactory jedisConnectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnectionFactory);
+        container.setConnectionFactory(jedisConnectionFactory);
         for (Pair<MessageListenerAdapter, ChannelTopic> messageListenerAdapter : redisEventListener) {
             container.addMessageListener(messageListenerAdapter.getFirst(), messageListenerAdapter.getSecond());
         }

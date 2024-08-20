@@ -24,7 +24,23 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        post: post_channel
         like: like_channel
+
+listener:
+  type:
+    achievements:
+      opinion_leader: OPINION LEADER
+
+achievement:
+  all_love: ALL LOVE
+
+handler:
+  executor_pool_parameters:
+    core_pool_size: 10
+    max_pool_capacity: 20
+    queue_capacity: 40
+    thread_name_prefix: AchievementHandlerThread-
 
 server:
   port: 8085
@@ -36,13 +52,3 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-achievement:
-  all_love: ALL LOVE
-
-handler:
-  executor_pool_parameters:
-    core_pool_size: 10
-    max_pool_capacity: 20
-    queue_capacity: 40
-    thread_name_prefix: AchievementHandlerThread-
