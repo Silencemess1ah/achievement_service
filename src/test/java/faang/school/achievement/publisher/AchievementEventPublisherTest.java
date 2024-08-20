@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class AchievementEventPublisherTest {
-
     private MockMvc mockMvc;
     @InjectMocks
     private AchievementEventPublisher achievementEventPublisher;
@@ -35,7 +34,6 @@ class AchievementEventPublisherTest {
     private RedisTemplate<String, Object> redisTemplate;
     @Mock
     private ChannelTopic topic;
-
     @BeforeEach
     void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(achievementEventPublisher).build();
