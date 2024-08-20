@@ -1,7 +1,7 @@
-package faang.school.achievement.producer;
+package faang.school.achievement.publisher;
 
 import faang.school.achievement.dto.PublishedUserAchievementDto;
-import faang.school.achievement.mapper.PublishedUserAchievementMapper;
+import faang.school.achievement.mapper.publisher.PublishedUserAchievementMapper;
 import faang.school.achievement.model.UserAchievement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

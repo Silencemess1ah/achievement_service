@@ -1,14 +1,12 @@
-package faang.school.achievement.producer;
+package faang.school.achievement.publisher;
 
 import faang.school.achievement.dto.PublishedUserAchievementDto;
-import faang.school.achievement.mapper.PublishedUserAchievementMapper;
+import faang.school.achievement.mapper.publisher.PublishedUserAchievementMapper;
 import faang.school.achievement.model.UserAchievement;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;

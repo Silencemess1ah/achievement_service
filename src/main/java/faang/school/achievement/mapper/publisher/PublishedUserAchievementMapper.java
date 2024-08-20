@@ -1,4 +1,4 @@
-package faang.school.achievement.mapper;
+package faang.school.achievement.mapper.publisher;
 
 import faang.school.achievement.dto.PublishedUserAchievementDto;
 import faang.school.achievement.model.UserAchievement;
