@@ -1,31 +1,41 @@
 package faang.school.achievement.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Evgenii Malkov
  */
 @Component
-@RequiredArgsConstructor
-public class AchievementCache {
-    private final Map<String, Achievement> achievements = new HashMap<>();
+public class AchievementCache extends AbstractCacheManager<AchievementDto> {
+
+    private static final String ACHIEVEMENT_CACHE_KEY = "ACHIEVEMENTS";
     private final AchievementRepository achievementRepository;
+    private final AchievementMapper achievementMapper;
+
+    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate, AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
+        super(mapper, redisTemplate);
+        this.achievementRepository = achievementRepository;
+        this.achievementMapper = achievementMapper;
+    }
 
     @PostConstruct
     public void fillAchievements() {
-        List<Achievement> allAchievements = achievementRepository.findAll();
-        allAchievements.forEach((achieve) -> achievements.put(achieve.getTitle(), achieve));
+        Map<String, AchievementDto> allAchievements = achievementRepository.findAll().stream()
+                .collect(Collectors.toMap(Achievement::getTitle, achievementMapper::toDto));
+        put(ACHIEVEMENT_CACHE_KEY, allAchievements);
     }
 
-    public Achievement get(String title) {
-        return this.achievements.get(title);
+    public AchievementDto get(String title) {
+        return get(ACHIEVEMENT_CACHE_KEY, title);
     }
 }
