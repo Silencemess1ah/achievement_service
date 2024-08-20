@@ -31,9 +31,7 @@ listener:
   type:
     achievements:
       opinion_leader: OPINION LEADER
-
-achievement:
-  all_love: ALL LOVE
+      all_love: ALL LOVE
 
 handler:
   executor_pool_parameters:

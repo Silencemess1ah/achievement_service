@@ -31,12 +31,12 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementMapper achievementMapper;
     private final List<AchievementFilter> achievementsFilter;
-    private final UserAchievementRepository userAchievementRepository;
 
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
@@ -53,6 +53,7 @@ public class AchievementService {
         return achievementProgressRepository.save(achievementProgress);
     }
 
+    @Transactional
     public void giveAchievement(long userId, Achievement achievement) {
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
@@ -102,27 +103,5 @@ public class AchievementService {
                 .map(AchievementProgress::getAchievement)
                 .map(achievementMapper::toDto)
                 .toList();
-    }
-
-    public boolean hasAchievement(long userId, long achievementId) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
-    }
-
-    @Transactional
-    public void createProgressIfNecessary(long userId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-    }
-
-    public AchievementProgress getProgress(long userId, long achievementId) {
-        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new RuntimeException("ошибка"));
-    }
-
-    @Transactional
-    public void giveAchievement(long userId, Achievement achievement) {
-        userAchievementRepository.save(UserAchievement.builder()
-                .userId(userId)
-                .achievement(achievement)
-                .build());
     }
 }

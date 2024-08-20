@@ -1,4 +1,4 @@
-package faang.school.achievement.messaging.handler;
+package faang.school.achievement.messaging.handler.like;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.LikeEvent;
@@ -11,7 +11,7 @@ public class AllLoveAchievementHandler extends LikeEventHandler {
 
     public AllLoveAchievementHandler(AchievementService achievementService,
                                      AchievementCache achievementCache,
-                                     @Value("${achievement.all_love}") String achievementTitle) {
+                                     @Value("${listener.type.achievements.all_love}") String achievementTitle) {
         super(achievementService, achievementCache, achievementTitle);
     }
 

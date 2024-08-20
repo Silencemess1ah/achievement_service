@@ -1,7 +1,8 @@
-package faang.school.achievement.messaging.handler;
+package faang.school.achievement.messaging.handler.like;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.LikeEvent;
+import faang.school.achievement.messaging.handler.EventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
