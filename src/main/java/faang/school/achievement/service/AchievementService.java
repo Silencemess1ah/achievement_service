@@ -2,6 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementEventDto;
+import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.publisher.achievement.AchievementPublisher;
@@ -22,7 +23,7 @@ public class AchievementService {
     @Transactional
     public void grantAchievement(long achievementId) {
         long userId = userContext.getUserId();
-        Achievement achievement = achievementRepository.getById(userId);
+        Achievement achievement = getAchievementFromRepository(achievementId);
 
         AchievementEventDto event = new AchievementEventDto(userId, achievementId);
         achievementPublisher.publish(event);
@@ -32,5 +33,11 @@ public class AchievementService {
             .achievement(achievement)
             .build();
         userAchievementRepository.save(userAchievement);
+    }
+
+    private Achievement getAchievementFromRepository(long achievementId) {
+        return achievementRepository.findById(achievementId)
+            .orElseThrow(() -> new EntityNotFoundException("Achievement with id: %d not found."
+                .formatted(achievementId)));
     }
 }

@@ -14,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,11 +52,11 @@ class AchievementServiceTest {
     @Test
     void grantAchievement() {
         when(userContext.getUserId()).thenReturn(userId);
-        when(achievementRepository.getById(userId)).thenReturn(achievement);
+        when(achievementRepository.findById(userId)).thenReturn(Optional.of(achievement));
 
         achievementService.grantAchievement(achievementId);
 
-        verify(achievementRepository).getById(userId);
+        verify(achievementRepository).findById(userId);
         verify(achievementPublisher).publish(any(AchievementEventDto.class));
         verify(userAchievementRepository).save(any(UserAchievement.class));
     }
