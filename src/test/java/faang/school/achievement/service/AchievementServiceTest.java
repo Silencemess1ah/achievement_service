@@ -1,6 +1,13 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.config.context.UserContext;
+import faang.school.achievement.dto.AchievementEventDto;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.achievement.AchievementPublisher;
+import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.BeforeEach;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
@@ -32,11 +39,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
@@ -47,6 +54,12 @@ class AchievementServiceTest {
     @Mock
     UserAchievementRepository userAchievementRepository;
 
+    @Mock
+    AchievementPublisher achievementPublisher;
+
+    @Mock
+    UserContext userContext;
+  
     @Mock
     AchievementProgressRepository achievementProgressRepository;
 
@@ -61,9 +74,6 @@ class AchievementServiceTest {
 
     @Mock
     AchievementFilter achievementFilter;
-
-    @Mock
-    UserContext userContext;
   
     @Mock
     AchievementMapper achievementMapper;
@@ -74,6 +84,9 @@ class AchievementServiceTest {
     @InjectMocks
     AchievementService achievementService;
 
+    long achievementId;
+    long userId;
+    Achievement achievement;
     long userId;
     long achievementId;
     Achievement achievement;
@@ -95,19 +108,8 @@ class AchievementServiceTest {
 
     @BeforeEach
     void setUp() {
-        achievementService = new AchievementService(
-            achievementRepository,
-            userAchievementRepository,
-            achievementProgressRepository,
-            achievementMapper,
-            userAchievementMapper,
-            achievementProgressMapper,
-            List.of(achievementFilter),
-            userContext
-        );
-
-        userId = 1;
         achievementId = 1;
+        userId = 1;
         achievement = new Achievement();
         achievementDto = AchievementDto.builder().build();
         achievementFilterDto = AchievementFilterDto.builder().build();
@@ -124,7 +126,32 @@ class AchievementServiceTest {
         achievementTitle = "title";
         achievement = new Achievement();
         achievementDto = AchievementDto.builder().build();
+     
+        achievementService = new AchievementService(
+            achievementRepository,
+            userAchievementRepository,
+            achievementProgressRepository,
+            achievementMapper,
+            userAchievementMapper,
+            achievementProgressMapper,
+            List.of(achievementFilter),
+            userContext
     }
+
+    @Test
+    @DisplayName("Grant an achievement and verify repository interactions and event publishing")
+    void grantAchievement() {
+        when(userContext.getUserId()).thenReturn(userId);
+        when(achievementRepository.findById(userId)).thenReturn(Optional.of(achievement));
+
+        achievementService.grantAchievement(achievementId);
+
+        verify(achievementRepository).findById(userId);
+        verify(achievementPublisher).publish(any(AchievementEventDto.class));
+        verify(userAchievementRepository).save(any(UserAchievement.class));
+    }
+          
+          
 
     @Test
     @DisplayName("Should return list of AchievementDto when filtering achievements by filter")
@@ -201,7 +228,7 @@ class AchievementServiceTest {
         assertNotNull(result);
         assertEquals(achievementDto, result);
     }
-
+          
     @Test
     @DisplayName("Should return AchievementDto when achievement is found in repository after cache miss")
     void getAchievementByTitle_NotFoundInCache() {
@@ -215,12 +242,12 @@ class AchievementServiceTest {
         verify(achievementRepository).findByTitle(achievementTitle);
     }
     
-      @Test
-      @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
+     @Test
+     @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
     void getAchievementByTitle_NotFound() {
         when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
         when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
-    }
+    }      
 }
