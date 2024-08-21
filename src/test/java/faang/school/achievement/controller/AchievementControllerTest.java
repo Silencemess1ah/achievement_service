@@ -35,6 +35,9 @@ class AchievementControllerTest {
     private String achievementFilterDtoJson;
     private long userId;
     private long achievementId;
+    private int offset;
+    private int limit;
+    private String sortField;
 
     @BeforeEach
     public void setUp() throws JsonProcessingException {
@@ -42,6 +45,9 @@ class AchievementControllerTest {
 
         userId = 1L;
         achievementId = 2L;
+        offset = 1;
+        limit = 10;
+        sortField = "title";
         mockMvc = MockMvcBuilders.standaloneSetup(achievementController).build();
         achievementFilterDto = new AchievementFilterDto();
         achievementFilterDtoJson = objectMapper.writeValueAsString(achievementFilterDto);
@@ -51,10 +57,14 @@ class AchievementControllerTest {
     @DisplayName("testing getAllAchievements controller")
     void testGetAllAchievements() throws Exception {
         mockMvc.perform(post("/api/v1/achievement")
+                        .param("offset", String.valueOf(offset))
+                        .param("limit", String.valueOf(limit))
+                        .param("sortField", sortField)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(achievementFilterDtoJson))
                 .andExpect(status().isOk());
-        verify(achievementService, times(1)).getAchievementsByFilter(achievementFilterDto);
+        verify(achievementService, times(1))
+                .getAchievementsByFilter(achievementFilterDto, offset, limit, sortField);
     }
 
     @Test

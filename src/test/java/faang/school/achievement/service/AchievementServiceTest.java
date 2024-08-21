@@ -30,6 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,6 +80,7 @@ class AchievementServiceTest {
     private UserAchievement userAchievement;
     private UserAchievementDto userAchievementDto;
     private String achievementTitle;
+    private String sortField;
 
 
     @BeforeEach
@@ -84,6 +88,7 @@ class AchievementServiceTest {
         userId = 1L;
         achievementId = 2L;
         achievementTitle = "achievementTitle";
+        sortField = "title";
         String achievementDescription = "achievementDescription";
         Rarity achievementRarity = Rarity.COMMON;
 
@@ -148,12 +153,18 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return list of AchievementDto when filtering achievements by filter")
     void getAchievementsByFilter() {
-        when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        int offset = 1;
+        int limit = 10;
+        PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(sortField));
+        PageImpl<Achievement> achievementPage = new PageImpl<>(List.of(achievement));
+        when(achievementRepository.findAll(pageRequest))
+                .thenReturn(achievementPage);
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
-        List<AchievementDto> resultAchievements = achievementService.getAchievementsByFilter(achievementFilterDto);
+        List<AchievementDto> resultAchievements = achievementService
+                .getAchievementsByFilter(achievementFilterDto, offset, limit, sortField);
 
-        verify(achievementRepository, times(1)).findAll();
+        verify(achievementRepository, times(1)).findAll(pageRequest);
         assertEquals(1, resultAchievements.size());
         assertIterableEquals(List.of(achievementDto), resultAchievements);
     }
