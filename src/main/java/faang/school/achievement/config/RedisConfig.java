@@ -13,13 +13,19 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
     @Value("${spring.data.redis.host}")
-    public String redisHost;
+    private String host;
 
     @Value("${spring.data.redis.port}")
-    public int redisPort;
+    private int port;
 
     @Value("${spring.data.redis.channel.achievement}")
     public String achievementChannelTopicName;
+
+    @Bean
+    public JedisConnectionFactory jedisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
+        return new JedisConnectionFactory(redisConfig);
+    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
@@ -28,12 +34,6 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new StringRedisSerializer());
         return template;
-    }
-
-    @Bean
-    public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(redisHost, redisPort);
-        return new JedisConnectionFactory(redisConfig);
     }
 
     @Bean

@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.service.AchievementService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,5 +49,15 @@ public class AchievementController {
     @ResponseStatus(HttpStatus.OK)
     public List<AchievementProgressDto> getUserNotAttainedAchievements(@PathVariable Long userId) {
         return achievementService.getUserNotAttainedAchievements(userId);
+    }
+
+    @GetMapping("/users/progress")
+    public List<AchievementProgressDto> getAchievementProgressByUserId() {
+        return achievementService.getAchievementProgressByUserId();
+    }
+    
+    @GetMapping("/title")
+    public AchievementDto getAchievementByTitle(@RequestParam String title) {
+        return achievementService.getAchievementByTitle(title);
     }
 }
