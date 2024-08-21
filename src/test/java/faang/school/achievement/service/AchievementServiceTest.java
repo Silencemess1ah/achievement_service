@@ -10,6 +10,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.service.util.AchievementUtilService;
 import faang.school.achievement.util.filter.AchievementFilter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,7 @@ public class AchievementServiceTest {
     AchievementProgressMapper achievementProgressMapper = Mockito.mock(AchievementProgressMapper.class);
     AchievementFilter filterMock = Mockito.mock(AchievementFilter.class);
     List<AchievementFilter> filters = List.of(filterMock);
+    AchievementUtilService achievementUtilService = Mockito.mock(AchievementUtilService.class);
 
     AchievementService achievementService = new AchievementService(
             achievementRepository,
@@ -47,7 +49,8 @@ public class AchievementServiceTest {
             achievementMapperMock,
             userAchievementMapper,
             achievementProgressMapper,
-            filters);
+            filters,
+            achievementUtilService);
 
     Achievement achievement = new Achievement();
     AchievementDto achievementDto = new AchievementDto();
@@ -137,4 +140,37 @@ public class AchievementServiceTest {
 
         verify(achievementProgressRepository, times(1)).findByUserId(userId);
     }
+
+    @Test
+    public void testHasAchievement() {
+        long userId = 1L;
+        long achievementId = 1L;
+        achievementService.hasAchievement(userId, achievementId);
+        verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    public void testCreateProgressIfNecessary(){
+        long userId = 1L;
+        long achievementId = 1L;
+        achievementService.createProgressIfNecessary(userId, achievementId);
+        verify(achievementProgressRepository).createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Test
+    public void testGetProgress(){
+        long userId = 1L;
+        long achievementId = 1L;
+        achievementService.getProgress(userId, achievementId);
+        verify(achievementUtilService).getProgress(userId, achievementId);
+    }
+
+    @Test
+    public void testGiveAchievement(){
+        long userId = 1L;
+        long achievementId = 1L;
+        achievementService.giveAchievement(userId, achievementId);
+        verify(achievementUtilService).giveAchievement(userId, achievementId);
+    }
+
 }

@@ -15,4 +15,6 @@ public interface UserAchievementMapper {
     UserAchievementDto toDto(UserAchievement userAchievement);
 
     List<UserAchievementDto> toDtoList(List<UserAchievement> userAchievements);
+
+    UserAchievement toEntity(UserAchievementDto userAchievementDto);
 }

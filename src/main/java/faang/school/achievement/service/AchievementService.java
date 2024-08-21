@@ -5,6 +5,7 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
+import faang.school.achievement.service.util.AchievementUtilService;
 import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -15,8 +16,10 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +37,7 @@ public class AchievementService {
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> filters;
+    private final AchievementUtilService achievementUtilService;
 
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
@@ -75,5 +79,23 @@ public class AchievementService {
         }
         log.info("Found achievements in progress for user with ID = {}", userId);
         return achievementProgressMapper.toDtoList(achievementProgresses);
+    }
+
+    public boolean hasAchievement(long userId, Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+@Transactional
+    public void createProgressIfNecessary(Long userId, Long achievementId){
+        achievementProgressRepository.createProgressIfNecessary(userId,achievementId);
+        log.info("Created progress for user with ID = {}", userId);
+    }
+    @Transactional
+    public AchievementProgress getProgress(Long userId, Long achievementId) {
+        return achievementUtilService.getProgress(userId, achievementId);
+    }
+
+    public void giveAchievement(long userId, Long achievementId){
+        achievementUtilService.giveAchievement(achievementId, userId);
+        log.info("Gave achievement with ID = {}", achievementId);
     }
 }

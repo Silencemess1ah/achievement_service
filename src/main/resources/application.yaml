@@ -24,6 +24,12 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        comment_achievement: post_comment_channel
+
+      cache:
+        title:
+          expert: EXPERT
+
 
 server:
   port: 8085
@@ -35,3 +41,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+user-service:
+  host: localhost
+  port: 8080
