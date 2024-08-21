@@ -54,7 +54,7 @@ class AchievementControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(achievementFilterDtoJson))
                 .andExpect(status().isOk());
-        verify(achievementService, times(1)).getAllAchievements(achievementFilterDto);
+        verify(achievementService, times(1)).getAchievementsByFilter(achievementFilterDto);
     }
 
     @Test

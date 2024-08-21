@@ -3,6 +3,7 @@ package faang.school.achievement.controller;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,12 +28,12 @@ public class AchievementController {
     @PostMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<AchievementDto> getAllAchievements(@RequestBody AchievementFilterDto achievementFilterDto) {
-        return achievementService.getAllAchievements(achievementFilterDto);
+        return achievementService.getAchievementsByFilter(achievementFilterDto);
     }
 
     @GetMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    public List<AchievementDto> getUserAchievements() {
+    public List<UserAchievementDto> getUserAchievements() {
         return achievementService.getAchievementsByUserId();
     }
 

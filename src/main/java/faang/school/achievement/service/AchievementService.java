@@ -9,7 +9,9 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.publisher.achievement.AchievementPublisher;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
@@ -45,14 +47,13 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final List<AchievementFilter> achievementFilters;
     private final AchievementPublisher achievementPublisher;
-    private final AchievementRepository achievementRepository;
-    private final UserAchievementRepository userAchievementRepository;
-    private final AchievementProgressRepository achievementProgressRepository;
 
     @Transactional
     public void grantAchievement(long achievementId) {
         long userId = userContext.getUserId();
-        Achievement achievement = getAchievementFromRepository(achievementId);
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Could not find achievement with ID: %d"
+                        .formatted(achievementId)));
 
         AchievementEventDto event = new AchievementEventDto(userId, achievementId);
         achievementPublisher.publish(event);
@@ -65,7 +66,7 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public List<AchievementDto> getAllAchievements(AchievementFilterDto achievementFilterDto) {
+    public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto achievementFilterDto) {
         Stream<Achievement> matchedAchievements = achievementRepository.findAll().stream();
         for (AchievementFilter achievementFilter : achievementFilters) {
             matchedAchievements = achievementFilter.filter(matchedAchievements, achievementFilterDto);

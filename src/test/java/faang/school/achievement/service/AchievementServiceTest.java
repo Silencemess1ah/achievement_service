@@ -2,16 +2,11 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
-import faang.school.achievement.dto.AchievementEventDto;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.achievement.AchievementPublisher;
-import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.repository.UserAchievementRepository;
-import org.junit.jupiter.api.BeforeEach;
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
@@ -24,12 +19,11 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.achievement.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
-import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,19 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.times;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
 
     private AchievementService achievementService;
 
-    @Mock
-    private AchievementPublisher achievementPublisher;
     @Mock
     private AchievementMapper achievementMapper;
     @Mock
@@ -73,6 +64,8 @@ class AchievementServiceTest {
     private UserAchievementRepository userAchievementRepository;
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
+    @Mock
+    private AchievementPublisher achievementPublisher;
 
     private AchievementFilterDto achievementFilterDto;
     private long userId;
@@ -82,6 +75,7 @@ class AchievementServiceTest {
     private AchievementProgress achievementProgress;
     private AchievementProgressDto achievementProgressDto;
     private UserAchievement userAchievement;
+    private UserAchievementDto userAchievementDto;
     private String achievementTitle;
 
 
@@ -90,23 +84,23 @@ class AchievementServiceTest {
         userId = 1L;
         achievementId = 2L;
         achievementTitle = "achievementTitle";
-        String achievementDescripton = "achievementDescription";
+        String achievementDescription = "achievementDescription";
         Rarity achievementRarity = Rarity.COMMON;
 
         achievement = Achievement.builder()
                 .title(achievementTitle)
                 .rarity(achievementRarity)
-                .description(achievementDescripton)
+                .description(achievementDescription)
                 .build();
         achievementDto = AchievementDto.builder()
                 .title(achievementTitle)
                 .rarity(achievementRarity)
-                .description(achievementDescripton)
+                .description(achievementDescription)
                 .build();
         achievementFilterDto = AchievementFilterDto.builder()
                 .titlePattern(achievementTitle)
                 .rarity(achievementRarity)
-                .descriptionPattern(achievementDescripton)
+                .descriptionPattern(achievementDescription)
                 .build();
 
         achievementProgress = AchievementProgress.builder().build();
@@ -114,6 +108,7 @@ class AchievementServiceTest {
         userAchievement = UserAchievement.builder()
                 .achievement(achievement)
                 .build();
+        userAchievementDto = UserAchievementDto.builder().build();
 
         List<AchievementFilter> achievementFiltersImpl = List.of(
                 new AchievementDescriptionFilter(),
@@ -132,6 +127,7 @@ class AchievementServiceTest {
                 .achievementProgressRepository(achievementProgressRepository)
                 .achievementFilters(achievementFiltersImpl)
                 .achievementCache(achievementCache)
+                .achievementPublisher(achievementPublisher)
                 .build();
     }
 
@@ -140,42 +136,22 @@ class AchievementServiceTest {
     @DisplayName("Grant an achievement and verify repository interactions and event publishing")
     void grantAchievement() {
         when(userContext.getUserId()).thenReturn(userId);
-        when(achievementRepository.findById(userId)).thenReturn(Optional.of(achievement));
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
 
         achievementService.grantAchievement(achievementId);
 
-        verify(achievementRepository).findById(userId);
+        verify(achievementRepository).findById(achievementId);
         verify(achievementPublisher).publish(any(AchievementEventDto.class));
         verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 
-
-
     @Test
     @DisplayName("Should return list of AchievementDto when filtering achievements by filter")
     void getAchievementsByFilter() {
-        when(achievementRepository.findAll()).thenReturn(achievements);
-        when(achievementFilter.isApplicable(achievementFilterDto)).thenReturn(true);
-        when(achievementFilter.apply(any(), any())).thenReturn(achievements.stream());
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        List<AchievementDto> result = achievementService.getAchievementsByFilter(achievementFilterDto);
-
-        verify(achievementRepository).findAll();
-        verify(achievementFilter).isApplicable(achievementFilterDto);
-        verify(achievementFilter).apply(any(), any());
-        verify(achievementMapper).toDto(achievement);
-        assertNotNull(result);
-        assertEquals(achievementsDto, result);
-    }
-
-    @Test
-    @DisplayName("testing getAllAchievements method")
-    void testGetAllAchievements() {
         when(achievementRepository.findAll()).thenReturn(List.of(achievement));
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
-        List<AchievementDto> resultAchievements = achievementService.getAllAchievements(achievementFilterDto);
+        List<AchievementDto> resultAchievements = achievementService.getAchievementsByFilter(achievementFilterDto);
 
         verify(achievementRepository, times(1)).findAll();
         assertEquals(1, resultAchievements.size());
@@ -213,7 +189,7 @@ class AchievementServiceTest {
     @DisplayName("Should return list of UserAchievementDto when retrieving achievements by user ID")
     void getAchievementsByUserId() {
         when(userContext.getUserId()).thenReturn(userId);
-        when(userAchievementRepository.findByUserId(userId)).thenReturn(userAchievements);
+        when(userAchievementRepository.findByUserId(userId)).thenReturn(List.of(userAchievement));
         when(userAchievementMapper.toDto(userAchievement)).thenReturn(userAchievementDto);
 
         List<UserAchievementDto> result = achievementService.getAchievementsByUserId();
@@ -221,7 +197,7 @@ class AchievementServiceTest {
         verify(userAchievementRepository).findByUserId(userId);
         verify(userAchievementMapper).toDto(userAchievement);
         assertNotNull(result);
-        assertEquals(userAchievementsDto, result);
+        assertEquals(List.of(userAchievementDto), result);
     }
 
     @Test
