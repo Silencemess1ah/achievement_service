@@ -16,17 +16,9 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.exception.EntityNotFoundException;
-import faang.school.achievement.mapper.AchievementMapper;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.repository.AchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import faang.school.achievement.exception.DataNotFoundException;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,9 +63,6 @@ class AchievementServiceTest {
     UserContext userContext;
 
     @Mock
-    AchievementMapper achievementMapper;
-
-    @Mock
     AchievementCache achievementCache;
 
     @InjectMocks
@@ -95,20 +84,19 @@ class AchievementServiceTest {
     List<AchievementProgress> achievementProgresses;
     List<AchievementProgressDto> achievementProgressesDto;
     String achievementTitle;
-    Achievement achievement;
-    AchievementDto achievementDto;
 
     @BeforeEach
     void setUp() {
         achievementService = new AchievementService(
-            achievementRepository,
-            userAchievementRepository,
-            achievementProgressRepository,
-            achievementMapper,
-            userAchievementMapper,
-            achievementProgressMapper,
-            List.of(achievementFilter),
-            userContext
+                achievementRepository,
+                userAchievementRepository,
+                achievementMapper,
+                achievementCache,
+                achievementProgressRepository,
+                userAchievementMapper,
+                achievementProgressMapper,
+                List.of(achievementFilter),
+                userContext
         );
 
         userId = 1;
