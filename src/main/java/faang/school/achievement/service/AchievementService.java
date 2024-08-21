@@ -2,10 +2,20 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
+import faang.school.achievement.dto.AchievementEventDto;
+import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.achievement.AchievementPublisher;
+import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.exception.EntityNotFoundException;
+import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -14,12 +24,6 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.repository.UserAchievementRepository;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,6 +36,7 @@ import java.util.stream.Stream;
 @Builder
 public class AchievementService {
     private final UserContext userContext;
+    private final AchievementCache achievementCache;
     private final AchievementMapper achievementMapper;
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
@@ -39,16 +44,24 @@ public class AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final List<AchievementFilter> achievementFilters;
-    private final AchievementCache achievementCache;
+    private final AchievementPublisher achievementPublisher;
+    private final AchievementRepository achievementRepository;
+    private final UserAchievementRepository userAchievementRepository;
+    private final AchievementProgressRepository achievementProgressRepository;
 
-    @Transactional(readOnly = true)
-    public List<AchievementDto> getAchievementsByUserId() {
+    @Transactional
+    public void grantAchievement(long achievementId) {
         long userId = userContext.getUserId();
-        List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
-        return userAchievements.stream()
-                .map(UserAchievement::getAchievement)
-                .map(achievementMapper::toDto)
-                .toList();
+        Achievement achievement = getAchievementFromRepository(achievementId);
+
+        AchievementEventDto event = new AchievementEventDto(userId, achievementId);
+        achievementPublisher.publish(event);
+
+        UserAchievement userAchievement = UserAchievement.builder()
+            .userId(userId)
+            .achievement(achievement)
+            .build();
+        userAchievementRepository.save(userAchievement);
     }
 
     @Transactional(readOnly = true)
@@ -58,6 +71,15 @@ public class AchievementService {
             matchedAchievements = achievementFilter.filter(matchedAchievements, achievementFilterDto);
         }
         return matchedAchievements.map(achievementMapper::toDto).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserAchievementDto> getAchievementsByUserId() {
+        long userId = userContext.getUserId();
+        List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
+        return userAchievements.stream()
+            .map(userAchievementMapper::toDto)
+            .toList();
     }
 
     @Transactional(readOnly = true)
@@ -99,4 +121,5 @@ public class AchievementService {
 
         return achievementMapper.toDto(achievement);
     }
-}
+}  
+    

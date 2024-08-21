@@ -2,6 +2,13 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
+import faang.school.achievement.dto.AchievementEventDto;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.achievement.AchievementPublisher;
+import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.BeforeEach;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
@@ -21,6 +28,8 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
+import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.exception.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,14 +45,18 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
 
     private AchievementService achievementService;
 
+    @Mock
+    private AchievementPublisher achievementPublisher;
     @Mock
     private AchievementMapper achievementMapper;
     @Mock
@@ -122,20 +135,38 @@ class AchievementServiceTest {
                 .build();
     }
 
+
     @Test
-    @DisplayName("testing getAchievementsByUserId method")
-    void testGetAchievementsByUserId() {
+    @DisplayName("Grant an achievement and verify repository interactions and event publishing")
+    void grantAchievement() {
         when(userContext.getUserId()).thenReturn(userId);
-        when(userAchievementRepository.findByUserId(userId)).thenReturn(List.of(userAchievement));
+        when(achievementRepository.findById(userId)).thenReturn(Optional.of(achievement));
+
+        achievementService.grantAchievement(achievementId);
+
+        verify(achievementRepository).findById(userId);
+        verify(achievementPublisher).publish(any(AchievementEventDto.class));
+        verify(userAchievementRepository).save(any(UserAchievement.class));
+    }
+
+
+
+    @Test
+    @DisplayName("Should return list of AchievementDto when filtering achievements by filter")
+    void getAchievementsByFilter() {
+        when(achievementRepository.findAll()).thenReturn(achievements);
+        when(achievementFilter.isApplicable(achievementFilterDto)).thenReturn(true);
+        when(achievementFilter.apply(any(), any())).thenReturn(achievements.stream());
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
-        List<AchievementDto> resultAchievements = achievementService.getAchievementsByUserId();
+        List<AchievementDto> result = achievementService.getAchievementsByFilter(achievementFilterDto);
 
-        verify(userContext, times(1)).getUserId();
-        verify(userAchievementRepository, times(1)).findByUserId(userId);
-        verify(achievementMapper, times(1)).toDto(achievement);
-        assertEquals(1, resultAchievements.size());
-        assertIterableEquals(List.of(achievementDto), resultAchievements);
+        verify(achievementRepository).findAll();
+        verify(achievementFilter).isApplicable(achievementFilterDto);
+        verify(achievementFilter).apply(any(), any());
+        verify(achievementMapper).toDto(achievement);
+        assertNotNull(result);
+        assertEquals(achievementsDto, result);
     }
 
     @Test
@@ -176,6 +207,35 @@ class AchievementServiceTest {
             verify(achievementMapper, times(1)).toDto(achievement);
             assertEquals(achievementDto, achievementDtoResult);
         }
+    }
+
+    @Test
+    @DisplayName("Should return list of UserAchievementDto when retrieving achievements by user ID")
+    void getAchievementsByUserId() {
+        when(userContext.getUserId()).thenReturn(userId);
+        when(userAchievementRepository.findByUserId(userId)).thenReturn(userAchievements);
+        when(userAchievementMapper.toDto(userAchievement)).thenReturn(userAchievementDto);
+
+        List<UserAchievementDto> result = achievementService.getAchievementsByUserId();
+
+        verify(userAchievementRepository).findByUserId(userId);
+        verify(userAchievementMapper).toDto(userAchievement);
+        assertNotNull(result);
+        assertEquals(userAchievementsDto, result);
+    }
+
+    @Test
+    @DisplayName("Should return AchievementDto when retrieving achievement by ID")
+    void getAchievementById() {
+        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+
+        AchievementDto result = achievementService.getAchievementById(achievementId);
+
+        verify(achievementRepository).findById(achievementId);
+        verify(achievementMapper).toDto(achievement);
+        assertNotNull(result);
+        assertEquals(achievementDto, result);
     }
 
     @Test
@@ -234,6 +294,7 @@ class AchievementServiceTest {
 
         verify(achievementCache).getAchievementByTitle(achievementTitle);
         verify(achievementRepository).findByTitle(achievementTitle);
+        assertNotNull(result);
         assertEquals(achievementDto, result);
     }
 
