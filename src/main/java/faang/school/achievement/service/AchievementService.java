@@ -23,6 +23,7 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.cache.AchievementCache;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.Optional;
@@ -105,5 +106,30 @@ public class AchievementService {
                 .formatted(title))));
 
         return achievementMapper.toDto(achievement);
+    }
+
+    @Transactional
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional
+    public Optional<AchievementProgress> getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void giveAchievement(Achievement achievement, long userId) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .createdAt(LocalDateTime.now())
+                .build();
+        userAchievementRepository.save(userAchievement);
     }
 }  

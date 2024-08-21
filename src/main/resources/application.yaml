@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        comment_achievement: comment_channel
       cache:
         achievement-key: achievements
 

@@ -1,6 +1,5 @@
 package faang.school.achievement.config.redis;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
+    @Value("${spring.data.redis.channel.comment_achievement}")
+    private String commentChannel;
     @Value("${spring.data.redis.channel.achievement}")
     private String achievement;
 
@@ -29,5 +30,10 @@ public class RedisConfig {
     @Bean
     public ChannelTopic achievementTopic() {
         return new ChannelTopic(achievement);
+    }
+
+    @Bean
+    public ChannelTopic commentChannel() {
+        return new ChannelTopic(commentChannel);
     }
 }
