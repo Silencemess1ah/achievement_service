@@ -11,11 +11,5 @@ public class RedisCredentials {
 
     private int port;
     private String host;
-    private Channel channel;
 
-    @Data
-    static class Channel {
-        private String achievement;
-        private String follower;
-    }
 }

@@ -14,6 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
     private final RedisCredentials redisCredentials;
+    private final RedisChannel redisChannel;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
@@ -24,7 +25,7 @@ public class RedisConfig {
 
     @Bean("achievementTopic")
     public ChannelTopic achievementTopic() {
-        return new ChannelTopic(redisCredentials.getChannel().getAchievement());
+        return new ChannelTopic(redisChannel.getAchievement());
     }
 
     @Bean
