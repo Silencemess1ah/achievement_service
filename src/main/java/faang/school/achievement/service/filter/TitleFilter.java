@@ -11,12 +11,12 @@ public class TitleFilter implements AchievementFilter {
 
     @Override
     public boolean isApplicable(AchievementFilterDto filter) {
-        return filter.getTitlePattern() != null && !filter.getTitlePattern().isEmpty();
+        return filter.getTitle() != null && !filter.getTitle().isEmpty();
     }
 
     @Override
     public Stream<AchievementDto> apply(Stream<AchievementDto> achievementStream, AchievementFilterDto filter) {
         return achievementStream.filter(achievement -> achievement.getTitle().toLowerCase()
-                .contains(filter.getTitlePattern().toLowerCase()));
+                .contains(filter.getTitle().toLowerCase()));
     }
 }

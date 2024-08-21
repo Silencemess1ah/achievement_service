@@ -21,6 +21,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -56,11 +57,11 @@ public class AchievementService {
     public List<AchievementDto> getAchievements(AchievementFilterDto filterDto) {
         Pageable pageable = preparePageRequest(filterDto.getPage(), filterDto.getSize(), filterDto.getSortField(), filterDto.getDirection());
 
-        Stream<AchievementDto> achievementList = achievementRepository.findAll(pageable).stream().map(achievementMapper::toDto);
-
+        Stream<Achievement> achievementList = achievementRepository.findAll(pageable).stream();
         return achievementFilters.stream()
                 .filter(filter -> filter.isApplicable(filterDto))
                 .flatMap(filter -> filter.apply(achievementList, filterDto))
+                .map(achievementMapper::toDto)
                 .toList();
     }
 

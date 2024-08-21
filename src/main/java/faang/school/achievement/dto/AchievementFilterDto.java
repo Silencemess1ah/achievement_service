@@ -15,9 +15,9 @@ import org.springframework.data.domain.Sort;
 @Builder
 public class AchievementFilterDto {
 
-    private String titlePattern;
-    private String descriptionPattern;
-    private String rarityPattern;
+    private String title;
+    private String description;
+    private String rarity;
     private SortField sortField = SortField.CREATED_AT;
     private Sort.Direction direction = Sort.Direction.DESC;
     private Integer page = 0;
