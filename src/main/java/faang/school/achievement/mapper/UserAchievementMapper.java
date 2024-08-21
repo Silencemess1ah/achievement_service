@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Evgenii Malkov
  */
-@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE, uses = {AchievementMapper.class})
 public interface UserAchievementMapper {
 
     UserAchievementDto toDto(UserAchievement achievement);

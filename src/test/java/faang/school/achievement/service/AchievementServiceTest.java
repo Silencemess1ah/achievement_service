@@ -23,6 +23,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import faang.school.achievement.service.filter.AchievementFilter;
+import faang.school.achievement.service.filter.DescriptionFilter;
+import faang.school.achievement.service.filter.RarelyFilter;
+import faang.school.achievement.service.filter.TitleFilter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -46,11 +60,24 @@ public class AchievementServiceTest {
     private UserAchievementRepository userAchievementRepository;
     @Mock
     private UserAchievementMapper userAchievementMapper;
-    @Mock
-    private List<AchievementFilter> achievementFilters;
 
     @InjectMocks
     private AchievementService achievementService;
+
+    @Mock
+    private DescriptionFilter descriptionFilter;
+
+    @Mock
+    private RarelyFilter rarelyFilter;
+
+    @Mock
+    private TitleFilter titleFilter;
+    private Achievement achievement;
+    private List<Achievement> achievementsList;
+    private AchievementDto achievementDto;
+    private List<AchievementDto> achievementDtoList;
+    private AchievementFilterDto achievementFilterDto;
+    private List<AchievementFilter> achievementFilters;
 
     @BeforeEach
     void setUp() {
@@ -63,23 +90,42 @@ public class AchievementServiceTest {
                 userAchievementRepository,
                 userAchievementMapper
         );
+
+        achievementFilterDto = AchievementFilterDto.
+                builder()
+                .descriptionPattern("description")
+                .rarityPattern("rarity")
+                .titlePattern("title")
+                .build();
     }
 
     @Test
     @DisplayName("Получение всех достижений с фильтрацией: тест успешного выполнения")
     void testGetAchievements() {
-        AchievementFilterDto filterDto = new AchievementFilterDto();
-        Achievement achievement = new Achievement();
-        AchievementDto achievementDto = new AchievementDto();
 
-        when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        when(achievementRepository.findAll()).thenReturn(achievementsList);
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-        when(achievementFilters.stream()).thenReturn(Stream.of());
+        when(descriptionFilter.isApplicable(any(AchievementFilterDto.class))).thenReturn(true);
+        when(rarelyFilter.isApplicable(any(AchievementFilterDto.class))).thenReturn(true);
+        when(titleFilter.isApplicable(any(AchievementFilterDto.class))).thenReturn(true);
+        when(descriptionFilter.apply(any(Stream.class), any(AchievementFilterDto.class))).thenReturn(Stream.of(AchievementDto.class));
 
-        List<AchievementDto> result = achievementService.getAchievements(filterDto);
+        List<AchievementDto> allByFilter = achievementService.getAllByFilter(achievementFilterDto);
 
-        assertEquals(1, result.size());
-        assertEquals(achievementDto, result.get(0));
+        assertEquals(achievementDtoList.size(), allByFilter.size());
+        verify(achievementRepository, times(1)).findAll();
+//        AchievementFilterDto filterDto = new AchievementFilterDto();
+//        Achievement achievement = new Achievement();
+//        AchievementDto achievementDto = new AchievementDto();
+//
+//        when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+//        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+//        when(achievementFilters.stream()).thenReturn(Stream.of());
+//
+//        List<AchievementDto> result = achievementService.getAchievements(filterDto);
+//
+//        assertEquals(1, result.size());
+//        assertEquals(achievementDto, result.get(0));
     }
 
     @Test

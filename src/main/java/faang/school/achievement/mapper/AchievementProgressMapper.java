@@ -10,11 +10,10 @@ import java.util.List;
 /**
  * @author Evgenii Malkov
  */
-@Mapper(componentModel = "spring", unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", uses = {AchievementMapper.class}, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AchievementProgressMapper {
 
     AchievementProgressDto toDto(AchievementProgress achievement);
 
     List<AchievementProgressDto> toListDto(List<AchievementProgress> achievement);
-
 }

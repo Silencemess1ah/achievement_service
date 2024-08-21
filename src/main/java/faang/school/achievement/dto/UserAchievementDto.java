@@ -1,17 +1,19 @@
 package faang.school.achievement.dto;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-/**
- * @author Evgenii Malkov
- */
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UserAchievementDto {
-    private long id;
+
+    private Long id;
     private AchievementDto achievement;
-    private long userId;
+    private Long userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

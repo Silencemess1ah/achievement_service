@@ -14,7 +14,7 @@ import java.util.List;
  * @author Evgenii Malkov
  */
 @RestController()
-@RequestMapping("achievement")
+@RequestMapping("/achievements")
 @RequiredArgsConstructor
 public class AchievementController {
 
@@ -25,8 +25,8 @@ public class AchievementController {
         return achievementService.getAchievementById(id);
     }
 
-    @GetMapping()
-    public List<AchievementDto> getAchievements(@ModelAttribute AchievementFilterDto filter) {
+    @GetMapping("/all")
+    public List<AchievementDto> getAchievements(AchievementFilterDto filter) {
         return achievementService.getAchievements(filter);
     }
 
