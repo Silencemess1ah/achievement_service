@@ -10,11 +10,17 @@ import java.util.stream.Stream;
 public class AchievementRarityFilter implements AchievementFilter {
     @Override
     public boolean isApplicable(AchievementFilterDto achievementFilterDto) {
-        return achievementFilterDto.rarity() != null;
+        return achievementFilterDto.getRarity() != null;
     }
 
     @Override
-    public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto achievementFilterDto) {
-        return achievements.filter(achievement -> achievement.getRarity().equals(achievementFilterDto.rarity()));
+    public Stream<Achievement> filter(Stream<Achievement> achievementStream,
+                                      AchievementFilterDto achievementFilterDto) {
+        if (isApplicable(achievementFilterDto)) {
+            return achievementStream.filter(achievement -> achievement.getRarity()
+                    .equals(achievementFilterDto.getRarity()));
+        }
+        return achievementStream;
     }
 }
+

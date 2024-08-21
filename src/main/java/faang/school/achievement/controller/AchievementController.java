@@ -11,12 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import faang.school.achievement.dto.UserAchievementDto;
-import faang.school.achievement.service.AchievementService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,10 +30,10 @@ public class AchievementController {
         return achievementService.getAllAchievements(achievementFilterDto);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    public List<AchievementDto> getUserAchievements(@PathVariable Long userId) {
-        return achievementService.getAchievementsByUserId(userId);
+    public List<AchievementDto> getUserAchievements() {
+        return achievementService.getAchievementsByUserId();
     }
 
     @GetMapping("/{achievementId}")
@@ -45,17 +42,17 @@ public class AchievementController {
         return achievementService.getAchievementById(achievementId);
     }
 
-    @GetMapping("/user/not-attained/{userId}")
+    @GetMapping("/user/not-attained")
     @ResponseStatus(HttpStatus.OK)
-    public List<AchievementProgressDto> getUserNotAttainedAchievements(@PathVariable Long userId) {
-        return achievementService.getUserNotAttainedAchievements(userId);
+    public List<AchievementProgressDto> getUserNotAttainedAchievements() {
+        return achievementService.getUserNotAttainedAchievements();
     }
 
     @GetMapping("/users/progress")
     public List<AchievementProgressDto> getAchievementProgressByUserId() {
         return achievementService.getAchievementProgressByUserId();
     }
-    
+
     @GetMapping("/title")
     public AchievementDto getAchievementByTitle(@RequestParam String title) {
         return achievementService.getAchievementByTitle(title);

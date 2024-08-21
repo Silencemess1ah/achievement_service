@@ -60,9 +60,9 @@ class AchievementControllerTest {
     @Test
     @DisplayName("testing getUserAchievements controller")
     void testGetUserAchievements() throws Exception {
-        mockMvc.perform(get("/api/v1/achievement/user/{userId}", userId))
+        mockMvc.perform(get("/api/v1/achievement/user", userId))
                 .andExpect(status().isOk());
-        verify(achievementService, times(1)).getAchievementsByUserId(userId);
+        verify(achievementService, times(1)).getAchievementsByUserId();
     }
 
     @Test
@@ -76,8 +76,8 @@ class AchievementControllerTest {
     @Test
     @DisplayName("testing getUserNotAttainedAchievements controller")
     void testGetUserNotAttainedAchievements() throws Exception {
-        mockMvc.perform(get("/api/v1/achievement/user/not-attained/{userId}", userId))
+        mockMvc.perform(get("/api/v1/achievement/user/not-attained"))
                 .andExpect(status().isOk());
-        verify(achievementService, times(1)).getUserNotAttainedAchievements(userId);
+        verify(achievementService, times(1)).getUserNotAttainedAchievements();
     }
 }
