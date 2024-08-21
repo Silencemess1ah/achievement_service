@@ -16,19 +16,10 @@ import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
-import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.exception.EntityNotFoundException;
-import faang.school.achievement.mapper.AchievementMapper;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.repository.AchievementRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,7 +34,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
@@ -74,9 +64,6 @@ class AchievementServiceTest {
 
     @Mock
     AchievementFilter achievementFilter;
-  
-    @Mock
-    AchievementMapper achievementMapper;
 
     @Mock
     AchievementCache achievementCache;
@@ -86,9 +73,6 @@ class AchievementServiceTest {
 
     long achievementId;
     long userId;
-    Achievement achievement;
-    long userId;
-    long achievementId;
     Achievement achievement;
     AchievementDto achievementDto;
     AchievementFilterDto achievementFilterDto;
@@ -103,8 +87,6 @@ class AchievementServiceTest {
     List<AchievementProgress> achievementProgresses;
     List<AchievementProgressDto> achievementProgressesDto;
     String achievementTitle;
-    Achievement achievement;
-    AchievementDto achievementDto;
 
     @BeforeEach
     void setUp() {
@@ -131,11 +113,14 @@ class AchievementServiceTest {
             achievementRepository,
             userAchievementRepository,
             achievementProgressRepository,
+            achievementCache,
             achievementMapper,
             userAchievementMapper,
             achievementProgressMapper,
             List.of(achievementFilter),
+            achievementPublisher,
             userContext
+        );
     }
 
     @Test
@@ -240,6 +225,8 @@ class AchievementServiceTest {
 
         verify(achievementCache).getAchievementByTitle(achievementTitle);
         verify(achievementRepository).findByTitle(achievementTitle);
+        assertNotNull(result);
+        assertEquals(achievementDto, result);
     }
     
      @Test
