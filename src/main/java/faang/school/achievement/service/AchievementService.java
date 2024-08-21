@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.SortField;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.ResourceNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -17,10 +18,14 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.filter.AchievementFilter;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,15 +41,20 @@ public class AchievementService {
 
     @Transactional
     public List<AchievementDto> getAllByFilter(@NotNull AchievementFilterDto filterDto) {
-        List<AchievementDto> achievementList = achievementRepository.findAll()
-                .stream()
-                .map(achievementMapper::toDto)
-                .toList();
+        Pageable pageable = preparePageRequest(filterDto.getPage(), filterDto.getSize(), filterDto.getSortField(), filterDto.getDirection());
+
+        Stream<AchievementDto> achievementList = achievementRepository.findAll(pageable).stream().map(achievementMapper::toDto);
 
         return achievementFilters.stream()
                 .filter(filter -> filter.isApplicable(filterDto))
-                .flatMap(filter -> filter.apply(achievementList.stream(), filterDto))
+                .flatMap(filter -> filter.apply(achievementList, filterDto))
                 .toList();
+    }
+
+    public Pageable preparePageRequest(int page, int size, SortField sortField, Sort.Direction direction) {
+        Sort sort = Sort.by(SortField.valueOf(sortField.name()).getValue());
+        sort = (direction.isAscending()) ? sort.ascending() : sort.descending();
+        return PageRequest.of(page, size, sort);
     }
 
     @Transactional
