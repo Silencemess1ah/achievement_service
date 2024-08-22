@@ -2,7 +2,7 @@ package faang.school.achievement.messaging.listener;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.event.LikeEvent;
+import faang.school.achievement.event.like.LikeEvent;
 import faang.school.achievement.messaging.handler.like.LikeEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
