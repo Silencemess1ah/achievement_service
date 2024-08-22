@@ -25,11 +25,13 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
+        profile_pic: profile_pic_channel
 
 listener:
   type:
     achievements:
       opinion_leader: OPINION LEADER
+      handsome: HANDSOME
 
 handler:
   executor_pool_parameters:

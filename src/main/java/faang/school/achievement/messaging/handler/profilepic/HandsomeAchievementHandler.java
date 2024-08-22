@@ -1,4 +1,4 @@
-package faang.school.achievement.messaging.handler.post;
+package faang.school.achievement.messaging.handler.profilepic;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.Event;
@@ -9,13 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpinionLeaderAchievementHandler extends AbstractEventHandler {
-
-
-    public OpinionLeaderAchievementHandler(AchievementCache achievementCache,
-                                           AchievementService achievementService,
-                                           @Value("${listener.type.achievements.opinion_leader}") String title,
-                                           AchievementProgressRepository achievementProgressRepository) {
+public class HandsomeAchievementHandler extends AbstractEventHandler {
+    public HandsomeAchievementHandler(AchievementCache achievementCache,
+                                      AchievementService achievementService,
+                                      @Value("${listener.type.achievements.handsome}") String title,
+                                      AchievementProgressRepository achievementProgressRepository) {
         super(achievementCache, achievementService, title, achievementProgressRepository);
     }
 

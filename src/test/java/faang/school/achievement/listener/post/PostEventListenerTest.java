@@ -2,7 +2,7 @@ package faang.school.achievement.listener.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.post.PostEvent;
-import faang.school.achievement.messaging.handler.post.PostEventHandler;
+import faang.school.achievement.messaging.handler.AbstractEventHandler;
 import faang.school.achievement.messaging.listener.post.PostEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +22,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PostEventListenerTest {
     @Mock
-    private List<PostEventHandler> postEventHandlers;
+    private List<AbstractEventHandler> postEventHandlers;
     @Mock
-    private PostEventHandler opinionLeaderAchievementHandler;
+    private AbstractEventHandler opinionLeaderAchievementHandler;
     @Mock
     private ObjectMapper objectMapper;
     @Mock
