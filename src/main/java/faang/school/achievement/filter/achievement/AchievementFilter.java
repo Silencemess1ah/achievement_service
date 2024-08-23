@@ -6,6 +6,10 @@ import faang.school.achievement.model.Achievement;
 import java.util.stream.Stream;
 
 public interface AchievementFilter {
+
     boolean isApplicable(AchievementFilterDto achievementFilterDto);
-    Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto achievementFilterDto);
+
+    Stream<Achievement> filter(Stream<Achievement> achievementStream,
+                               AchievementFilterDto achievementFilterDto);
 }
+
