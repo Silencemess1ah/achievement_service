@@ -25,6 +25,8 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         profile-picture:  profile_pic_channel
+      cache:
+        achievement-key: achievements
 
 server:
   port: 8085
