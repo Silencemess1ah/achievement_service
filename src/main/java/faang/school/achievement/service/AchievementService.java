@@ -123,5 +123,13 @@ public class AchievementService {
 
         return achievementMapper.toDto(achievement);
     }
+
+    @Transactional
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        Optional<AchievementProgress> achievementProgressOptional = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId);
+        return achievementProgressOptional.
+                orElseThrow(() -> new EntityNotFoundException(
+                        String.format("User with id %d has no progress about achievement with id %d", userId, achievementId)));
+    }
 }  
     

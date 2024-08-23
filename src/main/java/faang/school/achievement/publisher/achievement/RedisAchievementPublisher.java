@@ -12,10 +12,10 @@ public class RedisAchievementPublisher extends RedisMessagePublisher<Achievement
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic achievementTopic;
 
-    public RedisAchievementPublisher(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate, ChannelTopic achievementTopic) {
+    public RedisAchievementPublisher(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate, ChannelTopic achievementChannel) {
         super(objectMapper);
         this.redisTemplate = redisTemplate;
-        this.achievementTopic = achievementTopic;
+        this.achievementTopic = achievementChannel;
     }
 
     @Override
