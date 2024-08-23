@@ -34,6 +34,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,6 +114,7 @@ class AchievementServiceTest {
         achievementProgressDto = AchievementProgressDto.builder().build();
         userAchievement = UserAchievement.builder()
                 .achievement(achievement)
+                .userId(userId)
                 .build();
         userAchievementDto = UserAchievementDto.builder().build();
 
@@ -292,5 +295,30 @@ class AchievementServiceTest {
         when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
+    }
+
+    @Test
+    @DisplayName("Если User уже имеет такое достижение")
+    void testHasAchievement() {
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
+        boolean result = achievementService.hasAchievement(userId, achievementId);
+        assertTrue(result);
+        verify(userAchievementRepository, times(1)).existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("Создание прогресса если его не было")
+    void testCreateProgressIfNecessary() {
+        achievementService.createProgressIfNecessary(userId, achievementId);
+        verify(achievementProgressRepository, times(1)).createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("Получение прогресса по достижению")
+    void testGetProgress() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
+        achievementService.getProgress(userId, achievementId);
+
+        verify(achievementProgressRepository, times(1)).findByUserIdAndAchievementId(userId, achievementId);
     }
 }
