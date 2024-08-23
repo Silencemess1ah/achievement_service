@@ -27,6 +27,7 @@ public class LikeEventListener implements MessageListener {
 
         try {
             likeEvent = objectMapper.readValue(message.getBody(), LikeEvent.class);
+            log.info("Received event: {}", likeEvent);
         } catch (IOException e) {
             String errorMessage = "Failed reading event: " + Arrays.toString(message.getBody());
             log.error(errorMessage);
