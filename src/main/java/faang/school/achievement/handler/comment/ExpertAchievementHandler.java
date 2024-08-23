@@ -20,7 +20,6 @@ public class ExpertAchievementHandler implements EventHandler {
     @Override
     @Async
     public void checkAndGetAchievement(CommentEvent commentEvent) {
-        System.out.println("Fdsfasdfasd");
         String titleAchievement = "EXPERT";
         Achievement achievement = achievementCache.getAchievementByTitle(titleAchievement).orElseThrow();
         long userId = commentEvent.getAuthorId();

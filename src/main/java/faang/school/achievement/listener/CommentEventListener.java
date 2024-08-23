@@ -24,7 +24,6 @@ public class CommentEventListener implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            System.out.println("fds");
             CommentEvent commentEvent = objectMapper.readValue(message.getBody(), CommentEvent.class);
             for (EventHandler handler : handlers) {
                 if (handler != null) {
