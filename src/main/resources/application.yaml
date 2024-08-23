@@ -28,6 +28,10 @@ spring:
       cache:
         achievement-key: achievements
 
+  achievement-handler:
+    handsome-achievement-handler:
+      achievement-name: HANDSOME
+
 server:
   port: 8085
 

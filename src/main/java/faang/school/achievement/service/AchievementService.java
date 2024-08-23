@@ -123,5 +123,41 @@ public class AchievementService {
 
         return achievementMapper.toDto(achievement);
     }
+
+    @Transactional(readOnly = true)
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> {
+                    String errorMessage = String.format(
+                            "AchievementProgress with ID: %d user ID: %d not found.", achievementId, userId);
+                    log.error(errorMessage);
+                    return new EntityNotFoundException(errorMessage);
+                });
+    }
+
+    @Transactional
+    public void giveAchievement(long userId, long achievementId) {
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> {
+                    log.error("Achievement with ID: %d not found.", achievementId);
+                    return new EntityNotFoundException(
+                            "Achievement with ID: %d not found.".formatted(achievementId));
+                });
+
+        userAchievementRepository.save(UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build());
+    }
 }  
     
