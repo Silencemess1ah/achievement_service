@@ -28,7 +28,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -82,6 +85,8 @@ class AchievementServiceTest {
     private String achievementTitle;
     private String sortField;
 
+    @Captor
+    private ArgumentCaptor<UserAchievement> userAchievementArgumentCaptor;
 
     @BeforeEach
     public void setUp() {
@@ -292,5 +297,56 @@ class AchievementServiceTest {
         when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
+    }
+
+    @Test
+    @DisplayName("testing hasAchievement method")
+    void testGetAchievement() {
+        achievementService.hasAchievement(userId, achievementId);
+        verify(userAchievementRepository, times(1))
+                .existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("testing createProgressIfNecessary with non appropriate value")
+    void testCreateProgressIfNecessary() {
+        achievementService.createProgressIfNecessary(userId, achievementId);
+        verify(achievementProgressRepository, times(1))
+                .createProgressIfNecessary(userId, achievementId);
+    }
+
+
+    @Test
+    @DisplayName("testing getProgress with non appropriate value")
+    void testGetProgressWithNonAppropriateValue() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
+                .thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getProgress(userId, achievementId));
+    }
+
+    @Test
+    @DisplayName("testing getProgress with appropriate value")
+    void testGetProgressWithAppropriateValue() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
+                .thenReturn(Optional.of(achievementProgress));
+
+        achievementService.getProgress(userId, achievementId);
+
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("testing giveAchievement method")
+    void testGiveAchievement() {
+        achievementService.giveAchievement(userId, achievement);
+        verify(userAchievementRepository, times(1)).save(userAchievementArgumentCaptor.capture());
+    }
+
+    @Test
+    @DisplayName("testing saveAchievementProgress method")
+    void testSaveAchievementProgress() {
+        achievementService.saveAchievementProgress(achievementProgress);
+        verify(achievementProgressRepository, times(1)).save(achievementProgress);
     }
 }

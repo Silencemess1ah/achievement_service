@@ -123,5 +123,37 @@ public class AchievementService {
 
         return achievementMapper.toDto(achievement);
     }
+
+    @Transactional(readOnly = true)
+    public boolean hasAchievement(long userId, long achievementId){
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId){
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(long userId, long achievementId){
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("User with ID: %d does not have progress at achievement with ID: %d"
+                                .formatted(userId, achievementId)));
+    }
+
+    @Transactional
+    public void giveAchievement(long userId, Achievement achievement){
+        UserAchievement userAchievement = UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build();
+        userAchievementRepository.save(userAchievement);
+    }
+
+    @Transactional
+    public void saveAchievementProgress(AchievementProgress achievementProgress) {
+        achievementProgressRepository.save(achievementProgress);
+    }
 }  
     

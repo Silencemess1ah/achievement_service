@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class AchievementEventPublisher extends EventPublisher<AchievementEvent> {
     public AchievementEventPublisher(RedisTemplate<String, Object> redisTemplate,
                                      ObjectMapper objectMapper,
-                                     @Qualifier("achievementChannel") ChannelTopic achievementChannel) {
-        super(redisTemplate, objectMapper, achievementChannel);
+                                     @Qualifier("achievementTopic") ChannelTopic achievementTopic) {
+        super(redisTemplate, objectMapper, achievementTopic);
     }
 }

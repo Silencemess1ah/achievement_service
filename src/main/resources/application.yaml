@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
       cache:
         achievement-key: achievements
 
@@ -37,3 +38,19 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+thread-pool:
+  size:
+    min: 10
+    max: 20
+  keep-alive:
+    time: 60
+    time-unit: SECONDS
+  queue-size: 10000
+
+handler:
+  achievement:
+    sensei:
+      title: SENSEI
+      points: 30
+
