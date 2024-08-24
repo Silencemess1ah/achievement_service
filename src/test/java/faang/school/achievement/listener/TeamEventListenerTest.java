@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TeamEventListenerTest {
     private static final String MESSAGE_ERROR = "ReadValue exception";
     private static final long VALID_ID = 1L;
-    private final String string = "\"teamId\":1,\"userId\":2,\"projectId\":3";
+    private final String STRING = "\"teamId\":1,\"userId\":2,\"projectId\":3";
     private TeamEvent event;
     private Message message;
     @Mock
@@ -38,7 +38,7 @@ class TeamEventListenerTest {
         message = new Message() {
             @Override
             public byte[] getBody() {
-                return string.getBytes();
+                return STRING.getBytes();
             }
 
             @Override
