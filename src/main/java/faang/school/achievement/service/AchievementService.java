@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -47,7 +48,6 @@ public class AchievementService {
                             Stream::concat)
                     .toList();
         }
-
         log.info("Received all achievements");
         return achievementMapper.toDtoList(achievements);
     }
@@ -75,5 +75,28 @@ public class AchievementService {
         }
         log.info("Found achievements in progress for user with ID = {}", userId);
         return achievementProgressMapper.toDtoList(achievementProgresses);
+    }
+
+    public boolean hasAchievement(Long userId, Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    public AchievementProgress getProgress(Long userId, Long achievementId) {
+        AchievementProgress achievementProgress = achievementProgressRepository
+                .findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new NotFoundException("Achievement progress for user with ID = " + userId +
+                        " for achievement with ID = " + achievementId + "is not found"));
+        return achievementProgress;
+    }
+
+    public void giveAchievement(Long userId, Achievement achievement) {
+        UserAchievement newUserAchievement = new UserAchievement();
+        newUserAchievement.setUserId(userId);
+        newUserAchievement.setAchievement(achievement);
+        userAchievementRepository.save(newUserAchievement);
     }
 }
