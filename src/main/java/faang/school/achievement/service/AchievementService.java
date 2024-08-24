@@ -146,6 +146,11 @@ public class AchievementService {
     }
 
     @Transactional
+    public void saveProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
+    }
+
+    @Transactional
     public void giveAchievement(long userId, long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
                 .orElseThrow(() -> {
