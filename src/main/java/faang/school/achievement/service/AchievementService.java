@@ -139,7 +139,7 @@ public class AchievementService {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> {
                     String errorMessage = String.format(
-                            "AchievementProgress with ID: %d user ID: %d not found.", achievementId, userId);
+                            "AchievementProgress with ID: %d, user ID: %d not found.", achievementId, userId);
                     log.error(errorMessage);
                     return new EntityNotFoundException(errorMessage);
                 });
@@ -154,7 +154,7 @@ public class AchievementService {
     public void giveAchievement(long userId, long achievementId) {
         Achievement achievement = achievementRepository.findById(achievementId)
                 .orElseThrow(() -> {
-                    log.error("Achievement with ID: %d not found.", achievementId);
+                    log.error("Achievement with ID: %d, not found.", achievementId);
                     return new EntityNotFoundException(
                             "Achievement with ID: %d not found.".formatted(achievementId));
                 });
