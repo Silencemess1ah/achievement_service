@@ -1,5 +1,6 @@
 package faang.school.achievement.eventHandler;
 
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.CommentEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,11 +13,13 @@ import java.util.concurrent.Executors;
 @Component
 public abstract class CommentEventHandler implements EventHandler<CommentEvent> {
 
-
-
     @Bean
     public ExecutorService commentEventTPool() {
         return Executors.newCachedThreadPool();
+    }
+
+    protected void handleCommentEvent(long userId, Achievement achievement) {
+
     }
 
 }
