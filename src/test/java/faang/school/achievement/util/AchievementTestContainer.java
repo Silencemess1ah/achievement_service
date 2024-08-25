@@ -99,6 +99,7 @@ public class AchievementTestContainer {
                 .achievement(achievementDto())
                 .userId(userId)
                 .currentPoints(points)
+                .version(version)
                 .build();
     }
 

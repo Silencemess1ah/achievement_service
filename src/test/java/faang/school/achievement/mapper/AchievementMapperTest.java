@@ -47,6 +47,7 @@ public class AchievementMapperTest {
                 .achievement(mapper.toAchievementDto(entity.getAchievement()))
                 .userId(entity.getUserId())
                 .currentPoints(entity.getCurrentPoints())
+                .version(entity.getVersion())
                 .build();
 
         // when
