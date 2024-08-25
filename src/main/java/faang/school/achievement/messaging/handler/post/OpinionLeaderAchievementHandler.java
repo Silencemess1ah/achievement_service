@@ -1,7 +1,7 @@
 package faang.school.achievement.messaging.handler.post;
 
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.event.Event;
+import faang.school.achievement.event.post.PostEvent;
 import faang.school.achievement.messaging.handler.AbstractEventHandler;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.service.AchievementService;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpinionLeaderAchievementHandler extends AbstractEventHandler {
+public class OpinionLeaderAchievementHandler extends AbstractEventHandler<PostEvent> {
 
 
     public OpinionLeaderAchievementHandler(AchievementCache achievementCache,
@@ -20,7 +20,7 @@ public class OpinionLeaderAchievementHandler extends AbstractEventHandler {
     }
 
     @Override
-    public void handle(Event event) {
-        processEvent(event);
+    public void handle(PostEvent postEvent) {
+        processEvent(postEvent);
     }
 }

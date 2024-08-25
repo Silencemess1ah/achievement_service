@@ -25,9 +25,7 @@ public class ProfilePicEventListener implements MessageListener {
         try {
             ProfilePicEvent profilePicEvent = objectMapper.readValue(message.getBody(), ProfilePicEvent.class);
             log.info("Message received: {}", message.getBody());
-            for (var profileEventHandler : profileEventHandlers) {
-                profileEventHandler.handle(profilePicEvent);
-            }
+            profileEventHandlers.forEach(handler -> handler.handle(profilePicEvent));
             log.info("Achievement {} sent for processing", profilePicEvent);
         } catch (IOException e) {
             log.error(ExceptionMessage.EVENT_HANDLING_FAILURE, e);

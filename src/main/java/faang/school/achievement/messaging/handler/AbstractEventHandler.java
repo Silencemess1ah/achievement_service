@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.Async;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractEventHandler implements EventHandler<Event> {
+public abstract class AbstractEventHandler<T extends Event> implements EventHandler<T> {
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
     private final String title;
