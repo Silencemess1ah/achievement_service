@@ -1,4 +1,4 @@
-package faang.school.achievement.config.redis;
+package faang.school.achievement.config.redis.listeners.like;
 
 import faang.school.achievement.messaging.listener.like.LikeEventListener;
 import org.springframework.beans.factory.annotation.Qualifier;
