@@ -1,4 +1,4 @@
-package faang.school.achievement.messaging.listener;
+package faang.school.achievement.messaging.listener.like;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
