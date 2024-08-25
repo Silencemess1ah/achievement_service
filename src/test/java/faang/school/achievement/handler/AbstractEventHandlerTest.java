@@ -1,4 +1,4 @@
-package faang.school.achievement.handler.post;
+package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.post.PostEvent;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpinionLeaderAchievementHandlerTest {
+class AbstractEventHandlerTest {
     @Mock
     private AchievementCache achievementCache;
     @Mock
