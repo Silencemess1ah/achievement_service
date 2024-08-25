@@ -10,11 +10,16 @@ import java.util.stream.Stream;
 public class AchievementDescriptionFilter implements AchievementFilter {
     @Override
     public boolean isApplicable(AchievementFilterDto achievementFilterDto) {
-        return achievementFilterDto.description() != null;
+        return achievementFilterDto.getDescriptionPattern() != null;
     }
 
     @Override
-    public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto achievementFilterDto) {
-        return achievements.filter(achievement -> achievement.getDescription().contains(achievementFilterDto.description()));
+    public Stream<Achievement> filter(Stream<Achievement> achievementStream,
+                                      AchievementFilterDto achievementFilterDto) {
+        if (isApplicable(achievementFilterDto)) {
+            return achievementStream.filter(achievement -> achievement.getDescription().toLowerCase()
+                    .contains(achievementFilterDto.getDescriptionPattern().toLowerCase()));
+        }
+        return achievementStream;
     }
 }
