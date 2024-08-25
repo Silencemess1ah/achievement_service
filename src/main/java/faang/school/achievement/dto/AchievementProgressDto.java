@@ -14,4 +14,5 @@ public class AchievementProgressDto {
     private AchievementDto achievement;
     private long userId;
     private long currentPoints;
+    private long version;
 }

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ class AchievementServiceTest {
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
     private UserAchievementRepository userAchievementRepository;
+    @Mock
+    private MessageSource messageSource;
     @Spy
     private AchievementMapper mapper;
     @Spy
@@ -57,7 +60,7 @@ class AchievementServiceTest {
         container = new AchievementTestContainer();
         List<AchievementFilter> achievementFilters = new ArrayList<>(List.of(titleFilter, descriptionFilter, rarityFilter));
         service = new AchievementService(achievementRepository, achievementProgressRepository,
-                userAchievementRepository, mapper, achievementFilters);
+                userAchievementRepository, mapper, achievementFilters, messageSource);
     }
 
 

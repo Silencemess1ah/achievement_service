@@ -24,6 +24,16 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        comment: comment_channel
+
+  messages:
+    basename: messages
+
+data:
+  achievements:
+    9:
+      name: EVIL_COMMENTER
+      points: 100
 
 server:
   port: 8085
