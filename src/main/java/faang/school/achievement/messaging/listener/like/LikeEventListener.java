@@ -3,7 +3,7 @@ package faang.school.achievement.messaging.listener.like;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.like.LikeEvent;
-import faang.school.achievement.messaging.handler.like.LikeEventHandler;
+import faang.school.achievement.messaging.handler.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class LikeEventListener implements MessageListener {
-    private final List<LikeEventHandler> likeEventHandlers;
+    private final List<EventHandler<LikeEvent>> likeEventHandlers;
     private final ObjectMapper objectMapper;
 
     @Override
