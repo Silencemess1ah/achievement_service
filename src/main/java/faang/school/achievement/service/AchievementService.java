@@ -46,15 +46,7 @@ public class AchievementService {
     private final List<AchievementFilter> achievementFilters;
     private final UserContext userContext;
 
-    @Transactional(readOnly = true)
-    public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto achievementFilterDto) {
-        List<Achievement> achievements = achievementRepository.findAll();
-        return achievementFilters.stream()
-            .filter(achievementFilter -> achievementFilter.isApplicable(achievementFilterDto))
-            .reduce(achievements.stream(), (stream, filter) -> filter.apply(stream, achievementFilterDto), Stream::concat)
-            .map(achievementMapper::toDto)
-            .toList();
-    }
+
 
     @Transactional(readOnly = true)
     public List<UserAchievementDto> getAchievementsByUserId() {
@@ -65,16 +57,7 @@ public class AchievementService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<AchievementDto> getAchievementsByFilter(AchievementFilterDto achievementFilterDto,
-                                                        int offset, int limit, String sortField) {
-        Stream<Achievement> matchedAchievements = achievementRepository
-                .findAll(PageRequest.of(offset, limit, Sort.by(sortField))).stream();
-        for (AchievementFilter achievementFilter : achievementFilters) {
-            matchedAchievements = achievementFilter.filter(matchedAchievements, achievementFilterDto);
-        }
-        return matchedAchievements.map(achievementMapper::toDto).toList();
-    }
+
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementById(long id) {

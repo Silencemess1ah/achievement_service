@@ -120,24 +120,6 @@ class AchievementServiceTest {
     }
 
     @Test
-    @DisplayName("Should return list of AchievementDto when filtering achievements by filter")
-    void getAchievementsByFilter() {
-        when(achievementRepository.findAll()).thenReturn(achievements);
-        when(achievementFilter.isApplicable(achievementFilterDto)).thenReturn(true);
-        when(achievementFilter.apply(any(), any())).thenReturn(achievements.stream());
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        List<AchievementDto> result = achievementService.getAchievementsByFilter(achievementFilterDto);
-
-        verify(achievementRepository).findAll();
-        verify(achievementFilter).isApplicable(achievementFilterDto);
-        verify(achievementFilter).apply(any(), any());
-        verify(achievementMapper).toDto(achievement);
-        assertNotNull(result);
-        assertEquals(achievementsDto, result);
-    }
-
-    @Test
     @DisplayName("Should return list of UserAchievementDto when retrieving achievements by user ID")
     void getAchievementsByUserId() {
         when(userContext.getUserId()).thenReturn(userId);
