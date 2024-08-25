@@ -12,6 +12,8 @@ import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,12 +23,13 @@ import java.util.stream.StreamSupport;
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
-    private static final String MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT = "The user does not have such an achievement";
+    private static final String CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT = "message.error.doesNotHaveAchievement";
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementMapper mapper;
     private final List<AchievementFilter> achievementFilters;
+    private final MessageSource messageSource;
 
     public AchievementDto getAchievement(Long achievementId) {
         Achievement achievement = achievementRepository
@@ -69,7 +72,11 @@ public class AchievementService {
     public AchievementProgressDto getProgress(Long userId, Long achievementId) {
         return mapper.toAchievementProgressDto(
                 achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                        .orElseThrow(() -> new RuntimeException(MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT)));
+                        .orElseThrow(() -> new RuntimeException(messageSource
+                                .getMessage(
+                                        CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT,
+                                        null,
+                                        LocaleContextHolder.getLocale()))));
     }
 
     public void giveAchievement(Long userId, Achievement achievement) {

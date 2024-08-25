@@ -24,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,8 @@ class AchievementServiceTest {
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
     private UserAchievementRepository userAchievementRepository;
+    @Mock
+    private MessageSource messageSource;
     @Spy
     private AchievementMapperImpl mapper;
     @Spy
@@ -61,7 +64,7 @@ class AchievementServiceTest {
         container = new AchievementTestContainer();
         List<AchievementFilter> achievementFilters = new ArrayList<>(List.of(titleFilter, descriptionFilter, rarityFilter));
         service = new AchievementService(achievementRepository, achievementProgressRepository,
-                userAchievementRepository, mapper, achievementFilters);
+                userAchievementRepository, mapper, achievementFilters, messageSource);
     }
 
 
@@ -187,6 +190,8 @@ class AchievementServiceTest {
         // when
         when(achievementProgressRepository.findByUserIdAndAchievementId(Mockito.anyLong(), Mockito.anyLong()))
                 .thenReturn(Optional.empty());
+        when(messageSource.getMessage(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT);
         // then
         assertEquals(MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT,
                 assertThrows(RuntimeException.class, () ->

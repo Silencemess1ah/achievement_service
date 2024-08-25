@@ -79,11 +79,11 @@ class ManagerAchievementHandlerTest {
     @Test
     void testValidGiveAchievement() {
         //Act
-        when(achievementCache.get(TITLE_OF_ACHIEVEMENT)).thenReturn(achievement);
+        when(achievementCache.get(any())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(false);
         when(achievementService.getProgress(anyLong(), anyLong())).thenReturn(progressDto);
         when(mapper.toAchievementProgress(any())).thenReturn(achievementProgress);
-        handler.reaction(teamEvent);
+        handler.process(teamEvent);
         //Assert
         verify(achievementService).giveAchievement(teamEvent.getUserId(), achievement);
     }
@@ -93,11 +93,11 @@ class ManagerAchievementHandlerTest {
         //Arrange
         achievement.setPoints(VALID_ID);
         //Act
-        when(achievementCache.get(TITLE_OF_ACHIEVEMENT)).thenReturn(achievement);
+        when(achievementCache.get(any())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(false);
         when(achievementService.getProgress(anyLong(), anyLong())).thenReturn(progressDto);
         when(mapper.toAchievementProgress(any())).thenReturn(achievementProgress);
-        handler.reaction(teamEvent);
+        handler.process(teamEvent);
         //Assert
         verify(achievementProgressRepository).save(any());
     }
@@ -107,9 +107,9 @@ class ManagerAchievementHandlerTest {
         //Arrange
         achievement.setPoints(VALID_ID);
         //Act
-        when(achievementCache.get(TITLE_OF_ACHIEVEMENT)).thenReturn(achievement);
+        when(achievementCache.get(any())).thenReturn(achievement);
         when(achievementService.hasAchievement(anyLong(), anyLong())).thenReturn(true);
-        handler.reaction(teamEvent);
+        handler.process(teamEvent);
         //Assert
         verify(achievementService, never()).getProgress(anyLong(), any());
     }
