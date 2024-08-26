@@ -27,7 +27,7 @@ public abstract class AbstractEventHandler<T extends Event> implements EventHand
         long userId = event.getUserId();
         long achievementId = achievement.getId();
 
-        if (achievementService.userHasAchievement(achievementId, userId)) {
+        if (achievementService.userHasAchievement(userId, achievementId)) {
             return;
         }
         achievementService.createProgressIfNecessary(userId, achievementId);

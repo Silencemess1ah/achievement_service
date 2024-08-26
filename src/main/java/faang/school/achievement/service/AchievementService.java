@@ -81,7 +81,7 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public boolean userHasAchievement(long achievementId, long userId) {
+    public boolean userHasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 

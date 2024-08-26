@@ -26,10 +26,10 @@ public abstract class AbstractEventListener<T extends Event> implements MessageL
         log.info("{} received message: {}", this.getClass().getName(), message);
         log.debug("Channel: {}", new String(pattern, StandardCharsets.UTF_8));
 
-        T profilePicEvent = objectMapper.readValue(message.getBody(), getType());
+        T typedEvent = objectMapper.readValue(message.getBody(), getEventClassType());
 
-        handlers.forEach(handler -> handler.handle(profilePicEvent));
+        handlers.forEach(handler -> handler.handle(typedEvent));
     }
 
-    protected abstract Class<T> getType();
+    protected abstract Class<T> getEventClassType();
 }

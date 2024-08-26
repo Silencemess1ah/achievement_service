@@ -16,7 +16,7 @@ public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEve
     }
 
     @Override
-    protected Class<ProfilePicEvent> getType() {
+    protected Class<ProfilePicEvent> getEventClassType() {
         return ProfilePicEvent.class;
     }
 }
