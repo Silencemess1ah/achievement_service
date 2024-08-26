@@ -15,24 +15,28 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class AchievementCache {
 
-    private static final ConcurrentHashMap<String, Achievement> achievementCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Achievement> CACHE = new ConcurrentHashMap<>();
     private final AchievementRepository achievementRepository;
 
     @PostConstruct
     public void fill() {
         StreamSupport.stream(achievementRepository.findAll().spliterator(), false)
                 .forEach(achievement -> {
-                    achievementCache.put(achievement.getTitle(), achievement);
+                    CACHE.put(achievement.getTitle(), achievement);
                 });
-        log.info("Achievement cache has been filled. Size: {}", achievementCache.size());
+        log.info("Achievement cache has been filled. Size: {}", CACHE.size());
     }
 
     public Achievement get(String achievementName) {
-        return achievementCache.get(achievementName);
+        return CACHE.get(achievementName);
     }
 
     public void add(Achievement achievement) {
-        achievementCache.put(achievement.getTitle(), achievement);
+        CACHE.put(achievement.getTitle(), achievement);
+    }
+
+    public ConcurrentHashMap<String, Achievement> getCache() {
+        return CACHE;
     }
 
 }
