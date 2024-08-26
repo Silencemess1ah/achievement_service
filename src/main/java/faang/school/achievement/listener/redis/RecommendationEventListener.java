@@ -1,4 +1,4 @@
-package faang.school.achievement.redis.listener;
+package faang.school.achievement.listener.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

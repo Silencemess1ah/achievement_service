@@ -1,6 +1,6 @@
 package faang.school.achievement.config.redis;
 
-import faang.school.achievement.redis.listener.RecommendationEventListener;
+import faang.school.achievement.listener.redis.RecommendationEventListener;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
