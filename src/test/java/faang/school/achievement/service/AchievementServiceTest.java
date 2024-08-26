@@ -20,6 +20,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +30,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +53,7 @@ class AchievementServiceTest {
     private AchievementDescriptionFilter descriptionFilter;
     @Spy
     private AchievementRarityFilter rarityFilter;
+    @InjectMocks
     private AchievementService service;
 
     private AchievementTestContainer container;
@@ -144,6 +150,88 @@ class AchievementServiceTest {
 
         // then
         assertEquals(sizeExp, listDtoActual.size());
+    }
+
+    @Test
+    void testHasAchievement() {
+        long userId = container.userId();
+        long achievementId = container.achievementId();
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
+        assertTrue(service.hasAchievement(userId, achievementId));
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
+        assertFalse(service.hasAchievement(userId, achievementId));
+
+        verify(userAchievementRepository, times(2))
+                .existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    void testCreateProgressIfNecessary() {
+        long userId = container.userId();
+        long achievementId = container.achievementId();
+
+        service.createProgressIfNecessary(userId, achievementId);
+        verify(achievementProgressRepository, times(1))
+                .createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Test
+    void testGetProgressWhenExists() {
+        long followeeId = container.userId();
+        long achievementId = container.achievementId();
+        AchievementProgress progress = AchievementProgress.builder()
+                .id(1L)
+                .userId(followeeId)
+                .currentPoints(10L)
+                .build();
+        Optional<AchievementProgress> progressOptional = Optional.of(progress);
+        when(achievementProgressRepository.findByUserIdAndAchievementId(followeeId, achievementId))
+                .thenReturn(progressOptional);
+
+        assertEquals(progress, service.getProgress(followeeId, achievementId));
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(followeeId, achievementId);
+    }
+
+    @Test
+    void testGetProgressWhenNotExists() {
+        long followeeId = container.userId();
+        long achievementId = container.achievementId();
+        Optional<AchievementProgress> progressOptional = Optional.empty();
+        when(achievementProgressRepository.findByUserIdAndAchievementId(followeeId, achievementId))
+                .thenReturn(progressOptional);
+
+        assertThrows(EntityNotFoundException.class, () -> service.getProgress(followeeId, achievementId));
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(followeeId, achievementId);
+    }
+
+    @Test
+    void testSaveProgress() {
+        AchievementProgress progress = AchievementProgress.builder()
+                .id(1L)
+                .userId(2L)
+                .currentPoints(10L)
+                .build();
+        when(achievementProgressRepository.save(progress)).thenReturn(progress);
+
+        assertEquals(progress, service.saveProgress(progress));
+        verify(achievementProgressRepository, times(1)).save(progress);
+    }
+
+    @Test
+    void testGiveAchievement() {
+        Achievement achievement = new Achievement();
+        long userId = container.userId();
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+
+        service.giveAchievement(userId, achievement);
+        verify(userAchievementRepository, times(1)).save(userAchievement);
     }
 
     private List<Achievement> getAchievements(String titleFilter, String descriptionFilter, Rarity rarityFilter) {

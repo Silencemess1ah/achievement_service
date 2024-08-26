@@ -6,6 +6,8 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -53,5 +55,32 @@ public class AchievementService {
                         .allMatch(filter -> filter.test(achievement, filters)))
                 .map(mapper::toAchievementDto)
                 .toList();
+    }
+
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    public void createProgressIfNecessary(long followeeId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(followeeId, achievementId);
+    }
+
+    public AchievementProgress getProgress(long followeeId, long achievementId) {
+        return achievementProgressRepository
+                .findByUserIdAndAchievementId(followeeId, achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Achievement progress by user ID '" + followeeId
+                        + "' and achievement ID '" + achievementId + "' not found"));
+    }
+
+    public AchievementProgress saveProgress(AchievementProgress progress) {
+        return achievementProgressRepository.save(progress);
+    }
+
+    public void giveAchievement(long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+        userAchievementRepository.save(userAchievement);
     }
 }
