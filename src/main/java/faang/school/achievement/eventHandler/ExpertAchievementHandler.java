@@ -1,18 +1,16 @@
 package faang.school.achievement.eventHandler;
 
 import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.model.CommentEvent;
 import faang.school.achievement.service.AchievementService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
+@Component
 public class ExpertAchievementHandler extends CommentEventHandler{
 
-    private final AchievementService achievementService;
-    private final AchievementCache achievementCache;
+    private static final String ACHIEVEMENT_NAME = "EXPERT";
 
-    @Override
-    public void handle(CommentEvent event) {
-
+    public ExpertAchievementHandler(AchievementCache achievementCache,
+                                    AchievementService achievementService) {
+        super(achievementCache, achievementService, ACHIEVEMENT_NAME);
     }
 }

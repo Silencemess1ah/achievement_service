@@ -1,25 +1,36 @@
 package faang.school.achievement.eventHandler;
 
+import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.CommentEvent;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import faang.school.achievement.service.AchievementService;
+import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-@RequiredArgsConstructor
-@Component
+@AllArgsConstructor
 public abstract class CommentEventHandler implements EventHandler<CommentEvent> {
 
-    @Bean
-    public ExecutorService commentEventTPool() {
-        return Executors.newCachedThreadPool();
+    private final AchievementCache achievementCache;
+    private final AchievementService achievementService;
+    private final String achievementName;
+
+    @Override
+    @Transactional
+    public void handle(CommentEvent event) {
+        Achievement achievement = achievementCache.get(achievementName);
+        long achievementId = achievement.getId();
+        long userId = event.getUserId();
+        if (!achievementService.hasAchievement(userId, achievementId)) {
+            achievementService.createProgressIfNecessary(userId, achievementId);
+            AchievementProgress progress = achievementService.getProgress(userId, achievementId);
+            progress.increment();
+            achievementService.updateProgress(progress);
+            if (progress.getCurrentPoints() >= achievement.getPoints()) {
+                achievementService.giveAchievement(userId, achievement);
+            }
+        }
     }
 
-    protected void handleCommentEvent(long userId, Achievement achievement) {
-
-    }
 
 }
