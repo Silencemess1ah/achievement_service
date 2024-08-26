@@ -18,7 +18,7 @@ public class HandsomeAchievementHandler extends AbstractEventHandler<ProfilePicE
     }
 
     @Override
-    public void handle(ProfilePicEvent profilePicEvent) {
-        processEvent(profilePicEvent);
+    public void handle(ProfilePicEvent event) {
+        processEvent(event);
     }
 }

@@ -20,7 +20,7 @@ public class OpinionLeaderAchievementHandler extends AbstractEventHandler<PostEv
     }
 
     @Override
-    public void handle(PostEvent postEvent) {
-        processEvent(postEvent);
+    public void handle(PostEvent event) {
+        processEvent(event);
     }
 }
