@@ -7,7 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.util.Pair;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,10 +30,19 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+    RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
         final RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory);
         template.setValueSerializer(RedisSerializer.string());
         return template;
+    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer(JedisConnectionFactory jedisConnectionFactory,
+                                                 List<Pair<MessageListenerAdapter, ChannelTopic>> listenerTopicPairs) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(jedisConnectionFactory);
+        listenerTopicPairs.forEach(pair -> container.addMessageListener(pair.getFirst(), pair.getSecond()));
+        return container;
     }
 }
