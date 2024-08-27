@@ -20,7 +20,7 @@ public abstract class CommentEventHandler implements EventHandler<CommentEvent> 
     public void handle(CommentEvent event) {
         Achievement achievement = achievementCache.get(achievementName);
         long achievementId = achievement.getId();
-        long userId = event.getUserId();
+        long userId = event.getAuthorId();
         if (!achievementService.hasAchievement(userId, achievementId)) {
             achievementService.createProgressIfNecessary(userId, achievementId);
             AchievementProgress progress = achievementService.getProgress(userId, achievementId);
