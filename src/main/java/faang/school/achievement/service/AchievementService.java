@@ -68,8 +68,8 @@ public class AchievementService {
     public AchievementProgress getProgress(long followeeId, long achievementId) {
         return achievementProgressRepository
                 .findByUserIdAndAchievementId(followeeId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement progress by user ID '" + followeeId
-                        + "' and achievement ID '" + achievementId + "' not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Achievement progress by user ID \"%d\" and achievement ID \"%d\" not found"
+                        .formatted(followeeId, achievementId)));
     }
 
     public AchievementProgress saveProgress(AchievementProgress progress) {

@@ -153,17 +153,26 @@ class AchievementServiceTest {
     }
 
     @Test
-    void testHasAchievement() {
+    void testHasAchievementWhenExists() {
         long userId = container.userId();
         long achievementId = container.achievementId();
 
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
         assertTrue(service.hasAchievement(userId, achievementId));
 
+        verify(userAchievementRepository, times(1))
+                .existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    void testHasAchievementWhenNotExists() {
+        long userId = container.userId();
+        long achievementId = container.achievementId();
+
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
         assertFalse(service.hasAchievement(userId, achievementId));
 
-        verify(userAchievementRepository, times(2))
+        verify(userAchievementRepository, times(1))
                 .existsByUserIdAndAchievementId(userId, achievementId);
     }
 
