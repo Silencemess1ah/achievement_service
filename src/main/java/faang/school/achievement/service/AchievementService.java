@@ -19,7 +19,6 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +41,7 @@ public class AchievementService {
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
 
-        if(filterDto != null) {
+        if (filterDto != null) {
             Stream<Achievement> achievementStream = achievements.stream();
             achievements = filters.stream()
                     .filter(filter -> filter.isApplicable(filterDto))
@@ -84,18 +83,26 @@ public class AchievementService {
     public boolean hasAchievement(long userId, Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
-@Transactional
-    public void createProgressIfNecessary(Long userId, Long achievementId){
-        achievementProgressRepository.createProgressIfNecessary(userId,achievementId);
+
+    @Transactional
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
         log.info("Created progress for user with ID = {}", userId);
     }
+
     @Transactional
     public AchievementProgress getProgress(Long userId, Long achievementId) {
         return achievementUtilService.getProgress(userId, achievementId);
     }
 
-    public void giveAchievement(long userId, Long achievementId){
+    @Transactional
+    public void giveAchievement(long userId, Long achievementId) {
         achievementUtilService.giveAchievement(achievementId, userId);
         log.info("Gave achievement with ID = {}", achievementId);
+    }
+
+    @Transactional
+    public void incrementCurrentPointsForUser(long progressId) {
+        achievementUtilService.incrementCurrentPointsForUser(progressId);
     }
 }

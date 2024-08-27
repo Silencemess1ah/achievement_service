@@ -57,6 +57,10 @@ public class AchievementUtilService {
         dto.setUpdatedAt(LocalDateTime.now());
         UserAchievement achievement = mapper.toEntity(dto);
         achievement.setAchievement(getAchievement(achievementId));
-        userAchievementRepository.save(mapper.toEntity(dto));
+        userAchievementRepository.save(achievement);
+    }
+
+    public void incrementCurrentPointsForUser(long progressId) {
+        achievementProgressRepository.incrementCurrentPointsForUser(progressId);
     }
 }

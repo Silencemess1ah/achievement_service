@@ -1,6 +1,7 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.events.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -21,6 +24,8 @@ public class ThousandCommentsHandlerTest {
     private AchievementCache cache;
     @Mock
     private AchievementService service;
+    @Mock
+    private UserContext userContext;
     @InjectMocks
     private ThousandCommentsHandler handler;
 
@@ -28,6 +33,7 @@ public class ThousandCommentsHandlerTest {
     public void testHandle(){
         long userId = 1L;
         long achievementId = 2L;
+        userContext.setUserId(1L);
         AchievementProgress progress = new AchievementProgress();
         progress.setUserId(userId);
         progress.setId(achievementId);
@@ -35,7 +41,7 @@ public class ThousandCommentsHandlerTest {
         achievement.setId(achievementId);
         achievement.setTitle("Title");
         achievement.setPoints(1);
-        CommentEvent event = new CommentEvent(1L,1L,1L,"Test");
+        CommentEvent event = new CommentEvent(1L,1L,1L, LocalDateTime.now());
         when(cache.get(any())).thenReturn(achievement);
         when(service.hasAchievement(userId, achievementId)).thenReturn(false);
         when(service.getProgress(userId,achievementId)).thenReturn(new AchievementProgress());

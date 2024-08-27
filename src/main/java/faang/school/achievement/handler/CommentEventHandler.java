@@ -1,6 +1,7 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.events.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
@@ -18,6 +19,7 @@ public abstract class CommentEventHandler implements EventHandler<CommentEvent> 
     protected final AchievementCache cache;
     protected final AchievementService service;
     protected final ExecutorService cachedExecutorService;
+    protected final UserContext userContext;
 
     public abstract Achievement getAchievement();
 
