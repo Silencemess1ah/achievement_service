@@ -34,7 +34,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+    RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
         final RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory);
         template.setValueSerializer(RedisSerializer.string());
@@ -42,13 +42,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> listenerChannelPair) {
+    RedisMessageListenerContainer redisContainer(JedisConnectionFactory jedisConnectionFactory,
+                                                 List<Pair<MessageListenerAdapter, ChannelTopic>> listenerTopicPairs) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(jedisConnectionFactory());
-        listenerChannelPair.forEach(pair -> {container.addMessageListener(pair.getFirst(), pair.getSecond());});
+        container.setConnectionFactory(jedisConnectionFactory);
+        listenerTopicPairs.forEach(pair -> container.addMessageListener(pair.getFirst(), pair.getSecond()));
         return container;
     }
-
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration() {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();

@@ -6,6 +6,7 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.service.util.AchievementUtilService;
+import faang.school.achievement.redis.AchievementPublisher;
 import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -37,6 +38,7 @@ public class AchievementService {
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> filters;
     private final AchievementUtilService achievementUtilService;
+    private final AchievementPublisher achievementPublisher;
 
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
@@ -78,6 +80,42 @@ public class AchievementService {
         }
         log.info("Found achievements in progress for user with ID = {}", userId);
         return achievementProgressMapper.toDtoList(achievementProgresses);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean userHasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new NotFoundException(String.format(
+                        "Achievement progress with user id=%d and achievement id=%d not found!",
+                        userId, achievementId
+                )));
+    }
+
+    @Transactional
+    public void saveProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
+    }
+
+    @Transactional
+    public void giveAchievement(long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+
+        userAchievement = userAchievementRepository.save(userAchievement);
+
+        achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
     }
 
     public boolean hasAchievement(long userId, Long achievementId) {

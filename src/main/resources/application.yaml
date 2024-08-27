@@ -25,10 +25,12 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         comment_achievement: post_comment_channel
-
-      cache:
-        title:
-          expert: EXPERT
+        profile_pic_channel: profile_pic_channel
+    cache:
+      title:
+        expert: EXPERT
+achievements:
+  handsome: HANDSOME
 
 
 server:
@@ -37,6 +39,7 @@ server:
 logging:
   level:
     root: info
+    faang.school.achievement: debug
 
 project-service:
   host: localhost

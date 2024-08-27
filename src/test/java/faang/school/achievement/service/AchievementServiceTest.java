@@ -7,6 +7,10 @@ import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementEvent;
+import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.redis.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -42,6 +46,8 @@ public class AchievementServiceTest {
     List<AchievementFilter> filters = List.of(filterMock);
     AchievementUtilService achievementUtilService = Mockito.mock(AchievementUtilService.class);
 
+    AchievementPublisher achievementPublisher = Mockito.mock(AchievementPublisher.class);
+
     AchievementService achievementService = new AchievementService(
             achievementRepository,
             userAchievementRepository,
@@ -50,7 +56,8 @@ public class AchievementServiceTest {
             userAchievementMapper,
             achievementProgressMapper,
             filters,
-            achievementUtilService);
+            achievementUtilService,
+            achievementPublisher);
 
     Achievement achievement = new Achievement();
     AchievementDto achievementDto = new AchievementDto();
@@ -142,35 +149,73 @@ public class AchievementServiceTest {
     }
 
     @Test
-    public void testHasAchievement() {
-        long userId = 1L;
-        long achievementId = 1L;
-        achievementService.hasAchievement(userId, achievementId);
-        verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
+    void testUserHasAchievement() {
+        achievementService.userHasAchievement(1, 1);
+
+        verify(userAchievementRepository, times(1)).existsByUserIdAndAchievementId(1, 1);
     }
 
     @Test
-    public void testCreateProgressIfNecessary(){
-        long userId = 1L;
-        long achievementId = 1L;
-        achievementService.createProgressIfNecessary(userId, achievementId);
-        verify(achievementProgressRepository).createProgressIfNecessary(userId, achievementId);
+    void testCreateProgressIfNecessary() {
+        achievementService.createProgressIfNecessary(1, 1);
+
+        verify(achievementProgressRepository, times(1))
+                .createProgressIfNecessary(1, 1);
     }
 
     @Test
-    public void testGetProgress(){
-        long userId = 1L;
-        long achievementId = 1L;
-        achievementService.getProgress(userId, achievementId);
-        verify(achievementUtilService).getProgress(userId, achievementId);
+    void testGetProgress_exist_returns() {
+        AchievementProgress progress = AchievementProgress.builder()
+                .id(123)
+                .build();
+
+        when(achievementProgressRepository.findByUserIdAndAchievementId(1, 1))
+                .thenReturn(Optional.of(progress));
+
+        AchievementProgress result = achievementService.getProgress(1, 1);
+
+        assertEquals(progress, result);
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(1, 1);
     }
 
     @Test
-    public void testGiveAchievement(){
-        long userId = 1L;
-        long achievementId = 1L;
-        achievementService.giveAchievement(userId, achievementId);
-        verify(achievementUtilService).giveAchievement(userId, achievementId);
+    void testGetProgress_notExist_throws() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(1, 1))
+                .thenReturn(Optional.empty());
+
+
+        assertThrows(NotFoundException.class, () -> achievementService.getProgress(1, 1));
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(1, 1);
+    }
+
+    @Test
+    void testSaveProgress() {
+        AchievementProgress progress = AchievementProgress.builder()
+                .id(123)
+                .build();
+
+        achievementService.saveProgress(progress);
+
+        verify(achievementProgressRepository, times(1))
+                .save(progress);
+    }
+
+    @Test
+    void testGiveAchievement() {
+        Achievement achievement1 = Achievement.builder()
+                .id(123)
+                .build();
+
+        when(userAchievementMapper.toEvent(any())).thenReturn(AchievementEvent.builder().build());
+
+        achievementService.giveAchievement(1, achievement1);
+
+        verify(userAchievementRepository, times(1))
+                .save(any(UserAchievement.class));
+        verify(achievementPublisher, times(1))
+                .publishMessage(any(AchievementEvent.class));
     }
 
 }

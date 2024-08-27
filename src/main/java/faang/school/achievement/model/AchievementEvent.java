@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AchievementEvent {
 
-    private Long id;
+    private Long id; // achievementId ?
 
     private String title;
 
     private Long userId;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // achievedAt ?
 }
