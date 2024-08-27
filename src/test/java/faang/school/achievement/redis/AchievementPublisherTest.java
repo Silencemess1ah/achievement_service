@@ -1,6 +1,7 @@
 package faang.school.achievement.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.messaging.publisher.AchievementPublisher;
 import faang.school.achievement.model.AchievementEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

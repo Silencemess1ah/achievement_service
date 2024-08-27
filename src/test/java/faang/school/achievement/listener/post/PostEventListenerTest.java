@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PostEventListenerTest {
     @Mock
-    private List<AbstractEventHandler> postEventHandlers;
+    private List<AbstractEventHandler> abstractEventHandlers;
     @Mock
     private AbstractEventHandler opinionLeaderAchievementHandler;
     @Mock
@@ -56,7 +56,7 @@ class PostEventListenerTest {
 
     @Test
     void testHandle() throws IOException {
-        when(postEventHandlers.iterator())
+        when(abstractEventHandlers.iterator())
                 .thenReturn(List.of(opinionLeaderAchievementHandler).iterator());
         when(message.getBody()).thenReturn(jsonString.getBytes());
         when(objectMapper.readValue(any(byte[].class), eq(PostEvent.class)))

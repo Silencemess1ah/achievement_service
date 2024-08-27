@@ -26,12 +26,15 @@ spring:
         follower: follower_channel
         post: post_channel
         profile_pic: profile_pic_channel
+        like: like_channel
+
 
 listener:
   type:
     achievements:
       opinion_leader: OPINION LEADER
       handsome: HANDSOME
+      all_love: ALL LOVE
 
 handler:
   executor_pool_parameters:
