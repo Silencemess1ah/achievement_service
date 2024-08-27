@@ -29,7 +29,7 @@ public class AchievementProgressService {
     }
 
     @Transactional
-    public AchievementProgress saveAchievementProgress(AchievementProgress achievementProgress){
-        return achievementProgressRepository.save(achievementProgress);
+    public void saveAchievementProgress(AchievementProgress achievementProgress){
+        achievementProgressRepository.save(achievementProgress);
     }
 }
