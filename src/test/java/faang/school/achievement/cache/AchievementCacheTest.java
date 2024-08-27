@@ -56,5 +56,7 @@ public class AchievementCacheTest {
         achievementCache.fill();
         Mockito.verify(achievementRepository, Mockito.times(1)).findAll();
         Assertions.assertEquals(2, achievementCache.getCache().size());
+        Assertions.assertTrue(achievementCache.getCache().contains(achievementOne));
+        Assertions.assertTrue(achievementCache.getCache().contains(achievementTwo));
     }
 }
