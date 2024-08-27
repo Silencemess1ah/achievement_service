@@ -28,6 +28,7 @@ spring:
 
 cache:
   achievement:
+    cacheKey: achievement_key
     update-schedule: '*/10 * * * * *'
 
 
