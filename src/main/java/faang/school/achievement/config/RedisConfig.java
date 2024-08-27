@@ -1,7 +1,6 @@
 package faang.school.achievement.config;
 
 import faang.school.achievement.redis.listener.PostEventListener;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

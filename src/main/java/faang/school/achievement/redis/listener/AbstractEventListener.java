@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
-public  abstract class AbstractEventListener<T> implements MessageListener {
+public abstract class AbstractEventListener<T> implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final List<EventHandler<T>> handlers;
