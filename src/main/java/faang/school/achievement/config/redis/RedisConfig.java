@@ -1,4 +1,4 @@
-package faang.school.achievement.config.context;
+package faang.school.achievement.config.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

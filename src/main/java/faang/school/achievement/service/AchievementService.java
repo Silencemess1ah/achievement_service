@@ -36,22 +36,12 @@ public class AchievementService {
         }
     }
 
-    @Transactional
-    public void createProgressIfNecessary(long userId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-    }
-
     @Transactional(readOnly = true)
     public long getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow(() -> {
             log.info("Could not get progress from achievement with id {}", achievementId);
             return new EntityNotFoundException("Achievement with id " + achievementId + " not found");
         }).getCurrentPoints();
-    }
-
-    @Transactional(readOnly = true)
-    public boolean hasAchievement(long userId, long achievementId) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     @Transactional

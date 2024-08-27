@@ -3,9 +3,9 @@ package faang.school.achievement.handler;
 import faang.school.achievement.dto.CommentEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ExpertAchievementHandler extends CommentEventHandler {
 
     public ExpertAchievementHandler(AchievementService achievementService) {
