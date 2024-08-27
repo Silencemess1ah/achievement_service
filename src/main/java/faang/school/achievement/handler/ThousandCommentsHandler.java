@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 @Slf4j
 public class ThousandCommentsHandler extends CommentEventHandler {
 
-    @Value("${spring.data.redis.cache.title.expert}")
+    @Value("${spring.data.cache.title.expert}")
     private String achievementTitle;
 
     public ThousandCommentsHandler(AchievementCache cache, AchievementService service, ExecutorService cachedExecutorService, UserContext userContext) {

@@ -17,7 +17,7 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -117,7 +117,7 @@ public class AchievementService {
 
         achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
     }
-
+// Не знаю чьи методы оставлять. Делают примерно одно и тоже...
     public boolean hasAchievement(long userId, Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
