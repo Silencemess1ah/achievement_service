@@ -16,16 +16,11 @@ public abstract class PostEventHandler implements EventHandler<PostEvent> {
     protected final AchievementCache achievementCacheService;
     protected final String achievementTitle;
 
-    protected abstract void createProgressIfNecessary(PostEvent event, long achievementId);
-
-    protected abstract void tryGiveAchievement(AchievementProgress achievementProgress, Achievement achievement);
-
-    protected abstract AchievementProgress incrementAchievementProgress(PostEvent event, long achievementId);
 
     @Override
     public void handleEvent(PostEvent event) {
 
-        Achievement achievementFromCache = getAchievementFromCache();
+        Achievement achievementFromCache = achievementCacheService.getAchievementByTitle(achievementTitle);
         Long userId = event.getAuthorId();
         long achievementId = achievementFromCache.getId();
 
@@ -34,14 +29,16 @@ public abstract class PostEventHandler implements EventHandler<PostEvent> {
             return;
         }
 
-        createProgressIfNecessary(event, achievementId);
+        achievementService.createProgressIfNecessary(event.getAuthorId(), achievementId);
 
-        AchievementProgress achievementProgress = incrementAchievementProgress(event, achievementId);
+        AchievementProgress achievementProgress = achievementService.incrementAchievementProgress(event.getAuthorId(), achievementId);
 
         tryGiveAchievement(achievementProgress, achievementFromCache);
     }
 
-    private Achievement getAchievementFromCache() {
-        return achievementCacheService.getAchievementByTitle(achievementTitle);
+    private void tryGiveAchievement(AchievementProgress achievementProgress, Achievement achievementFromCache) {
+        if (achievementProgress.getCurrentPoints() >= achievementFromCache.getPoints()) {
+            achievementService.giveAchievement(achievementFromCache, achievementProgress.getUserId());
+        }
     }
 }

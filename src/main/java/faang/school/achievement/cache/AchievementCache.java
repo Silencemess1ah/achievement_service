@@ -12,9 +12,11 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -72,9 +74,25 @@ public class AchievementCache {
         }
     }
 
-/*    @Scheduled(cron = "${cache.achievement.update-schedule}")
+    @Scheduled(cron = "${cache.achievement.update-schedule}")
     public void updateCache() {
         log.info("Starting update of Achievement cache");
-        this.initCache();
-    }*/
+        Set<String> currentCacheKeys = redisTemplate.opsForValue().getOperations().keys("*");
+        List<Achievement> updatedAchievements = getAllAchievements();
+
+        for (Achievement achievement : updatedAchievements) {
+            assert currentCacheKeys != null;
+
+            if (!currentCacheKeys.contains(achievement.getTitle())) {
+                try {
+                    String achievementJson = objectMapper.writeValueAsString(achievement);
+                    redisTemplate.opsForValue().set(achievement.getTitle(), achievementJson);
+                    log.debug("Updated cache for achievement {}", achievement.getTitle());
+                } catch (JsonProcessingException e) {
+                    log.error("Error serializing achievement to JSON", e);
+                    continue;
+                }
+            }
+        }
+    }
 }
