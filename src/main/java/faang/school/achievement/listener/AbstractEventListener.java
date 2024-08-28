@@ -14,9 +14,9 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public abstract class AbstractEventListener<T> {
     private static final String CODE_MESSAGE_ERROR = "message.error.readValueException";
-    protected final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     protected final List<EventHandler<T>> eventHandlers;
-    protected final MessageSource messageSource;
+    private final MessageSource messageSource;
 
     protected void handleEvent(Message message, Class<T> type, Consumer<T> consumer) {
         try {

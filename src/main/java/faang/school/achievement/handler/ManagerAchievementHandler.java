@@ -11,20 +11,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
-@Async
 public class ManagerAchievementHandler extends TeamEventHandler {
-    @Value("${data.achievements.titles.manager}")
-    private String achievementsTitle;
+    private final String achievementsTitle;
 
     public ManagerAchievementHandler(
             AchievementCache achievementCache,
             AchievementService achievementService,
             AchievementProgressRepository achievementProgressRepository,
-            AchievementMapper mapper) {
+            AchievementMapper mapper,
+            @Value("${data.achievements.titles.manager}") String achievementsTitle) {
         super(achievementCache, achievementService, achievementProgressRepository, mapper);
+        this.achievementsTitle = achievementsTitle;
     }
-
+    @Transactional
+    @Async
     public void process(TeamEvent teamEvent) {
         processTeamEvent(teamEvent, achievementsTitle);
     }

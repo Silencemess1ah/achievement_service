@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public abstract class TeamEventHandler implements EventHandler<TeamEvent> {
-    protected final AchievementCache achievementCache;
-    protected final AchievementService service;
-    protected final AchievementProgressRepository achievementProgressRepository;
-    protected final AchievementMapper mapper;
+    private final AchievementCache achievementCache;
+    private final AchievementService service;
+    private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementMapper mapper;
 
     protected void processTeamEvent(TeamEvent event, String title) {
         Long userId = event.getUserId();

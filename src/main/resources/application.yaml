@@ -26,8 +26,7 @@ spring:
         follower: follower_channel
         team: team_channel
 
-  messages:
-    basename: messages
+  messages.basename: messages
 
 server:
   port: 8085
@@ -40,7 +39,4 @@ project-service:
   host: localhost
   port: 8082
 
-data:
-  achievements:
-    titles:
-      manager: MANAGER
+data.achievements.titles.manager: MANAGER
