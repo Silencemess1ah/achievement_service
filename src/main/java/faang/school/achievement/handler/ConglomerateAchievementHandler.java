@@ -4,6 +4,7 @@ package faang.school.achievement.handler;
 import faang.school.achievement.service.AchievementProgressService;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.UserAchievementService;
+import faang.school.achievement.service.UserEventCounterService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,9 +15,11 @@ public class ConglomerateAchievementHandler extends TeamEventHandler {
 
     public ConglomerateAchievementHandler(AchievementService achievementService,
                                           AchievementProgressService achievementProgressService,
-                                          UserAchievementService userAchievementService) {
-        super(achievementService, achievementProgressService, userAchievementService);
+                                          UserAchievementService userAchievementService,
+                                          UserEventCounterService userEventCounterService) {
+        super(achievementService, achievementProgressService, userAchievementService, userEventCounterService);
     }
+
 
     @Override
     public String getAchievementName() {

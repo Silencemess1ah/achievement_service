@@ -13,12 +13,12 @@ public class UserAchievementService {
     private final UserAchievementRepository userAchievementRepository;
 
     @Transactional(readOnly = true)
-    public boolean hasAchievement(Long userId, Long achievementId){
+    public boolean hasAchievement(Long userId, Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     @Transactional
-    public void giveAchievement(Long userId, Achievement achievement){
+    public void giveAchievement(Long userId, Achievement achievement) {
         UserAchievement entity = UserAchievement.builder()
                 .userId(userId)
                 .achievement(achievement)

@@ -22,10 +22,13 @@ public abstract class RedisAbstractMessageListener<T> implements MessageListener
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            T t = objectMapper.readValue(message.getBody(),clazz);
+            T t = objectMapper.readValue(message.getBody(), clazz);
             abstractEventHandlers.forEach(handler -> handler.checkAchievement(t));
+            countEvent(t);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    public abstract void countEvent(T t);
 }
