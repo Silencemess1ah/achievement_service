@@ -24,4 +24,5 @@ public class AppConfig {
     public ExecutorService executorService() {
         return Executors.newFixedThreadPool(threads);
     }
+
 }
