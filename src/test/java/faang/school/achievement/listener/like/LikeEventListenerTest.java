@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.Message;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +44,7 @@ class LikeEventListenerTest {
 
     @BeforeEach
     void setUp() {
-        likeEvent = new LikeEvent(1, 1, 1);
+        likeEvent = new LikeEvent(UUID.randomUUID(),1, 1, 1);
     }
 
     @Test
