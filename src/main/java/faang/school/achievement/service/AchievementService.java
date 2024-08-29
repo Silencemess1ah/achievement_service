@@ -116,12 +116,9 @@ public class AchievementService {
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementByTitle(String title) {
-        Optional<Achievement> cachedAchievement = achievementCache.getAchievementByTitle(title);
-        Achievement achievement = cachedAchievement.orElseGet(() -> achievementRepository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement with title: %s not found."
-                        .formatted(title))));
+        Achievement cachedAchievement = achievementCache.getAchievementByTitle(title);
 
-        return achievementMapper.toDto(achievement);
+        return achievementMapper.toDto(cachedAchievement);
     }
 
     @Transactional(readOnly = true)
@@ -164,5 +161,11 @@ public class AchievementService {
                 .achievement(achievement)
                 .build());
     }
-}  
+
+    public AchievementProgress incrementAchievementProgress(long userId, long achievementId) {
+        AchievementProgress achievementProgress = getProgress(userId, achievementId);
+        achievementProgress.increment();
+        return achievementProgressRepository.save(achievementProgress);
+    }
+}
     

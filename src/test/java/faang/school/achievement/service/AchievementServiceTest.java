@@ -7,6 +7,7 @@ import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.exception.DataNotFoundException;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
@@ -23,13 +24,18 @@ import faang.school.achievement.publisher.achievement.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -48,8 +54,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayNameGeneration(value = DisplayNameGenerator.ReplaceUnderscores.class)
+
 class AchievementServiceTest {
 
+    public static final long USER_ID = 1L;
+    public static final long ACHIEVEMENT_ID = 1L;
+
+    @InjectMocks
     private AchievementService achievementService;
 
     @Mock
@@ -260,7 +272,7 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return AchievementDto when achievement is found in cache")
     void getAchievementByTitle_FoundInCache() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(achievement);
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
         AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);

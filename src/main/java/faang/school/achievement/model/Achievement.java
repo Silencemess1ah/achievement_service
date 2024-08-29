@@ -1,18 +1,22 @@
 package faang.school.achievement.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+
 @AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Builder
 @Entity
@@ -33,10 +37,12 @@ public class Achievement {
     @Enumerated(EnumType.ORDINAL)
     private Rarity rarity;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "achievement")
+    @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
     private List<UserAchievement> userAchievements;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "achievement")
+    @OneToMany(mappedBy = "achievement")
+    @JsonManagedReference
     private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)

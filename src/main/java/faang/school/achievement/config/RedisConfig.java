@@ -1,17 +1,12 @@
 package faang.school.achievement.config;
 
-import faang.school.achievement.listener.AlbumCreateEventListener;
-import faang.school.achievement.listener.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -25,7 +20,13 @@ public class RedisConfig {
     private int port;
 
     @Value("${spring.data.redis.channel.achievement}")
-    public String achievementChannelTopicName;
+    public String achievementChannel;
+
+    @Value("${spring.data.redis.channel.follower}")
+    private String followerChannel;
+
+    @Value("${spring.data.redis.channel.post}")
+    private String postChannel;
 
     @Value("${spring.data.redis.channel.profile-picture}")
     private String profilePicture;
@@ -59,7 +60,26 @@ public class RedisConfig {
 
     @Bean
     public ChannelTopic achievementChannel() {
-        return new ChannelTopic(achievementChannelTopicName);
+        return new ChannelTopic(achievementChannel);
+    }
+
+    @Bean("postChannelTopic")
+    public ChannelTopic postChannelTopic() {
+        return new ChannelTopic(postChannel);
+    }
+
+    @Bean
+    public MessageListenerAdapter messageListenerAdapter(PostEventListener postEventListener) {
+        return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter messageListenerAdapter) {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(jedisConnectionFactory());
+        redisMessageListenerContainer.addMessageListener(messageListenerAdapter, postChannelTopic());
+
+        return redisMessageListenerContainer;
     }
 
     @Bean

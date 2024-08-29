@@ -2,60 +2,97 @@ package faang.school.achievement.cache;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.exception.JsonParseException;
+import faang.school.achievement.exception.DataNotFoundException;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class AchievementCache {
+
     private final AchievementRepository achievementRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${spring.data.redis.cache.achievement-key}")
-    private String achievementKey;
+    private final SessionFactory sessionFactory;
 
     @PostConstruct
-    protected void init() {
-        List<Achievement> achievements = achievementRepository.findAll();
-        achievements.forEach(this::cacheAchievement);
+    public void initCache() {
+        List<Achievement> allAchievements = getAllAchievements();
+
+        allAchievements.forEach(achievement -> {
+            try {
+                String achievementJson = objectMapper.writeValueAsString(achievement);
+                redisTemplate.opsForValue().set(achievement.getTitle(), achievementJson);
+            } catch (Exception e) {
+                log.error("Error serializing achievement to JSON", e);
+            }
+        });
     }
 
-    public Optional<Achievement> getAchievementByTitle(String title) {
-        String json = (String) redisTemplate.opsForHash().get(achievementKey, title);
-        return json != null ? Optional.of(deserialize(json)) : Optional.empty();
+    public List<Achievement> getAllAchievements() {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
+        List<Achievement> achievements = session.createQuery("from Achievement", Achievement.class).getResultList();
+
+        for (Achievement achievement : achievements) {
+            Hibernate.initialize(achievement.getUserAchievements());
+            Hibernate.initialize(achievement.getProgresses());
+            Hibernate.initialize(achievement.getRarity());
+        }
+
+        session.getTransaction().commit();
+        session.close();
+
+        return achievements;
     }
 
-    private void cacheAchievement(Achievement achievement) {
-        String json = serialize(achievement);
-        redisTemplate.opsForHash().put(achievementKey, achievement.getTitle(), json);
-    }
+    public Achievement getAchievementByTitle(String title) {
+        String achievement = (String) redisTemplate.opsForValue().get(title);
 
-    private String serialize(Achievement achievement) {
-        return handleJsonConversion(() -> objectMapper.writeValueAsString(achievement));
-    }
-
-    private Achievement deserialize(String json) {
-        return handleJsonConversion(() -> objectMapper.readValue(json, Achievement.class));
-    }
-
-    private <T> T handleJsonConversion(Callable<T> callable) {
+        if (achievement == null) {
+            achievementRepository.findByTitle(title).orElseThrow(() -> new DataNotFoundException("Achievement not found " + title));
+        }
         try {
-            return callable.call();
+            return objectMapper.readValue(achievement, Achievement.class);
         } catch (JsonProcessingException e) {
-            throw new JsonParseException("Error processing JSON with error: %s".formatted(e.getMessage()));
-        } catch (Exception e) {
-            throw new RuntimeException(("Unexpected error during JSON conversion with error: %s".formatted(e.getMessage())), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Scheduled(cron = "${cache.achievement.update-schedule}")
+    public void updateCache() {
+        log.info("Starting update of Achievement cache");
+        Set<String> currentCacheKeys = redisTemplate.opsForValue().getOperations().keys("*");
+        List<Achievement> updatedAchievements = getAllAchievements();
+
+        for (Achievement achievement : updatedAchievements) {
+            assert currentCacheKeys != null;
+
+            if (!currentCacheKeys.contains(achievement.getTitle())) {
+                try {
+                    String achievementJson = objectMapper.writeValueAsString(achievement);
+                    redisTemplate.opsForValue().set(achievement.getTitle(), achievementJson);
+                    log.debug("Updated cache for achievement {}", achievement.getTitle());
+                } catch (JsonProcessingException e) {
+                    log.error("Error serializing achievement to JSON", e);
+                    continue;
+                }
+            }
         }
     }
 }
