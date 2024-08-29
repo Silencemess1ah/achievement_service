@@ -24,6 +24,9 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        team: team_channel
+
+  messages.basename: messages
 
 server:
   port: 8085
@@ -35,3 +38,5 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+data.achievements.titles.manager: MANAGER

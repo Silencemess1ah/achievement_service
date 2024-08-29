@@ -17,6 +17,8 @@ public interface AchievementMapper {
     @Mapping(source = "achievement", target = "achievement", qualifiedByName = "achievementMap")
     AchievementProgressDto toAchievementProgressDto(AchievementProgress achievementProgress);
 
+    AchievementProgress toAchievementProgress(AchievementProgressDto dto);
+
     @Named("achievementMap")
     default AchievementDto achievementToAchievementDto(Achievement achievement) {
         return toAchievementDto(achievement);
