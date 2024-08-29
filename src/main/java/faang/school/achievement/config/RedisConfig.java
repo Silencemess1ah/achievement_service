@@ -1,5 +1,6 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.listener.AlbumCreateEventListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.profile-picture}")
     private String profilePicture;
 
+    @Value("${spring.data.redis.channel.album}")
+    private String albumTopicName;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
@@ -49,6 +53,10 @@ public class RedisConfig {
         return new MessageListenerAdapter(profilePicEventListener);
     }
 
+    public MessageListenerAdapter albumCreateListener(AlbumCreateEventListener albumCreateEventListener) {
+        return new MessageListenerAdapter(albumCreateEventListener);
+    }
+
     @Bean
     public ChannelTopic achievementChannel() {
         return new ChannelTopic(achievementChannelTopicName);
@@ -60,12 +68,20 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic albumChannelTopic() {
+        return new ChannelTopic(albumTopicName);
+    }
+
+    @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
-                                                 ProfilePicEventListener profilePicEventListener) {
+                                                 ProfilePicEventListener profilePicEventListener,
+                                                 AlbumCreateEventListener albumCreateEventListener) {
         RedisMessageListenerContainer container
                 = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
+        container.addMessageListener(albumCreateListener(albumCreateEventListener), albumChannelTopic());
+
 
         return container;
     }

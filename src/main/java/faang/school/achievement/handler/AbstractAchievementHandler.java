@@ -17,10 +17,13 @@ public abstract class AbstractAchievementHandler {
     protected void processAchievementEvent(String achievementTitle, long userId) {
         Achievement achievement = getAchievement(achievementTitle);
         long achievementId = achievement.getId();
-        long incrementCurrentPoints = getIncrementCurrentPoints(userId, achievementId);
 
-        if (getAchievementPoints(userId, achievementId) == incrementCurrentPoints) {
-            giveAchievement(userId, achievementId);
+        if (!achievementService.hasAchievement(userId, achievementId)) {
+            long incrementCurrentPoints = getIncrementCurrentPoints(userId, achievementId);
+
+            if (getAchievementPoints(userId, achievementId) == incrementCurrentPoints) {
+                giveAchievement(userId, achievementId);
+            }
         }
     }
 
@@ -34,10 +37,7 @@ public abstract class AbstractAchievementHandler {
     }
 
     protected long getIncrementCurrentPoints(long userId, long achievementId) {
-        if (!achievementService.hasAchievement(userId, achievementId)) {
-            achievementService.createProgressIfNecessary(userId, achievementId);
-        }
-
+        achievementService.createProgressIfNecessary(userId, achievementId);
         AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
         achievementProgress.increment();
         achievementService.saveProgress(achievementProgress);

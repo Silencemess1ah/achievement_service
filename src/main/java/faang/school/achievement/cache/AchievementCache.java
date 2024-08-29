@@ -54,8 +54,7 @@ public class AchievementCache {
             return callable.call();
         } catch (JsonProcessingException e) {
             throw new JsonParseException("Error processing JSON with error: %s".formatted(e.getMessage()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(("Unexpected error during JSON conversion with error: %s".formatted(e.getMessage())), e);
         }
     }

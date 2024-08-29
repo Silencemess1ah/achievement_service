@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        album: album_channel
         profile-picture:  profile_pic_channel
       cache:
         achievement-key: achievements
@@ -31,6 +32,8 @@ spring:
   achievement-handler:
     handsome-achievement-handler:
       achievement-name: HANDSOME
+    librarian-achievement-handler:
+      achievement-name: LIBRARIAN
 
 server:
   port: 8085
