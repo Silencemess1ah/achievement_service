@@ -1,7 +1,7 @@
 package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.ProfilePicEvent;
+import faang.school.achievement.event.ProfilePicEvent;
 import faang.school.achievement.handler.EventHandler;
 import org.springframework.stereotype.Component;
 

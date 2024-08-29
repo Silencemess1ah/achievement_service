@@ -1,6 +1,5 @@
 package faang.school.achievement.config;
 
-import faang.school.achievement.listener.AlbumCreateEventListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,11 +60,6 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter albumCreateListener(AlbumCreateEventListener albumCreateEventListener) {
-        return new MessageListenerAdapter(albumCreateEventListener);
-    }
-
-    @Bean
     public MessageListenerAdapter postListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
@@ -93,13 +87,11 @@ public class RedisConfig {
     @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
-                                                 AlbumCreateEventListener albumCreateEventListener,
                                                  PostEventListener postEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
-        container.addMessageListener(albumCreateListener(albumCreateEventListener), albumChannelTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
 
         return container;
