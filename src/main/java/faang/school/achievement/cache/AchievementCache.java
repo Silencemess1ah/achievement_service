@@ -6,6 +6,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -21,12 +24,16 @@ public class AchievementCache {
     @PostConstruct
     public void initCache() {
         Iterable<Achievement> allAchievements = achievementRepository.findAll();
-        for (Achievement achievement: allAchievements) {
+        for (Achievement achievement : allAchievements) {
             achievements.putIfAbsent(achievement.getTitle(), achievement);
         }
     }
 
     public Achievement get(String title) {
         return achievements.get(title);
+    }
+
+    public List<Achievement> getAll() {
+        return new ArrayList<>(achievements.values());
     }
 }
