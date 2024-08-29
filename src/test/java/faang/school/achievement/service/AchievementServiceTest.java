@@ -58,9 +58,6 @@ import static org.mockito.Mockito.when;
 
 class AchievementServiceTest {
 
-    public static final long USER_ID = 1L;
-    public static final long ACHIEVEMENT_ID = 1L;
-
     @InjectMocks
     private AchievementService achievementService;
 
@@ -284,25 +281,9 @@ class AchievementServiceTest {
     }
 
     @Test
-    @DisplayName("Should return AchievementDto when achievement is found in repository after cache miss")
-    void getAchievementByTitle_NotFoundInCache() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
-        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);
-
-        verify(achievementCache).getAchievementByTitle(achievementTitle);
-        verify(achievementRepository).findByTitle(achievementTitle);
-        assertNotNull(result);
-        assertEquals(achievementDto, result);
-    }
-
-    @Test
     @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
     void getAchievementByTitle_NotFound() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
-        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(null);
 
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
     }

@@ -1,8 +1,11 @@
 package faang.school.achievement.handler;
 
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
 
-@Component
 public interface EventHandler<T> {
-    void handle(T event);
+
+    @Async("executorService")
+    void handleEvent(T event);
+
+    Class<T> getType();
 }

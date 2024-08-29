@@ -1,12 +1,18 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.listener.AlbumCreateEventListener;
+import faang.school.achievement.listener.ProfilePicEventListener;
+import faang.school.achievement.listener.PostEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -54,8 +60,14 @@ public class RedisConfig {
         return new MessageListenerAdapter(profilePicEventListener);
     }
 
+    @Bean
     public MessageListenerAdapter albumCreateListener(AlbumCreateEventListener albumCreateEventListener) {
         return new MessageListenerAdapter(albumCreateEventListener);
+    }
+
+    @Bean
+    public MessageListenerAdapter postListener(PostEventListener postEventListener) {
+        return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
@@ -69,25 +81,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public MessageListenerAdapter messageListenerAdapter(PostEventListener postEventListener) {
-        return new MessageListenerAdapter(postEventListener);
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter messageListenerAdapter) {
-        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
-        redisMessageListenerContainer.setConnectionFactory(jedisConnectionFactory());
-        redisMessageListenerContainer.addMessageListener(messageListenerAdapter, postChannelTopic());
-
-        return redisMessageListenerContainer;
-    }
-
-    @Bean
     public ChannelTopic profilePictureTopic() {
         return new ChannelTopic(profilePicture);
     }
 
-    @Bean
+    @Bean("albumChannelTopic")
     public ChannelTopic albumChannelTopic() {
         return new ChannelTopic(albumTopicName);
     }
@@ -95,13 +93,14 @@ public class RedisConfig {
     @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
-                                                 AlbumCreateEventListener albumCreateEventListener) {
-        RedisMessageListenerContainer container
-                = new RedisMessageListenerContainer();
+                                                 AlbumCreateEventListener albumCreateEventListener,
+                                                 PostEventListener postEventListener) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
+
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(albumCreateListener(albumCreateEventListener), albumChannelTopic());
-
+        container.addMessageListener(postListener(postEventListener), postChannelTopic());
 
         return container;
     }

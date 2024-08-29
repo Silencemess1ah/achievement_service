@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LibrarianAchievementHandler extends AbstractAchievementHandler implements EventHandler<AlbumCreatedEvent> {
 
-    @Value("${spring.achievement-handler.librarian-achievement-handler.achievement-name}")
+    @Value("${achievement-handler.librarian-achievement-handler.achievement-name}")
     private String achievementTitle;
 
     public LibrarianAchievementHandler(AchievementService achievementService, AchievementCache achievementCache) {
@@ -19,7 +19,12 @@ public class LibrarianAchievementHandler extends AbstractAchievementHandler impl
     }
 
     @Override
-    public void handle(AlbumCreatedEvent event) {
+    public void handleEvent(AlbumCreatedEvent event) {
         processAchievementEvent(achievementTitle, event.getUserId());
+    }
+
+    @Override
+    public Class<AlbumCreatedEvent> getType() {
+        return AlbumCreatedEvent.class;
     }
 }

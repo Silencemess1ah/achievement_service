@@ -2,11 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
-import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.dto.AchievementEventDto;
-import faang.school.achievement.dto.AchievementFilterDto;
-import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.dto.*;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -28,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -118,6 +113,9 @@ public class AchievementService {
     public AchievementDto getAchievementByTitle(String title) {
         Achievement cachedAchievement = achievementCache.getAchievementByTitle(title);
 
+        if (cachedAchievement == null) {
+            throw new EntityNotFoundException("Achievement with title '" + title + "' not found");
+        }
         return achievementMapper.toDto(cachedAchievement);
     }
 
@@ -160,12 +158,6 @@ public class AchievementService {
                 .userId(userId)
                 .achievement(achievement)
                 .build());
-    }
-
-    public AchievementProgress incrementAchievementProgress(long userId, long achievementId) {
-        AchievementProgress achievementProgress = getProgress(userId, achievementId);
-        achievementProgress.increment();
-        return achievementProgressRepository.save(achievementProgress);
     }
 }
     

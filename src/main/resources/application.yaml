@@ -34,21 +34,19 @@ cache:
   achievement:
     update-schedule: '0 */1 * * * *' # every minute
 
-
-  achievement-handler:
-    handsome-achievement-handler:
-      achievement-name: HANDSOME
-    librarian-achievement-handler:
-      achievement-name: LIBRARIAN
+achievement-handler:
+  handsome-achievement-handler:
+    achievement-name: HANDSOME
+  librarian-achievement-handler:
+    achievement-name: LIBRARIAN
+  writer-achievement-handler:
+    achievement-name: WRITER
 
 server:
   port: 8085
 
 executors:
   thread-pool-size: 10
-
-achievements:
-  writer: WRITER
 
 logging:
   level:

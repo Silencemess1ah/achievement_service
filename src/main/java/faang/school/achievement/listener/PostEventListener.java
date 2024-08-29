@@ -1,8 +1,8 @@
-package faang.school.achievement.redis.listener;
+package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.model.event.PostEvent;
-import faang.school.achievement.redis.handler.EventHandler;
+import faang.school.achievement.event.PostEvent;
+import faang.school.achievement.handler.EventHandler;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
