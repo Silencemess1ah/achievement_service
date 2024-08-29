@@ -7,7 +7,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,7 +33,7 @@ public class AchievementCache {
         return achievements.get(title);
     }
 
-    public Collection<Achievement> getAll() {
-        return achievements.values();
+    public List<Achievement> getAll() {
+        return new ArrayList<>(achievements.values());
     }
 }
