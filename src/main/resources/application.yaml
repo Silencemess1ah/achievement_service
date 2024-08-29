@@ -24,11 +24,21 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-      cache:
-        achievement-key: achievements
+        post: post_channel
+
+cache:
+  achievement:
+    update-schedule: '0 */1 * * * *' # every minute
+
 
 server:
   port: 8085
+
+executors:
+  thread-pool-size: 10
+
+achievements:
+  writer: WRITER
 
 logging:
   level:

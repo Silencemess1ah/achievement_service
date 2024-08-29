@@ -7,6 +7,7 @@ import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.exception.DataNotFoundException;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -116,12 +116,38 @@ public class AchievementService {
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementByTitle(String title) {
-        Optional<Achievement> cachedAchievement = achievementCache.getAchievementByTitle(title);
-        Achievement achievement = cachedAchievement.orElseGet(() -> achievementRepository.findByTitle(title)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement with title: %s not found."
-                        .formatted(title))));
+        Achievement cachedAchievement = achievementCache.getAchievementByTitle(title);
 
-        return achievementMapper.toDto(achievement);
+        return achievementMapper.toDto(cachedAchievement);
     }
-}  
-    
+
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new DataNotFoundException("Achievement progress not found"));
+    }
+
+    @Transactional
+    public void giveAchievement(Achievement achievement, long userId) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+
+        userAchievementRepository.save(userAchievement);
+    }
+
+    public AchievementProgress incrementAchievementProgress(long userId, long achievementId) {
+        AchievementProgress achievementProgress = getProgress(userId, achievementId);
+        achievementProgress.increment();
+        return achievementProgressRepository.save(achievementProgress);
+    }
+}
