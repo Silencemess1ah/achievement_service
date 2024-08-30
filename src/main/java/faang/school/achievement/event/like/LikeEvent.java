@@ -18,7 +18,7 @@ public class LikeEvent implements Event {
     private long authorId;
     private long postId;
     private long likeId;
-    private LocalDateTime localDateTime;
+    private LocalDateTime timeStamp;
 
     @Override
     public long getUserId() {
