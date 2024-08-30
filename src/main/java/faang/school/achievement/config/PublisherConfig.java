@@ -15,8 +15,8 @@ public class PublisherConfig {
     public AchievementPublisher achievementPublisher(
         ObjectMapper objectMapper,
         RedisTemplate<String, Object> redisTemplate,
-        ChannelTopic achievementTopic
+        ChannelTopic achievementChannel
     ) {
-        return new RedisAchievementPublisher(objectMapper, redisTemplate, achievementTopic);
+        return new RedisAchievementPublisher(objectMapper, redisTemplate, achievementChannel);
     }
 }

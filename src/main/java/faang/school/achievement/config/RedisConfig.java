@@ -1,5 +1,6 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.redis.listener.PostEventListener;
 import faang.school.achievement.listener.CommentEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,10 +24,16 @@ public class RedisConfig {
     private int port;
 
     @Value("${spring.data.redis.channel.achievement}")
-    public String achievementChannelTopicName;
+    public String achievementChannel;
 
-    @Value("${spring.data.redis.channel.achievement}")
-    private String achievement;
+    @Value("${spring.data.redis.channel.follower}")
+    private String followerChannel;
+
+    @Value("${spring.data.redis.channel.post}")
+    private String postChannel;
+
+//    @Value("${spring.data.redis.channel.achievement}")
+//    private String achievement;
 
     @Value("${spring.data.redis.channel.comment_achievement}")
     private String commentChannel;
@@ -46,31 +53,50 @@ public class RedisConfig {
         return template;
     }
 
-    @Bean
-    MessageListenerAdapter commentListener(CommentEventListener commentEventListener) {
-        return new MessageListenerAdapter(commentEventListener);
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentListener) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(commentListener, commentChannel());
-        return container;
-    }
+//    @Bean
+//    MessageListenerAdapter commentListener(CommentEventListener commentEventListener) {
+//        return new MessageListenerAdapter(commentEventListener);
+//    }
+//
+//    @Bean
+//    public RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentListener) {
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(jedisConnectionFactory());
+//        container.addMessageListener(commentListener, commentChannel());
+//        return container;
+//    }
 
     @Bean
     public ChannelTopic achievementChannel() {
-        return new ChannelTopic(achievementChannelTopicName);
+        return new ChannelTopic(achievementChannel);
+    }
+
+    @Bean("postChannelTopic")
+    public ChannelTopic postChannelTopic() {
+        return new ChannelTopic(postChannel);
     }
 
     @Bean
-    public ChannelTopic achievementTopic() {
-        return new ChannelTopic(achievement);
+    public MessageListenerAdapter messageListenerAdapter(PostEventListener postEventListener) {
+        return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
-    public ChannelTopic commentChannel() {
-        return new ChannelTopic(commentChannel);
+    public RedisMessageListenerContainer redisMessageListenerContainer(MessageListenerAdapter messageListenerAdapter) {
+        RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
+        redisMessageListenerContainer.setConnectionFactory(jedisConnectionFactory());
+        redisMessageListenerContainer.addMessageListener(messageListenerAdapter, postChannelTopic());
+
+        return redisMessageListenerContainer;
     }
+//
+//    @Bean
+//    public ChannelTopic achievementTopic() {
+//        return new ChannelTopic(achievement);
+//    }
+//
+//    @Bean
+//    public ChannelTopic commentChannel() {
+//        return new ChannelTopic(commentChannel);
+//    }
 }
