@@ -25,9 +25,12 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         profile_pic_channel: profile_pic_channel
+        mentorship_channel: mentorship_offered_channel
+
 
 achievements:
   handsome: HANDSOME
+  sensei: SENSEI
 
 
 server:
