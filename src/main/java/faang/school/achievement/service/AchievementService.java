@@ -2,12 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
-import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.dto.AchievementEventDto;
-import faang.school.achievement.dto.AchievementFilterDto;
-import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.dto.UserAchievementDto;
-import faang.school.achievement.exception.DataNotFoundException;
+import faang.school.achievement.dto.*;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -118,9 +113,13 @@ public class AchievementService {
     public AchievementDto getAchievementByTitle(String title) {
         Achievement cachedAchievement = achievementCache.getAchievementByTitle(title);
 
+        if (cachedAchievement == null) {
+            throw new EntityNotFoundException("Achievement with title '" + title + "' not found");
+        }
         return achievementMapper.toDto(cachedAchievement);
     }
 
+    @Transactional(readOnly = true)
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
@@ -130,24 +129,35 @@ public class AchievementService {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
+    @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new DataNotFoundException("Achievement progress not found"));
+                .orElseThrow(() -> {
+                    String errorMessage = String.format(
+                            "AchievementProgress with ID: %d, user ID: %d not found.", achievementId, userId);
+                    log.error(errorMessage);
+                    return new EntityNotFoundException(errorMessage);
+                });
     }
 
     @Transactional
-    public void giveAchievement(Achievement achievement, long userId) {
-        UserAchievement userAchievement = UserAchievement.builder()
-                .achievement(achievement)
-                .userId(userId)
-                .build();
-
-        userAchievementRepository.save(userAchievement);
+    public void saveProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
     }
 
-    public AchievementProgress incrementAchievementProgress(long userId, long achievementId) {
-        AchievementProgress achievementProgress = getProgress(userId, achievementId);
-        achievementProgress.increment();
-        return achievementProgressRepository.save(achievementProgress);
+    @Transactional
+    public void giveAchievement(long userId, long achievementId) {
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> {
+                    log.error("Achievement with ID: %d, not found.", achievementId);
+                    return new EntityNotFoundException(
+                            "Achievement with ID: %d not found.".formatted(achievementId));
+                });
+
+        userAchievementRepository.save(UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build());
     }
 }
+    
