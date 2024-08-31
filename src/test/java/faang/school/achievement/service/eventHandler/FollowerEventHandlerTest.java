@@ -28,7 +28,6 @@ class FollowerEventHandlerTest {
     protected AchievementService achievementService;
     @Captor
     private ArgumentCaptor<AchievementProgress> progressCaptor;
-
     private FollowerEventHandler followerEventHandler;
     private long followeeId, achievementId;
     private Achievement achievement;
@@ -36,19 +35,13 @@ class FollowerEventHandlerTest {
     private AchievementProgress progress;
     private FollowerEvent event;
 
-    private static class TestImplementation extends FollowerEventHandler {
-        public TestImplementation(AchievementCache cache, AchievementService achievementService) {
-            super(cache, achievementService);
-        }
-
-        @Override
-        public void handle(FollowerEvent event) {
-        }
-    }
-
     @BeforeEach
     void setUp() {
-        followerEventHandler = new TestImplementation(achievementCache, achievementService);
+        followerEventHandler = new FollowerEventHandler(achievementCache, achievementService) {
+            @Override
+            public void handle(FollowerEvent event) {
+            }
+        };
         followeeId = 10L;
         achievementId = 1L;
         achievementTitle = "title";

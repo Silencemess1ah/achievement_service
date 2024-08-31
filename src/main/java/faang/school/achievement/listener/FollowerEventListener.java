@@ -16,8 +16,8 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class FollowerEventListener implements MessageListener {
-    private ObjectMapper objectMapper;
-    private List<FollowerEventHandler> followerEventHandlers;
+    private final ObjectMapper objectMapper;
+    private final List<FollowerEventHandler> followerEventHandlers;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
