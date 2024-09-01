@@ -7,6 +7,7 @@ import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.exception.DataNotFoundException;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
@@ -23,12 +24,18 @@ import faang.school.achievement.publisher.achievement.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -47,8 +54,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayNameGeneration(value = DisplayNameGenerator.ReplaceUnderscores.class)
+
 class AchievementServiceTest {
 
+    @InjectMocks
     private AchievementService achievementService;
 
     @Mock
@@ -259,7 +269,7 @@ class AchievementServiceTest {
     @Test
     @DisplayName("Should return AchievementDto when achievement is found in cache")
     void getAchievementByTitle_FoundInCache() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(achievement);
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
         AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);
@@ -271,26 +281,81 @@ class AchievementServiceTest {
     }
 
     @Test
-    @DisplayName("Should return AchievementDto when achievement is found in repository after cache miss")
-    void getAchievementByTitle_NotFoundInCache() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
-        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.of(achievement));
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        AchievementDto result = achievementService.getAchievementByTitle(achievementTitle);
-
-        verify(achievementCache).getAchievementByTitle(achievementTitle);
-        verify(achievementRepository).findByTitle(achievementTitle);
-        assertNotNull(result);
-        assertEquals(achievementDto, result);
-    }
-
-    @Test
     @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
     void getAchievementByTitle_NotFound() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(Optional.empty());
-        when(achievementRepository.findByTitle(achievementTitle)).thenReturn(Optional.empty());
+        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(null);
 
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
     }
+
+    @Test
+    void testHasAchievement() {
+        achievementService.hasAchievement(1, 1);
+
+        verify(userAchievementRepository, times(1))
+                .existsByUserIdAndAchievementId(1, 1);
+    }
+
+    @Test
+    void testCreateProgressIfNecessary() {
+        achievementService.createProgressIfNecessary(1, 1);
+
+        verify(achievementProgressRepository, times(1))
+                .createProgressIfNecessary(1, 1);
+    }
+
+    @Test
+    void testGetProgressAchievementProgressNotFound() {
+        long userId = 1L;
+        long achievementId = 1L;
+
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
+                .thenReturn(Optional.empty());
+
+        EntityNotFoundException thrown = assertThrows(
+                EntityNotFoundException.class,
+                () -> achievementService.getProgress(userId, achievementId)
+        );
+
+        assertEquals("AchievementProgress with ID: 1, user ID: 1 not found.", thrown.getMessage());
+    }
+
+    @Test
+    void testGetProgressSuccess() {
+        long userId = 1L;
+        long achievementId = 1L;
+
+        AchievementProgress expectedProgress = AchievementProgress.builder()
+                .achievement(achievement)
+                .userId(1)
+                .build();
+
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
+                .thenReturn(Optional.of(expectedProgress));
+
+        AchievementProgress actualProgress = achievementService.getProgress(userId, achievementId);
+
+        assertNotNull(actualProgress);
+        assertEquals(expectedProgress, actualProgress);
+
+        verify(achievementProgressRepository, times(1)).findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    void testSaveProgress() {
+        AchievementProgress achievementProgress = new AchievementProgress();
+        achievementService.saveProgress(achievementProgress);
+
+        verify(achievementProgressRepository, times(1)).save(achievementProgress);
+    }
+
+    @Test
+    void testGiveAchievement() {
+        when(achievementRepository.findById(1L)).thenReturn(Optional.ofNullable(achievement));
+        achievementService.giveAchievement(1, 1);
+
+        ArgumentCaptor<UserAchievement> captor = ArgumentCaptor.forClass(UserAchievement.class);
+        verify(userAchievementRepository, times(1)).save(captor.capture());
+    }
+
 }
