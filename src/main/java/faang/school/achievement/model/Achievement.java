@@ -36,8 +36,8 @@ public class Achievement {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "achievement")
     private List<UserAchievement> userAchievements;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "achievement")
-    private List<AchievementProgress> progresses;
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "achievement")
+//    private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
     private long points;

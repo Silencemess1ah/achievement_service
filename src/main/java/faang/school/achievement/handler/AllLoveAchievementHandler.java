@@ -38,13 +38,15 @@ public class AllLoveAchievementHandler {
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
 
+    @Transactional
     public void handler(LikeEvent likeEvent) {
-        long userId = likeEvent.getCommentAuthorId();
+        long userId = likeEvent.getPostAuthorId();
         long achievementId;
         Achievement allLoveAchievement = achievementCache.getAchievementByTitle(ACHIEVEMENT_TITLE).get();
         achievementId = allLoveAchievement.getId();
 
-        if (hasAchievement(likeEvent.getCommentAuthorId(), allLoveAchievement.getId())) {
+        if (likeEvent.getPostAuthorId() != null &&
+                hasAchievement(likeEvent.getPostAuthorId(), allLoveAchievement.getId())) {
             log.info("user with id: " + userId + " already has achievement: " + ACHIEVEMENT_TITLE);
             return;
         }

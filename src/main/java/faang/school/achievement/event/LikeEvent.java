@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LikeEvent {
-    private long commentAuthorId;
-    private long postId;
-    private long likeId;
+    private Long postAuthorId;
+    private Long postId;
+    private Long likeId;
 }
