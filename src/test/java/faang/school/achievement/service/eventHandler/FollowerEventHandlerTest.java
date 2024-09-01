@@ -1,6 +1,9 @@
 package faang.school.achievement.service.eventHandler;
 
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.FollowerEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementCache;
@@ -23,21 +26,25 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FollowerEventHandlerTest {
     @Mock
-    protected AchievementCache achievementCache;
+    private AchievementCache achievementCache;
     @Mock
-    protected AchievementService achievementService;
+    private AchievementService achievementService;
+    @Mock
+    private AchievementMapper achievementMapper;
     @Captor
     private ArgumentCaptor<AchievementProgress> progressCaptor;
     private FollowerEventHandler followerEventHandler;
     private long followeeId, achievementId;
     private Achievement achievement;
+    private AchievementDto achievementDto;
     private String achievementTitle;
     private AchievementProgress progress;
+    private AchievementProgressDto progressDto;
     private FollowerEvent event;
 
     @BeforeEach
     void setUp() {
-        followerEventHandler = new FollowerEventHandler(achievementCache, achievementService) {
+        followerEventHandler = new FollowerEventHandler(achievementCache, achievementService, achievementMapper) {
             @Override
             public void handle(FollowerEvent event) {
             }
@@ -50,9 +57,18 @@ class FollowerEventHandlerTest {
                 .title(achievementTitle)
                 .points(3)
                 .build();
+        achievementDto = AchievementDto.builder()
+                .id(achievement.getId())
+                .title(achievement.getTitle())
+                .points(achievement.getPoints())
+                .build();
         progress = AchievementProgress.builder()
                 .currentPoints(1)
                 .achievement(achievement)
+                .build();
+        progressDto = AchievementProgressDto.builder()
+                .currentPoints(progress.getCurrentPoints())
+                .achievement(achievementDto)
                 .build();
         event = FollowerEvent.builder()
                 .followeeId(followeeId)
@@ -63,7 +79,8 @@ class FollowerEventHandlerTest {
     void testHandleWhenGainingProgress() {
         when(achievementCache.get(achievementTitle)).thenReturn(achievement);
         when(achievementService.hasAchievement(followeeId, achievementId)).thenReturn(false);
-        when(achievementService.getProgress(followeeId, achievementId)).thenReturn(progress);
+        when(achievementService.getProgress(followeeId, achievementId)).thenReturn(progressDto);
+        when(achievementMapper.toAchievementProgress(progressDto)).thenReturn(progress);
         long expectedPoints = progress.getCurrentPoints() + 1;
 
         followerEventHandler.process(event, achievementTitle);
@@ -79,7 +96,8 @@ class FollowerEventHandlerTest {
     void testHandleWhenAchievementReceiving() {
         when(achievementCache.get(achievementTitle)).thenReturn(achievement);
         when(achievementService.hasAchievement(followeeId, achievementId)).thenReturn(false);
-        when(achievementService.getProgress(followeeId, achievementId)).thenReturn(progress);
+        when(achievementService.getProgress(followeeId, achievementId)).thenReturn(progressDto);
+        when(achievementMapper.toAchievementProgress(progressDto)).thenReturn(progress);
         progress.setCurrentPoints(achievement.getPoints() - 1);
         long expectedPoints = progress.getCurrentPoints() + 1;
 
