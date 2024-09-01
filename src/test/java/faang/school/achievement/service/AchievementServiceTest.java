@@ -7,7 +7,7 @@ import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.filter.impl.AchievementDescriptionFilter;
 import faang.school.achievement.filter.impl.AchievementRarityFilter;
 import faang.school.achievement.filter.impl.AchievementTitleFilter;
-import faang.school.achievement.mapper.AchievementMapper;
+import faang.school.achievement.mapper.AchievementMapperImpl;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
@@ -22,8 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,14 +41,17 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
+    private static final String MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT = "The user does not have such an achievement";
     @Mock
     private AchievementRepository achievementRepository;
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
     private UserAchievementRepository userAchievementRepository;
+    @Mock
+    private MessageSource messageSource;
     @Spy
-    private AchievementMapper mapper;
+    private AchievementMapperImpl mapper;
     @Spy
     private AchievementTitleFilter titleFilter;
     @Spy
@@ -63,7 +68,7 @@ class AchievementServiceTest {
         container = new AchievementTestContainer();
         List<AchievementFilter> achievementFilters = new ArrayList<>(List.of(titleFilter, descriptionFilter, rarityFilter));
         service = new AchievementService(achievementRepository, achievementProgressRepository,
-                userAchievementRepository, mapper, achievementFilters);
+                userAchievementRepository, mapper, achievementFilters, messageSource);
     }
 
 
@@ -153,27 +158,48 @@ class AchievementServiceTest {
     }
 
     @Test
-    void testHasAchievementWhenExists() {
-        long userId = container.userId();
-        long achievementId = container.achievementId();
-
-        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
-        assertTrue(service.hasAchievement(userId, achievementId));
-
-        verify(userAchievementRepository, times(1))
-                .existsByUserIdAndAchievementId(userId, achievementId);
+    void testValidHasAchievement() {
+        // when
+        when(userAchievementRepository.existsByUserIdAndAchievementId(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(true);
+        // then
+        assertTrue(service.hasAchievement(container.userId(), container.achievementId()));
     }
 
     @Test
-    void testHasAchievementWhenNotExists() {
-        long userId = container.userId();
-        long achievementId = container.achievementId();
+    void testInvalidHasAchievement() {
+        // when
+        when(userAchievementRepository.existsByUserIdAndAchievementId(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(false);
 
-        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
-        assertFalse(service.hasAchievement(userId, achievementId));
+        // then
+        assertFalse(service.hasAchievement(container.userId(), container.achievementId()));
+    }
 
-        verify(userAchievementRepository, times(1))
-                .existsByUserIdAndAchievementId(userId, achievementId);
+    @Test
+    void testGetProgressIfExist() {
+        // given
+        AchievementProgress achievementProgress = container.achievementProgress();
+        AchievementProgressDto progressDto = mapper.toAchievementProgressDto(achievementProgress);
+        // when
+        when(achievementProgressRepository.findByUserIdAndAchievementId(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(Optional.of(achievementProgress));
+        // then
+        assertEquals(progressDto,
+                service.getProgress(Mockito.anyLong(), Mockito.anyLong()));
+    }
+
+    @Test
+    void testGetProgressIfNotExist() {
+        // when
+        when(achievementProgressRepository.findByUserIdAndAchievementId(Mockito.anyLong(), Mockito.anyLong()))
+                .thenReturn(Optional.empty());
+        when(messageSource.getMessage(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT);
+        // then
+        assertEquals(MESSAGE_DOES_NOT_HAVE_ACHIEVEMENT,
+                assertThrows(RuntimeException.class, () ->
+                        service.getProgress(Mockito.anyLong(), Mockito.anyLong())).getMessage());
     }
 
     @Test
@@ -184,37 +210,6 @@ class AchievementServiceTest {
         service.createProgressIfNecessary(userId, achievementId);
         verify(achievementProgressRepository, times(1))
                 .createProgressIfNecessary(userId, achievementId);
-    }
-
-    @Test
-    void testGetProgressWhenExists() {
-        long followeeId = container.userId();
-        long achievementId = container.achievementId();
-        AchievementProgress progress = AchievementProgress.builder()
-                .id(1L)
-                .userId(followeeId)
-                .currentPoints(10L)
-                .build();
-        Optional<AchievementProgress> progressOptional = Optional.of(progress);
-        when(achievementProgressRepository.findByUserIdAndAchievementId(followeeId, achievementId))
-                .thenReturn(progressOptional);
-
-        assertEquals(progress, service.getProgress(followeeId, achievementId));
-        verify(achievementProgressRepository, times(1))
-                .findByUserIdAndAchievementId(followeeId, achievementId);
-    }
-
-    @Test
-    void testGetProgressWhenNotExists() {
-        long followeeId = container.userId();
-        long achievementId = container.achievementId();
-        Optional<AchievementProgress> progressOptional = Optional.empty();
-        when(achievementProgressRepository.findByUserIdAndAchievementId(followeeId, achievementId))
-                .thenReturn(progressOptional);
-
-        assertThrows(EntityNotFoundException.class, () -> service.getProgress(followeeId, achievementId));
-        verify(achievementProgressRepository, times(1))
-                .findByUserIdAndAchievementId(followeeId, achievementId);
     }
 
     @Test

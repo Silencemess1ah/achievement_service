@@ -13,19 +13,24 @@ import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
+    private static final String CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT = "message.error.doesNotHaveAchievement";
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementMapper mapper;
     private final List<AchievementFilter> achievementFilters;
+    private final MessageSource messageSource;
 
     public AchievementDto getAchievement(Long achievementId) {
         Achievement achievement = achievementRepository
@@ -57,30 +62,35 @@ public class AchievementService {
                 .toList();
     }
 
-    public boolean hasAchievement(long userId, long achievementId) {
+    public boolean hasAchievement(Long userId, Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    public void createProgressIfNecessary(long followeeId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(followeeId, achievementId);
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-    public AchievementProgress getProgress(long followeeId, long achievementId) {
-        return achievementProgressRepository
-                .findByUserIdAndAchievementId(followeeId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement progress by user ID \"%d\" and achievement ID \"%d\" not found"
-                        .formatted(followeeId, achievementId)));
+    public AchievementProgressDto getProgress(Long userId, Long achievementId) {
+        return mapper.toAchievementProgressDto(
+                achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                        .orElseThrow(() -> new RuntimeException(messageSource
+                                .getMessage(
+                                        CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT,
+                                        null,
+                                        LocaleContextHolder.getLocale()))));
+    }
+
+    public void giveAchievement(Long userId, Achievement achievement) {
+        userAchievementRepository.save(
+                UserAchievement.builder()
+                        .userId(userId)
+                        .achievement(achievement)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
     }
 
     public AchievementProgress saveProgress(AchievementProgress progress) {
         return achievementProgressRepository.save(progress);
-    }
-
-    public void giveAchievement(long userId, Achievement achievement) {
-        UserAchievement userAchievement = UserAchievement.builder()
-                .achievement(achievement)
-                .userId(userId)
-                .build();
-        userAchievementRepository.save(userAchievement);
     }
 }
