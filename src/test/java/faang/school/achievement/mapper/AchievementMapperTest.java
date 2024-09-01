@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AchievementMapperTest {
-    private AchievementMapper mapper = new AchievementMapperImpl();
+    private final AchievementMapper mapper = new AchievementMapperImpl();
     private AchievementTestContainer container;
 
     @BeforeEach
@@ -48,6 +48,8 @@ public class AchievementMapperTest {
                 .userId(entity.getUserId())
                 .currentPoints(entity.getCurrentPoints())
                 .version(entity.getVersion())
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 .build();
 
         // when
@@ -55,5 +57,24 @@ public class AchievementMapperTest {
 
         // then
         assertEquals(dtoExp, dtoActual);
+    }
+
+    @Test
+    void testToAchievementProgress() {
+        // given
+        AchievementProgressDto dto = container.achievementProgresDto();
+        dto.setAchievement(null);
+        AchievementProgress achievementProgress = AchievementProgress.builder()
+                .id(dto.getId())
+                .achievement(null)
+                .userId(dto.getUserId())
+                .currentPoints(dto.getCurrentPoints())
+                .build();
+
+        // when
+        AchievementProgress dtoActual = mapper.toAchievementProgress(dto);
+
+        // then
+        assertEquals(achievementProgress, dtoActual);
     }
 }

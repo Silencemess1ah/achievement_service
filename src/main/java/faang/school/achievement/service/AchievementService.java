@@ -6,7 +6,6 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -14,14 +13,16 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 public class AchievementService {
+    private static final String CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT = "message.error.doesNotHaveAchievement";
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
@@ -67,29 +68,23 @@ public class AchievementService {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
+    public AchievementProgressDto getProgress(Long userId, Long achievementId) {
+        return mapper.toAchievementProgressDto(
+                achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                        .orElseThrow(() -> new RuntimeException(messageSource
+                                .getMessage(
+                                        CODE_MESSAGE_NOT_HAVE_ACHIEVEMENT,
+                                        null,
+                                        LocaleContextHolder.getLocale()))));
+    }
+
     public void giveAchievement(Long userId, Achievement achievement) {
-        UserAchievement userAchievement = UserAchievement.builder()
-                .userId(userId)
-                .achievement(achievement)
-                .build();
-        userAchievementRepository.save(userAchievement);
-    }
-
-    public void deleteAchievementProgress(Long achievementProgressId) {
-        achievementProgressRepository.deleteById(achievementProgressId);
-    }
-
-    public void saveProgress(AchievementProgress achievementProgress) {
-        achievementProgressRepository.save(achievementProgress);
-    }
-
-    public AchievementProgress getProgress(Long userId, Long achievementId) {
-        return getAchievementProgress(userId, achievementId);
-    }
-
-    private AchievementProgress getAchievementProgress(Long userId, Long achievementId) {
-        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException(messageSource.getMessage("exception.not_found_achievementProgress",
-                        new Object[]{userId, achievementId}, Locale.getDefault())));
+        userAchievementRepository.save(
+                UserAchievement.builder()
+                        .userId(userId)
+                        .achievement(achievement)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build());
     }
 }

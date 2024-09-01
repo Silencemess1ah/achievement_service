@@ -24,15 +24,10 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-        comment: comment_channel
+        team: team_channel
 
   messages:
     basename: messages
-
-data:
-  achievements:
-    title:
-      evil-commenter: EVIL_COMMENTER
 
 server:
   port: 8085
@@ -44,3 +39,10 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+
+data:
+  achievements:
+    title:
+      evil-commenter: EVIL_COMMENTER
+      manager: MANAGER
