@@ -6,11 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class LikeEvent {
-    private Long postAuthorId;
-    private Long postId;
-    private Long likeId;
+    private long postId;
+    private long authorPostId;
+    private long authorLikeId;
 }

@@ -2,11 +2,9 @@ package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.dto.AchievementEventDto;
-import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.event.LikeEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
-import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
@@ -18,6 +16,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,27 +26,29 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AllLoveAchievementHandler {
-    private static final String ACHIEVEMENT_TITLE = "ALL LOVE";
-    private static final int ACHIEVEMENT_REQUIRED_LIKES = 4;
+    @Value("${achievement-handler.all-love-achievement-handler.achievement-name}")
+    private String achievement_title;
+
+    @Value("${achievement-handler.all-love-achievement-handler.achievement-required-likes}")
+    private int achievementRequiredLikes;
+
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementRepository achievementRepository;
     private final AchievementPublisher achievementPublisher;
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
-    private final UserAchievementMapper userAchievementMapper;
-    private final AchievementProgressMapper achievementProgressMapper;
+    private final UserAchievementMapper userAchievementMapper;;
 
     @Transactional
     public void handler(LikeEvent likeEvent) {
-        long userId = likeEvent.getPostAuthorId();
+        long userId = likeEvent.getAuthorPostId();
         long achievementId;
-        Achievement allLoveAchievement = achievementCache.getAchievementByTitle(ACHIEVEMENT_TITLE).get();
+        Achievement allLoveAchievement = achievementCache.getAchievementByTitle(achievement_title);
         achievementId = allLoveAchievement.getId();
 
-        if (likeEvent.getPostAuthorId() != null &&
-                hasAchievement(likeEvent.getPostAuthorId(), allLoveAchievement.getId())) {
-            log.info("user with id: " + userId + " already has achievement: " + ACHIEVEMENT_TITLE);
+        if (hasAchievement(userId, allLoveAchievement.getId())) {
+            log.info("user with id: " + userId + " already has achievement: " + achievement_title);
             return;
         }
 
@@ -55,7 +56,7 @@ public class AllLoveAchievementHandler {
 
         achievementProgress.increment();
         achievementProgressRepository.save(achievementProgress);
-        if (achievementProgress.getCurrentPoints() >= ACHIEVEMENT_REQUIRED_LIKES) {
+        if (achievementProgress.getCurrentPoints() >= achievementRequiredLikes) {
             grantAchievement(userId, achievementId);
         }
 
@@ -93,8 +94,4 @@ public class AllLoveAchievementHandler {
                 .build();
         userAchievementRepository.save(userAchievement);
     }
-
-//    public boolean reachAchievementChecker(long userId, long achievementId) {
-//
-//    }
 }

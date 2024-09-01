@@ -89,12 +89,12 @@ public class RedisConfig {
     }
 
     @Bean
-    ChannelTopic likeEventTopic() {
+    public ChannelTopic likeEventTopic() {
         return new ChannelTopic(likeChannel);
     }
 
     @Bean
-    MessageListenerAdapter likeEventListenerAdapter(LikeEventListener likeEventListener) {
+    public MessageListenerAdapter likeEventListenerAdapter(LikeEventListener likeEventListener) {
         return new MessageListenerAdapter(likeEventListener);
     }
 
@@ -102,13 +102,13 @@ public class RedisConfig {
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
                                                  PostEventListener postEventListener,
-                                                 MessageListenerAdapter likeEventListenerAdapter) {
+                                                 LikeEventListener likeEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
-        container.addMessageListener(likeEventListenerAdapter, likeEventTopic());
+        container.addMessageListener(likeEventListenerAdapter(likeEventListener), likeEventTopic());
 
         return container;
     }

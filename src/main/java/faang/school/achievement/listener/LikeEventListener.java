@@ -28,10 +28,5 @@ public class LikeEventListener implements MessageListener {
             throw new RuntimeException(e);
         }
         allLoveAchievementHandler.handler(likeEvent);
-
-//        AnalyticsEvent analyticsEvent = profileViewEventMapper.toAnalyticsEvent(likeEvent);
-//        analyticsEvent.setEventType(EventType.PROFILE_VIEW);
-//        analyticsEventService.saveAnalyticsEvent(analyticsEvent);
-        System.out.println("Success" + likeEvent.getLikeId());
     }
 }
