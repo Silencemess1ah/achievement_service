@@ -1,4 +1,4 @@
-package faang.school.achievement.service.handler;
+package faang.school.achievement.service.handler.commentEvent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

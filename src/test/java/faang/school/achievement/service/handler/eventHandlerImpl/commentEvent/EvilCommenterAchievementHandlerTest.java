@@ -1,14 +1,17 @@
 package faang.school.achievement.service.handler.eventHandlerImpl.commentEvent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.event.CommentEvent;
 import faang.school.achievement.exception.NotFoundException;
+import faang.school.achievement.mapper.AchievementMapperImpl;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.service.handler.eventHandlerImpl.CommentEventHandler;
+import faang.school.achievement.service.handler.commentEvent.EvilCommenterAchievementHandler;
+import faang.school.achievement.service.handler.commentEvent.CommentEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +37,8 @@ class EvilCommenterAchievementHandlerTest {
     private AchievementCache achievementCache;
     @Mock
     private AchievementPublisher achievementPublisher;
+    @Spy
+    private AchievementMapperImpl mapper;
     @Captor
     private ArgumentCaptor<AchievementProgress> progressCaptor;
     private CommentEventHandler handler;
@@ -41,6 +47,7 @@ class EvilCommenterAchievementHandlerTest {
     private CommentEvent commentEvent;
     private Achievement achievement;
     private AchievementProgress achievementProgress;
+    private AchievementProgressDto achievementProgressDto;
 
 
     @BeforeEach
@@ -48,7 +55,7 @@ class EvilCommenterAchievementHandlerTest {
         prepareData();
 
         handler = new EvilCommenterAchievementHandler(achievementCache, achievementService, achievementPublisher,
-                nameAchievement);
+                nameAchievement, mapper);
     }
 
     @Test
@@ -77,7 +84,7 @@ class EvilCommenterAchievementHandlerTest {
         boolean achievementWasReceived = false;
         when(achievementCache.get(nameAchievement)).thenReturn(achievement);
         when(achievementService.hasAchievement(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementWasReceived);
-        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgress);
+        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgressDto);
         int progressPointExp = 1;
         // when
         handler.process(commentEvent);
@@ -92,8 +99,8 @@ class EvilCommenterAchievementHandlerTest {
         boolean achievementWasReceived = false;
         when(achievementCache.get(nameAchievement)).thenReturn(achievement);
         when(achievementService.hasAchievement(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementWasReceived);
-        achievementProgress.setCurrentPoints(99);
-        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgress);
+        achievementProgressDto.setCurrentPoints(99);
+        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgressDto);
         // when
         handler.process(commentEvent);
         // then
@@ -122,5 +129,7 @@ class EvilCommenterAchievementHandlerTest {
                 .currentPoints(0)
                 .achievement(achievement)
                 .build();
+
+        achievementProgressDto = mapper.toAchievementProgressDto(achievementProgress);
     }
 }

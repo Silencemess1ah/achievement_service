@@ -6,6 +6,7 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -86,5 +87,13 @@ public class AchievementService {
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
                         .build());
+    }
+
+    public void deleteAchievementProgress(long achievementProgressId) {
+        achievementProgressRepository.deleteById(achievementProgressId);
+    }
+
+    public void saveProgress(AchievementProgress achievementProgress) {
+        achievementProgressRepository.save(achievementProgress);
     }
 }

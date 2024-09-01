@@ -3,7 +3,7 @@ package faang.school.achievement.service.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.event.CommentEvent;
-import faang.school.achievement.service.handler.eventHandlerImpl.CommentEventHandler;
+import faang.school.achievement.service.handler.commentEvent.CommentEventHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;

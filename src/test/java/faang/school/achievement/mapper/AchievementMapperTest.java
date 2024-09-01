@@ -62,13 +62,16 @@ public class AchievementMapperTest {
     @Test
     void testToAchievementProgress() {
         // given
-        AchievementProgressDto dto = container.achievementProgresDto();
+        AchievementProgressDto dto = container.achievementProgressDto();
         dto.setAchievement(null);
         AchievementProgress achievementProgress = AchievementProgress.builder()
                 .id(dto.getId())
                 .achievement(null)
                 .userId(dto.getUserId())
                 .currentPoints(dto.getCurrentPoints())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
+                .version(dto.getVersion())
                 .build();
 
         // when

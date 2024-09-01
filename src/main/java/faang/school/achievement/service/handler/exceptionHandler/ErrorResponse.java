@@ -1,4 +1,4 @@
-package faang.school.achievement.service.handler;
+package faang.school.achievement.service.handler.exceptionHandler;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

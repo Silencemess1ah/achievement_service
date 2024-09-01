@@ -1,14 +1,15 @@
-package faang.school.achievement.service.handler.eventHandlerImpl;
+package faang.school.achievement.service.handler.commentEvent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import faang.school.achievement.dto.AchievementEvent;
+import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.event.CommentEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.service.handler.EventHandler;
 import jakarta.transaction.Transactional;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public abstract class CommentEventHandler implements EventHandler<CommentEvent> 
     protected final AchievementService service;
     private final AchievementPublisher achievementPublisher;
     private final String nameAchievement;
+    private final AchievementMapper mapper;
 
     @Override
     @Async
@@ -35,9 +37,10 @@ public abstract class CommentEventHandler implements EventHandler<CommentEvent> 
         }
         service.createProgressIfNecessary(userId, achievementId);
         if(checkConditionForInc()) {
-            AchievementProgress progressAchievement = service.getProgress(userId, achievementId);
-            progressAchievement.increment();
-            checkAchievementsPoints(achievement, progressAchievement, userId);
+            AchievementProgressDto achievementProgressDto = service.getProgress(userId, achievementId);
+            AchievementProgress progress = mapper.toAchievementProgress(achievementProgressDto);
+            progress.increment();
+            checkAchievementsPoints(achievement, progress, userId);
         }
     }
 

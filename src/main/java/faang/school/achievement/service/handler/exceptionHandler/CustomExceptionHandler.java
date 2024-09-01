@@ -1,4 +1,4 @@
-package faang.school.achievement.service.handler;
+package faang.school.achievement.service.handler.exceptionHandler;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
