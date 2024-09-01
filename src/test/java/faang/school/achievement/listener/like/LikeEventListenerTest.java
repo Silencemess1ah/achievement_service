@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.connection.Message;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ class LikeEventListenerTest {
 
     @BeforeEach
     void setUp() {
-        likeEvent = new LikeEvent(UUID.randomUUID(),1, 1, 1, LocalDateTime.now());
+        likeEvent = new LikeEvent(UUID.randomUUID(),1, 1, 1);
     }
 
     @Test
