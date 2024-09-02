@@ -1,4 +1,4 @@
-package faang.school.achievement.service;
+package faang.school.achievement.cache;
 
 import faang.school.achievement.dto.achievement.AchievementDto;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -20,7 +20,7 @@ public class AchievementCache {
 
     @Value("${spring.data.redis.achievement-hash-key}")
     private String achievementHashKey;
-    private final RedisTemplate<String, AchievementDto> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final Map<String, AchievementDto> achievements;
     private final AchievementRepository achievementRepository;
     private final AchievementMapper achievementMapper;
