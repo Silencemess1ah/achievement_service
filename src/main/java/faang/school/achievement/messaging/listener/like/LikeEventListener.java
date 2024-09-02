@@ -11,7 +11,6 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -29,7 +28,7 @@ public class LikeEventListener implements MessageListener {
             likeEvent = objectMapper.readValue(message.getBody(), LikeEvent.class);
             log.info("Received event: {}", likeEvent);
         } catch (IOException e) {
-            String errorMessage = "Failed reading event: " + Arrays.toString(message.getBody());
+            String errorMessage = "Failed reading event: " + message;
             log.error(errorMessage);
             throw new RuntimeException(errorMessage);
         }
