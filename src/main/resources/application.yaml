@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         comment: comment_channel
+
         project_channel: project_channel
 
   task:
@@ -35,6 +36,7 @@ spring:
         keep-alive: 60
         queue-capacity: 1000
         thread-name-prefix: async_thread_pool
+
 
 server:
   port: 8085
