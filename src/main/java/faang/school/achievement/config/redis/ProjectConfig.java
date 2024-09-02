@@ -1,4 +1,4 @@
-package faang.school.achievement.config.context.redis;
+package faang.school.achievement.config.redis;
 
 import faang.school.achievement.listener.ProjectListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
