@@ -24,8 +24,8 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-        project_channel: project_channel
         comment: comment_channel
+        project_channel: project_channel
 
   task:
     execution:
