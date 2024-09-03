@@ -13,9 +13,9 @@ public class PublisherConfig {
 
     @Bean
     public AchievementPublisher achievementPublisher(
-        ObjectMapper objectMapper,
-        RedisTemplate<String, Object> redisTemplate,
-        ChannelTopic achievementChannel
+            ObjectMapper objectMapper,
+            RedisTemplate<String, Object> redisTemplate,
+            ChannelTopic achievementChannel
     ) {
         return new RedisAchievementPublisher(objectMapper, redisTemplate, achievementChannel);
     }

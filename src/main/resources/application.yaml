@@ -24,23 +24,30 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        album: album_channel
+        profile-picture: profile_pic_channel
         post: post_channel
-#        comment_achievement: comment_channel
+        comment_achievement: comment_channel
+      cache:
+        achievement-key: achievements
 
 cache:
   achievement:
-#    achievement-key: achievements
     update-schedule: '0 */1 * * * *' # every minute
 
+achievement-handler:
+  handsome-achievement-handler:
+    achievement-name: HANDSOME
+  librarian-achievement-handler:
+    achievement-name: LIBRARIAN
+  writer-achievement-handler:
+    achievement-name: WRITER
 
 server:
   port: 8085
 
 executors:
   thread-pool-size: 10
-
-achievements:
-  writer: WRITER
 
 logging:
   level:

@@ -3,6 +3,7 @@ package faang.school.achievement.publisher.achievement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.publisher.RedisMessagePublisher;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,8 @@ public class RedisAchievementPublisher extends RedisMessagePublisher<Achievement
     private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic achievementTopic;
 
-    public RedisAchievementPublisher(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate, ChannelTopic achievementTopic) {
+    public RedisAchievementPublisher(ObjectMapper objectMapper, RedisTemplate<String, Object> redisTemplate,
+                                     @Qualifier("achievementChannel") ChannelTopic achievementTopic) {
         super(objectMapper);
         this.redisTemplate = redisTemplate;
         this.achievementTopic = achievementTopic;
