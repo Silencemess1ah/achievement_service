@@ -3,8 +3,9 @@ package faang.school.achievement.service.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.event.CommentEvent;
-import faang.school.achievement.service.handler.commentEvent.CommentEventHandler;
-import faang.school.achievement.service.handler.commentEvent.EvilCommenterAchievementHandler;
+import faang.school.achievement.service.handler.eventHandler.AbstractEventHandler;
+import faang.school.achievement.service.handler.eventHandler.commentEvent.CommentEventHandler;
+import faang.school.achievement.service.handler.eventHandler.commentEvent.EvilCommenterAchievementHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.data.redis.connection.Message;
 
 import java.io.IOException;
@@ -26,30 +28,33 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class CommentEventListenerTest {
-    @Mock
-    private CommentEventHandler handler = Mockito.mock(EvilCommenterAchievementHandler.class);
+public class CommentEventListenerTest {
     @Spy
     private ObjectMapper objectMapper;
-    List<CommentEventHandler> handlers;
-
-    private CommentEventListener listener;
+    @Mock
+    private CommentEventHandler handler =  Mockito.mock(EvilCommenterAchievementHandler.class);
+    @Mock
+    private MessageSource messageSource;
+    private final Class<CommentEvent> clazz = CommentEvent.class;
+    private final String channelName = "comment_channel";
     @Captor
     private ArgumentCaptor<CommentEvent> eventCaptor;
-    private String json = """
-                            {
-                                "id":1,
-                                "authorId":2,
-                                "postId":3,
-                                "content":"content"
-                            }""";
+    private CommentEventListener listener;
+    private final String json = """
+            {
+                "id":1,
+                "authorId":2,
+                "postId":3,
+                "content":"content"
+            }""";
     private Message message;
     private CommentEvent event;
 
+
     @BeforeEach
     void setUp() {
-        handlers = List.of(handler);
-        listener = new CommentEventListener(objectMapper, handlers);
+        List<AbstractEventHandler<CommentEvent>> handlers = List.of(handler);
+        listener = new CommentEventListener(objectMapper, handlers, messageSource, clazz, channelName);
         //Arrange
         message = new Message() {
             @Override

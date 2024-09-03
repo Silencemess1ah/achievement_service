@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         team: team_channel
+        comment: comment_channel
 
   messages:
     basename: messages
@@ -43,6 +44,6 @@ project-service:
 
 data:
   achievements:
-    title:
+    titles:
       evil-commenter: EVIL_COMMENTER
       manager: MANAGER

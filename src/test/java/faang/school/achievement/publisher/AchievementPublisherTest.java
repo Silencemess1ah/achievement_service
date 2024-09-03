@@ -1,6 +1,7 @@
 package faang.school.achievement.publisher;
 
 import faang.school.achievement.dto.AchievementEvent;
+import faang.school.achievement.service.publisher.AchievementPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

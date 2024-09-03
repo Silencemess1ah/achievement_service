@@ -7,11 +7,11 @@ import faang.school.achievement.exception.NotFoundException;
 import faang.school.achievement.mapper.AchievementMapperImpl;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.publisher.AchievementPublisher;
+import faang.school.achievement.service.publisher.AchievementPublisher;
 import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.service.handler.commentEvent.EvilCommenterAchievementHandler;
-import faang.school.achievement.service.handler.commentEvent.CommentEventHandler;
+import faang.school.achievement.service.handler.eventHandler.commentEvent.EvilCommenterAchievementHandler;
+import faang.school.achievement.service.handler.eventHandler.commentEvent.CommentEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +42,7 @@ class EvilCommenterAchievementHandlerTest {
     @Captor
     private ArgumentCaptor<AchievementProgress> progressCaptor;
     private CommentEventHandler handler;
-    private String nameAchievement = "EVIL_COMMENTER";
+    private final String nameAchievement = "EVIL_COMMENTER";
 
     private CommentEvent commentEvent;
     private Achievement achievement;
@@ -53,7 +53,6 @@ class EvilCommenterAchievementHandlerTest {
     @BeforeEach
     void setUp() {
         prepareData();
-
         handler = new EvilCommenterAchievementHandler(achievementCache, achievementService, achievementPublisher,
                 nameAchievement, mapper);
     }
@@ -71,11 +70,11 @@ class EvilCommenterAchievementHandlerTest {
         // given
         boolean achievementWasReceived = true;
         when(achievementCache.get(nameAchievement)).thenReturn(achievement);
-        when(achievementService.hasAchievement(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementWasReceived);
+        when(achievementService.hasAchievement(commentEvent.getUserId(), achievement.getId())).thenReturn(achievementWasReceived);
         // when
         handler.process(commentEvent);
         // then
-        verify(achievementService, times(0)).createProgressIfNecessary(commentEvent.getAuthorId(), achievement.getId());
+        verify(achievementService, times(0)).createProgressIfNecessary(commentEvent.getUserId(), achievement.getId());
     }
 
     @Test
@@ -83,8 +82,8 @@ class EvilCommenterAchievementHandlerTest {
         // given
         boolean achievementWasReceived = false;
         when(achievementCache.get(nameAchievement)).thenReturn(achievement);
-        when(achievementService.hasAchievement(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementWasReceived);
-        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgressDto);
+        when(achievementService.hasAchievement(commentEvent.getUserId(), achievement.getId())).thenReturn(achievementWasReceived);
+        when(achievementService.getProgress(commentEvent.getUserId(), achievement.getId())).thenReturn(achievementProgressDto);
         int progressPointExp = 1;
         // when
         handler.process(commentEvent);
@@ -98,14 +97,14 @@ class EvilCommenterAchievementHandlerTest {
         // given
         boolean achievementWasReceived = false;
         when(achievementCache.get(nameAchievement)).thenReturn(achievement);
-        when(achievementService.hasAchievement(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementWasReceived);
+        when(achievementService.hasAchievement(commentEvent.getUserId(), achievement.getId())).thenReturn(achievementWasReceived);
         achievementProgressDto.setCurrentPoints(99);
-        when(achievementService.getProgress(commentEvent.getAuthorId(), achievement.getId())).thenReturn(achievementProgressDto);
+        when(achievementService.getProgress(commentEvent.getUserId(), achievement.getId())).thenReturn(achievementProgressDto);
         // when
         handler.process(commentEvent);
         // then
         verify(achievementService, times(1)).deleteAchievementProgress(achievementProgress.getId());
-        verify(achievementService, times(1)).giveAchievement(commentEvent.getAuthorId(), achievement);
+        verify(achievementService, times(1)).giveAchievement(commentEvent.getUserId(), achievement);
         verify(achievementPublisher, times(1)).publish(Mockito.any());
     }
 
