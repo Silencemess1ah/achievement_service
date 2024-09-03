@@ -1,15 +1,16 @@
-package faang.school.achievement.listener;
+package faang.school.achievement.service.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.TeamEvent;
-import faang.school.achievement.service.handler.teamEvent.EventHandler;
+import faang.school.achievement.dto.event.TeamEvent;
+import faang.school.achievement.service.handler.eventHandler.AbstractEventHandler;
+import faang.school.achievement.service.handler.eventHandler.teamEvent.ManagerAchievementHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.data.redis.connection.Message;
 
 import java.io.IOException;
@@ -20,21 +21,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class TeamEventListenerTest {
+
     private static final String MESSAGE_ERROR = "ReadValue exception";
+    private static final String channelName = "comment_channel";
     private static final long VALID_ID = 1L;
-    private final String STRING = "\"teamId\":1,\"userId\":2,\"projectId\":3";
+    private final String STRING = "{\"teamId\":1,\"userId\":2,\"projectId\":3}";
     private TeamEvent event;
     private Message message;
     @Mock
-    private List<EventHandler<TeamEvent>> eventHandlers;
-    @Mock
     private ObjectMapper objectMapper;
-    @InjectMocks
+    @Mock
+    private ManagerAchievementHandler handler;
+    @Mock
+    private MessageSource messageSource;
+    private final Class<TeamEvent> clazz = TeamEvent.class;
     private TeamEventListener listener;
 
     @BeforeEach
     void setUp() {
         //Arrange
+        List<AbstractEventHandler<TeamEvent>> eventHandlers = List.of(handler);
+        listener = new TeamEventListener(objectMapper, eventHandlers, messageSource, clazz, channelName);
+
         message = new Message() {
             @Override
             public byte[] getBody() {
@@ -48,8 +56,8 @@ class TeamEventListenerTest {
         };
         event = TeamEvent.builder()
                 .teamId(VALID_ID)
-                .projectId(VALID_ID)
                 .userId(VALID_ID)
+                .projectId(VALID_ID)
                 .build();
     }
 
@@ -59,7 +67,7 @@ class TeamEventListenerTest {
         Mockito.when(objectMapper.readValue(message.getBody(), TeamEvent.class)).thenReturn(event);
         listener.onMessage(message, new byte[]{});
         //Assert
-        Mockito.verify(eventHandlers).forEach(Mockito.any());
+        Mockito.verify(handler).process(Mockito.any());
     }
 
     @Test

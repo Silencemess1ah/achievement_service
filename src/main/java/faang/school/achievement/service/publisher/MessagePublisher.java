@@ -1,4 +1,4 @@
-package faang.school.achievement.publisher;
+package faang.school.achievement.service.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 

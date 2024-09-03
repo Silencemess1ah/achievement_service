@@ -9,9 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CommentEvent {
+public class CommentEvent implements EventInt {
     private Long id;
     private String content;
     private Long authorId;
     private Long postId;
+
+    @Override
+    public Long getUserId() {
+        return authorId;
+    }
 }
