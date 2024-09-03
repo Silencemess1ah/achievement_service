@@ -155,5 +155,5 @@ public class AchievementService {
     public void saveAchievementProgress(AchievementProgress achievementProgress) {
         achievementProgressRepository.save(achievementProgress);
     }
-}  
+}
     

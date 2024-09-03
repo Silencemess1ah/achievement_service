@@ -25,11 +25,33 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         mentorship: mentorship_channel
+        album: album_channel
+        profile-picture:  profile_pic_channel
+        post: post_channel
       cache:
         achievement-key: achievements
 
+cache:
+  achievement:
+    update-schedule: '0 */1 * * * *' # every minute
+
+achievement-handler:
+  handsome-achievement-handler:
+    achievement-name: HANDSOME
+  librarian-achievement-handler:
+    achievement-name: LIBRARIAN
+  writer-achievement-handler:
+    achievement-name: WRITER
+  sensei-achievement-handler:
+    achievement-name: SENSEI
+    points: 30
+
+
 server:
   port: 8085
+
+executors:
+  thread-pool-size: 10
 
 logging:
   level:
@@ -39,18 +61,8 @@ project-service:
   host: localhost
   port: 8082
 
-thread-pool:
-  size:
-    min: 10
-    max: 20
-  keep-alive:
-    time: 60
-    time-unit: SECONDS
-  queue-size: 10000
-
 handler:
   achievement:
     sensei:
-      title: SENSEI
-      points: 30
+
 

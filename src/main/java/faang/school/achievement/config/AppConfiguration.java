@@ -1,3 +1,4 @@
+
 package faang.school.achievement.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
