@@ -1,5 +1,6 @@
 package faang.school.achievement.model;
 
 public enum EventType {
-    TEAM_EVENT
+    TEAM_EVENT,
+    COMMENT_EVENT
 }

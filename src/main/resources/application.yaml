@@ -49,4 +49,5 @@ project-service:
   achievements:
     conglomerate: CONGLOMERATE
     manager: MANAGER
+    expert: EXPERT
 

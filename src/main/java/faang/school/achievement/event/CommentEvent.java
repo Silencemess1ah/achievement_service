@@ -1,9 +1,9 @@
-package faang.school.achievement.dto;
+package faang.school.achievement.event;
 
 import lombok.Data;
 
 @Data
-public class CommentEventDto {
+public class CommentEvent {
     private long commentAuthorId;
     private long postAuthorId;
     private long commentId;

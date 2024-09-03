@@ -24,7 +24,7 @@ public class TeamConfig {
     }
 
     @Bean
-    Pair<MessageListenerAdapter, ChannelTopic> teamRequester(MessageListenerAdapter teamMessageListener) {
-        return Pair.of(teamMessageListener, teamTopic());
+    Pair<MessageListenerAdapter, ChannelTopic> teamRequester(MessageListenerAdapter teamEventListener) {
+        return Pair.of(teamEventListener, teamTopic());
     }
 }

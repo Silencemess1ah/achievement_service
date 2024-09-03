@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class TeamEventHandler extends AbstractEventHandler<TeamEvent> {
 
-
     public TeamEventHandler(AchievementService achievementService,
                             AchievementProgressService achievementProgressService,
                             UserAchievementService userAchievementService,
@@ -25,7 +24,7 @@ public abstract class TeamEventHandler extends AbstractEventHandler<TeamEvent> {
     @Async("asyncExecutor")
     public void checkAchievement(TeamEvent event) {
         Achievement achievement = achievementService.getAchievementFromCache(getAchievementName());
-        if (!userAchievementService.hasAchievement(event.getAuthorId(), achievement.getId())) {
+        if (userAchievementService.hasAchievement(event.getAuthorId(), achievement.getId())) {
             achievementProgressService.createProgressIfNecessary(event.getAuthorId(), achievement.getId());
             AchievementProgress progress = achievementProgressService.getProgress(event.getAuthorId(), achievement.getId());
             Long num = userEventCounterService.getProgress(event.getAuthorId(), EventType.TEAM_EVENT);
