@@ -2,7 +2,6 @@ package faang.school.achievement.config;
 
 import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
-import faang.school.achievement.redis.listener.PostEventListener;
 import faang.school.achievement.listener.CommentEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -70,7 +69,7 @@ public class RedisConfig {
     }
 
     @Bean
-    MessageListenerAdapter commentListener(CommentEventListener commentEventListener) {
+    public MessageListenerAdapter commentListener(CommentEventListener commentEventListener) {
         return new MessageListenerAdapter(commentEventListener);
     }
 
@@ -102,12 +101,14 @@ public class RedisConfig {
     @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
-                                                 PostEventListener postEventListener) {
+                                                 PostEventListener postEventListener,
+                                                 CommentEventListener commentEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
+        container.addMessageListener(commentListener(commentEventListener), commentAchievementChannel());
 
         return container;
     }

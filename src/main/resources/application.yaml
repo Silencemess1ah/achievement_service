@@ -42,6 +42,8 @@ achievement-handler:
     achievement-name: LIBRARIAN
   writer-achievement-handler:
     achievement-name: WRITER
+  comment-achievement-handler:
+    achievement-name: EXPERT
 
 server:
   port: 8085

@@ -1,7 +1,7 @@
 package faang.school.achievement.handler;
 
 import org.springframework.scheduling.annotation.Async;
-import faang.school.achievement.dto.CommentEvent;
+import faang.school.achievement.event.CommentEvent;
 
 public interface EventHandler<T> {
 
@@ -10,5 +10,5 @@ public interface EventHandler<T> {
 
     Class<T> getType();
 
-    void checkAndGetAchievement(CommentEvent commentEvent);
+//    void checkAndGetAchievement(CommentEvent commentEvent);
 }
