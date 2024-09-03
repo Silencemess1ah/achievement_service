@@ -21,17 +21,18 @@ public class RedisConfig {
     private int port;
 
     @Bean
-    public JedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
-        return new JedisConnectionFactory(config);
+    public JedisConnectionFactory jedisConnectionFactory() {
+        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
+        return new JedisConnectionFactory(redisConfig);
     }
 
     @Bean
-    public RedisMessageListenerContainer redisContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> requesters) {
+    RedisMessageListenerContainer redisContainer(List<Pair<MessageListenerAdapter, ChannelTopic>> redisEventListener,
+                                                 JedisConnectionFactory jedisConnectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnectionFactory());
-        for (Pair<MessageListenerAdapter, ChannelTopic> requester : requesters) {
-            container.addMessageListener(requester.getFirst(), requester.getSecond());
+        container.setConnectionFactory(jedisConnectionFactory);
+        for (Pair<MessageListenerAdapter, ChannelTopic> messageListenerAdapter : redisEventListener) {
+            container.addMessageListener(messageListenerAdapter.getFirst(), messageListenerAdapter.getSecond());
         }
         return container;
     }

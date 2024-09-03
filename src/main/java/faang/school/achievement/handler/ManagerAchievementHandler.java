@@ -8,16 +8,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExpertAchievementHandler extends CommentEventHandler {
-    @Value("${project-service.achievements.expert}")
+public class ManagerAchievementHandler extends TeamEventHandler {
+    @Value("${project-service.achievements.manager}")
     private String achievement;
 
-    public ExpertAchievementHandler(AchievementService achievementService,
-                                    AchievementProgressService achievementProgressService,
-                                    UserAchievementService userAchievementService,
-                                    UserEventCounterService userEventCounterService) {
+    public ManagerAchievementHandler(AchievementService achievementService,
+                                     AchievementProgressService achievementProgressService,
+                                     UserAchievementService userAchievementService,
+                                     UserEventCounterService userEventCounterService) {
         super(achievementService, achievementProgressService, userAchievementService, userEventCounterService);
     }
+
 
     @Override
     public String getAchievementName() {

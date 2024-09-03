@@ -24,7 +24,16 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        team: team_channel
         comment: comment_channel
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 10000
+        keep-alive: 60
+        thread-name-prefix: AchievementPool
 
 server:
   port: 8085
@@ -36,3 +45,9 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+  achievements:
+    conglomerate: CONGLOMERATE
+    manager: MANAGER
+    expert: EXPERT
+
