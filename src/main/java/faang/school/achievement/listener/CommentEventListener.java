@@ -10,8 +10,7 @@ import java.util.List;
 @Component
 public class CommentEventListener extends AbstractEventListener<CommentEvent> {
     public CommentEventListener(ObjectMapper objectMapper,
-                                List<EventHandler<CommentEvent>> eventHandlers,
-                                Class<CommentEvent> type) {
-        super(objectMapper, eventHandlers, type);
+                                List<EventHandler<CommentEvent>> eventHandlers) {
+        super(objectMapper, eventHandlers, CommentEvent.class);
     }
 }
