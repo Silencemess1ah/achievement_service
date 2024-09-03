@@ -10,5 +10,4 @@ public interface EventHandler<T> {
 
     Class<T> getType();
 
-//    void checkAndGetAchievement(CommentEvent commentEvent);
 }

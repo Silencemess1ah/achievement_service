@@ -15,25 +15,3 @@ public class CommentEventListener extends AbstractEventListener<CommentEvent> {
         super(objectMapper, eventHandlers, type);
     }
 }
-
-//@Component
-//@RequiredArgsConstructor
-//@Slf4j
-//public class CommentEventListener implements MessageListener {
-//    private final List<EventHandler> handlers;
-//    private final ObjectMapper objectMapper;
-//
-//    @Override
-//    public void onMessage(Message message, byte[] pattern) {
-//        try {
-//            CommentEvent commentEvent = objectMapper.readValue(message.getBody(), CommentEvent.class);
-//            for (EventHandler handler : handlers) {
-//                if (handler != null) {
-//                    handler.checkAndGetAchievement(commentEvent);
-//                }
-//            }
-//        } catch (IOException e) {
-//            log.error(e.getMessage(), e);
-//        }
-//    }
-//}
