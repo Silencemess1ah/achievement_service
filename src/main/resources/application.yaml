@@ -28,6 +28,13 @@ spring:
         profile_pic: profile_pic_channel
         like: like_channel
 
+  kafka:
+    host: localhost
+    port: 9092
+    topics:
+      project_topic: project_channel
+    consumer:
+      group-id: Group1
 
 listener:
   type:
@@ -35,6 +42,7 @@ listener:
       opinion_leader: OPINION LEADER
       handsome: HANDSOME
       all_love: ALL LOVE
+      businessman: BUSINESSMAN
 
 handler:
   executor_pool_parameters:
