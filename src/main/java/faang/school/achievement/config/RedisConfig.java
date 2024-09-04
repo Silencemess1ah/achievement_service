@@ -1,7 +1,7 @@
 package faang.school.achievement.config;
 
-import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
+import faang.school.achievement.listener.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +39,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.channel.album}")
     private String albumTopicName;
 
+    @Value("${spring.data.redis.channel.mentorship}")
+    private String mentorshipChannelTopicName;
+
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() {
         RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(host, port);
@@ -65,7 +68,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public ChannelTopic achievementChannel() {
+    public ChannelTopic achievementTopic() {
         return new ChannelTopic(achievementChannel);
     }
 
@@ -82,6 +85,11 @@ public class RedisConfig {
     @Bean("albumChannelTopic")
     public ChannelTopic albumChannelTopic() {
         return new ChannelTopic(albumTopicName);
+    }
+
+    @Bean
+    public ChannelTopic mentorshipTopic() {
+        return new ChannelTopic(mentorshipChannelTopicName);
     }
 
     @Bean

@@ -65,7 +65,8 @@ public class AchievementCache {
         String achievement = (String) redisTemplate.opsForValue().get(title);
 
         if (achievement == null) {
-            achievementRepository.findByTitle(title).orElseThrow(() -> new DataNotFoundException("Achievement not found " + title));
+            achievementRepository.findByTitle(title)
+                    .orElseThrow(() -> new DataNotFoundException("Achievement not found " + title));
         }
         try {
             return objectMapper.readValue(achievement, Achievement.class);
@@ -90,7 +91,6 @@ public class AchievementCache {
                     log.debug("Updated cache for achievement {}", achievement.getTitle());
                 } catch (JsonProcessingException e) {
                     log.error("Error serializing achievement to JSON", e);
-                    continue;
                 }
             }
         }

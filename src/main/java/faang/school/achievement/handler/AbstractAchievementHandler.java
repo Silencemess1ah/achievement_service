@@ -6,39 +6,36 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class AbstractAchievementHandler {
-    private final AchievementService achievementService;
-    private final AchievementCache achievementCache;
+public abstract class AbstractAchievementHandler<T> {
+    protected final AchievementCache achievementCache;
+    protected final AchievementService achievementService;
 
-    protected void processAchievementEvent(String achievementTitle, long userId) {
+    @Async(value = "executorService")
+    public void handleEvent(T event) {
+        String achievementTitle = getAchievementTitle();
         Achievement achievement = achievementCache.getAchievementByTitle(achievementTitle);
+        long userId = getUserId(event);
+        handleAchievement(userId, achievement);
+    }
+
+    protected void handleAchievement(long userId, Achievement achievement) {
         long achievementId = achievement.getId();
-
         if (!achievementService.hasAchievement(userId, achievementId)) {
-            long incrementCurrentPoints = getIncrementCurrentPoints(userId, achievementId);
-
-            if (getAchievementPoints(userId, achievementId) == incrementCurrentPoints) {
-                giveAchievement(userId, achievementId);
+            achievementService.createProgressIfNecessary(userId, achievementId);
+            AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
+            achievementProgress.increment();
+            if (achievementProgress.getCurrentPoints()>= getPointsToEarnAchievement()) {
+                achievementService.giveAchievement(userId, achievement);
             }
+            achievementService.saveAchievementProgress(achievementProgress);
         }
     }
 
-    private long getIncrementCurrentPoints(long userId, long achievementId) {
-        achievementService.createProgressIfNecessary(userId, achievementId);
-        AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
-        achievementProgress.increment();
-        achievementService.saveProgress(achievementProgress);
-        return achievementProgress.getCurrentPoints();
-    }
-
-    private long getAchievementPoints(long userId, long achievementId) {
-        return achievementService.getProgress(userId, achievementId).getAchievement().getPoints();
-    }
-
-    private void giveAchievement(long userId, long achievementId) {
-        achievementService.giveAchievement(userId, achievementId);
-    }
+    protected abstract String getAchievementTitle();
+    protected abstract long getUserId(T event);
+    protected abstract long getPointsToEarnAchievement();
 }
