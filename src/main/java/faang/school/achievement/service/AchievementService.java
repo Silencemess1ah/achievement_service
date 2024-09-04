@@ -7,7 +7,6 @@ import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.BadRequestException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.dto.SortField;
-import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.ResourceNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -19,23 +18,13 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.NotNull;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -85,5 +74,40 @@ public class AchievementService {
     public List<AchievementProgressDto> getUserAchievementsInProgress(long userId) {
         List<AchievementProgress> achievements = achievementProgressRepository.findByUserId(userId);
         return achievementProgressMapper.toListDto(achievements);
+    }
+
+    @Transactional
+    public boolean hasAchievement(Long userId, Long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Transactional
+    public AchievementProgressDto getAchievementProgress(Long userId, Long achievementId) {
+        AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User %s doesn't have achievement progress %s", userId, achievementId)));
+        return achievementProgressMapper.toDto(achievementProgress);
+    }
+
+    @Transactional
+    public AchievementProgressDto saveAchievementProgress(AchievementProgressDto achievementProgressDto) {
+        AchievementProgress savedAchievementProgress = achievementProgressRepository.save(achievementProgressMapper.toEntity(achievementProgressDto));
+        return achievementProgressMapper.toDto(savedAchievementProgress);
+    }
+
+    @Transactional
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Transactional
+    public UserAchievementDto giveAchievement(AchievementDto achievement, Long userId) {
+        UserAchievement userAchievementToSave = UserAchievement.builder()
+                .achievement(achievementMapper.toEntity(achievement))
+                .userId(userId)
+                .build();
+
+        UserAchievement savedUserAchievement = userAchievementRepository.save(userAchievementToSave);
+
+        return userAchievementMapper.toDto(savedUserAchievement);
     }
 }
