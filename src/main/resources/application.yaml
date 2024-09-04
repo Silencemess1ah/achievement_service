@@ -24,6 +24,17 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        post: post_channel
+
+handler:
+  thread-pool-executor-parameters:
+    core-pool-size: 10
+    max-pool-size: 50
+    queue-capacity: 100
+    await-termination-seconds: 60
+  achievement:
+    names:
+      writer: WRITER
 
 server:
   port: 8085
