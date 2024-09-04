@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SenseiAchievementHandler extends EventHandler<MentorshipStartEvent> {
+public class SenseiAchievementHandler extends AbstractAchievementHandler<MentorshipStartEvent> {
 
-    @Value("${handler.achievement.sensei.title}")
-    private String senseiAchievementTitle;
-    @Value("${handler.achievement.sensei.points}")
+    @Value("${achievement-handler.sensei-achievement-handler.achievement-name}")
+    private String achievementTitle;
+    @Value("${achievement-handler.sensei-achievement-handler.points}")
     private long pointsToEarnAchievement;
 
     public SenseiAchievementHandler(AchievementCache achievementCache, AchievementService achievementService) {
@@ -20,7 +20,7 @@ public class SenseiAchievementHandler extends EventHandler<MentorshipStartEvent>
 
     @Override
     public String getAchievementTitle() {
-        return senseiAchievementTitle;
+        return achievementTitle;
     }
 
     @Override

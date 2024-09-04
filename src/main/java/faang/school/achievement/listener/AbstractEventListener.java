@@ -1,7 +1,7 @@
 package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.handler.AbstractAchievementHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class AbstractEventListener<T> implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final List<EventHandler<T>> eventHandlers;
+    private final List<AbstractAchievementHandler<T>> eventHandlers;
     private final Class<T> type;
 
     @Override
