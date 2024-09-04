@@ -1,5 +1,7 @@
 package faang.school.achievement.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
  * @author Evgenii Malkov
  */
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -23,4 +27,8 @@ public class AchievementProgressDto {
     private LocalDateTime updatedAt;
     private long version;
     private AchievementDto achievementDto;
+
+    public void increment() {
+        currentPoints++;
+    }
 }
