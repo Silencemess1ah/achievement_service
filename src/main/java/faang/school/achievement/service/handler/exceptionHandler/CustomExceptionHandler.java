@@ -32,19 +32,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CustomReadValueException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleCustomReadValueException(CustomReadValueException e, HttpServletRequest request) {
-        String error = messageSource.getMessage("error.read_value_exception", null, Locale.getDefault());;
+    public void handleCustomReadValueException(CustomReadValueException e, HttpServletRequest request) {
+        String error = messageSource.getMessage("error.read_value_exception", null, Locale.getDefault());
         log.error(error, e);
-        return buildErrorResponse(request.getRequestURI(), HttpStatus.INTERNAL_SERVER_ERROR.value(), error, e.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(CustomJsonProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleCustomJsonProcessingException(CustomJsonProcessingException e, HttpServletRequest request) {
-
+    public void handleCustomJsonProcessingException(CustomJsonProcessingException e, HttpServletRequest request) {
         String error = messageSource.getMessage("error.json_processing_exception", null, Locale.getDefault());
         log.error(error, e);
-        return buildErrorResponse(request.getRequestURI(), HttpStatus.INTERNAL_SERVER_ERROR.value(), error, e.getMessage(), LocalDateTime.now());
     }
 
     private ErrorResponse buildErrorResponse(String url, int status, String error, String message, LocalDateTime timestamp) {
