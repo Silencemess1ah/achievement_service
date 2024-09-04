@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -22,7 +23,12 @@ public abstract class AbstractCacheManager<T> {
         this.redisTemplate.opsForHash().putAll(key, values);
     }
 
-    protected T get(String key, String hashKey) {
+    protected T get(String key, String hashKey, Class<T> type) {
+        Object value = this.redisTemplate.opsForHash().get(key, hashKey);
+
+        if (value instanceof LinkedHashMap<?,?>) {
+            return mapper.convertValue(value, type);
+        }
         return (T) this.redisTemplate.opsForHash().get(key, hashKey);
     }
 

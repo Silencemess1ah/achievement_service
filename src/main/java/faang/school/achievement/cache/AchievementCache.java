@@ -36,6 +36,6 @@ public class AchievementCache extends AbstractCacheManager<AchievementDto> {
     }
 
     public AchievementDto get(String title) {
-        return get(ACHIEVEMENT_CACHE_KEY, title);
+        return get(ACHIEVEMENT_CACHE_KEY, title, AchievementDto.class);
     }
 }
