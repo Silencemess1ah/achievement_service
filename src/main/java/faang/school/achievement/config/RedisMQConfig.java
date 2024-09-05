@@ -1,6 +1,7 @@
 package faang.school.achievement.config;
 
 import faang.school.achievement.listener.achievement.AchievementListener;
+import faang.school.achievement.listener.post.PostEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisMQConfig {
     @Value("${spring.data.redis.channel.achievement}")
     private String achievementTopicName;
+    @Value("${spring.data.redis.channel.post}")
+    private String postTopicName;
     @Value("${spring.data.redis.host}")
     private String host;
     @Value("${spring.data.redis.port}")
@@ -73,13 +76,25 @@ public class RedisMQConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementListener) {
+    public MessageListenerAdapter redisPostEventListener(PostEventListener postEventListener) {
+        return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    public ChannelTopic postEventTopic() {
+        return new ChannelTopic(postTopicName);
+    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementListener,
+                                                 MessageListenerAdapter redisPostEventListener) {
         RedisMessageListenerContainer container =
                 new RedisMessageListenerContainer();
 
-        container.setConnectionFactory(jedisConnectionFactory());
+        container.setConnectionFactory(connectionFactory());
 
         container.addMessageListener(achievementListener, achievementTopic());
+        container.addMessageListener(redisPostEventListener, postEventTopic());
 
         return container;
     }
