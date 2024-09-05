@@ -5,6 +5,7 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
+import faang.school.achievement.redis.AchievementPublisher;
 import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
@@ -18,6 +19,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +37,7 @@ public class AchievementService {
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> filters;
+    private final AchievementPublisher achievementPublisher;
 
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
@@ -48,6 +51,7 @@ public class AchievementService {
                             Stream::concat)
                     .toList();
         }
+
         log.info("Received all achievements");
         return achievementMapper.toDtoList(achievements);
     }
@@ -77,26 +81,39 @@ public class AchievementService {
         return achievementProgressMapper.toDtoList(achievementProgresses);
     }
 
-    public boolean hasAchievement(Long userId, Long achievementId) {
+    @Transactional(readOnly = true)
+    public boolean userHasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
-    public void createProgressIfNecessary(Long userId, Long achievementId) {
+    @Transactional
+    public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-    public AchievementProgress getProgress(Long userId, Long achievementId) {
-        AchievementProgress achievementProgress = achievementProgressRepository
-                .findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new NotFoundException("Achievement progress for user with ID = " + userId +
-                        " for achievement with ID = " + achievementId + "is not found"));
-        return achievementProgress;
+    @Transactional(readOnly = true)
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new NotFoundException(String.format(
+                        "Achievement progress with user id=%d and achievement id=%d not found!",
+                        userId, achievementId
+                )));
     }
 
-    public void giveAchievement(Long userId, Achievement achievement) {
-        UserAchievement newUserAchievement = new UserAchievement();
-        newUserAchievement.setUserId(userId);
-        newUserAchievement.setAchievement(achievement);
-        userAchievementRepository.save(newUserAchievement);
+    @Transactional
+    public void saveProgress(AchievementProgress progress) {
+        achievementProgressRepository.save(progress);
+    }
+
+    @Transactional
+    public void giveAchievement(long userId, Achievement achievement) {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .achievement(achievement)
+                .userId(userId)
+                .build();
+
+        userAchievement = userAchievementRepository.save(userAchievement);
+
+        achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
     }
 }

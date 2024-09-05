@@ -24,7 +24,16 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        profile_pic_channel: profile_pic_channel
+        mentorship_channel: mentorship_offered_channel
         recommendation: recommendation_channel
+
+
+achievements:
+  handsome: HANDSOME
+  sensei: SENSEI
+
+
 
 server:
   port: 8085
@@ -32,6 +41,7 @@ server:
 logging:
   level:
     root: info
+    faang.school.achievement: debug
 
 project-service:
   host: localhost
