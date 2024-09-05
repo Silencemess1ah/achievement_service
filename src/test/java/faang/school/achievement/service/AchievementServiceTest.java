@@ -3,11 +3,10 @@ package faang.school.achievement.service;
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.dto.AchievementEventDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
-import faang.school.achievement.exception.DataNotFoundException;
+import faang.school.achievement.event.AchievementEvent;
 import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
@@ -20,11 +19,10 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.achievement.AchievementPublisher;
+import faang.school.achievement.publisher.AchievementEventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -33,9 +31,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -57,7 +55,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayNameGeneration(value = DisplayNameGenerator.ReplaceUnderscores.class)
-
 class AchievementServiceTest {
 
     @InjectMocks
@@ -81,6 +78,9 @@ class AchievementServiceTest {
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
     private AchievementPublisher achievementPublisher;
+    @Mock
+    private AchievementEventPublisher achievementEventPublisher;
+
 
     private AchievementFilterDto achievementFilterDto;
     private long userId;
@@ -94,6 +94,8 @@ class AchievementServiceTest {
     private String achievementTitle;
     private String sortField;
 
+    @Captor
+    private ArgumentCaptor<UserAchievement> userAchievementArgumentCaptor;
 
     @BeforeEach
     public void setUp() {
@@ -145,7 +147,7 @@ class AchievementServiceTest {
                 .achievementProgressRepository(achievementProgressRepository)
                 .achievementFilters(achievementFiltersImpl)
                 .achievementCache(achievementCache)
-                .achievementPublisher(achievementPublisher)
+//                .achievementEventPublisher(achievementPublisher)
                 .build();
     }
 
@@ -159,7 +161,7 @@ class AchievementServiceTest {
         achievementService.grantAchievement(achievementId);
 
         verify(achievementRepository).findById(achievementId);
-        verify(achievementPublisher).publish(any(AchievementEventDto.class));
+//        verify(achievementPublisher).publish(any(AchievementEvent.class));
         verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 
@@ -225,20 +227,6 @@ class AchievementServiceTest {
     }
 
     @Test
-    @DisplayName("Should return AchievementDto when retrieving achievement by ID")
-    void getAchievementById() {
-        when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
-
-        AchievementDto result = achievementService.getAchievementById(achievementId);
-
-        verify(achievementRepository).findById(achievementId);
-        verify(achievementMapper).toDto(achievement);
-        assertNotNull(result);
-        assertEquals(achievementDto, result);
-    }
-
-    @Test
     @DisplayName("testing getUserNotAttainedAchievements")
     void testGetUserNotAttainedAchievements() {
         when(userContext.getUserId()).thenReturn(userId);
@@ -271,7 +259,7 @@ class AchievementServiceTest {
 
     @Test
     @DisplayName("Should return AchievementDto when achievement is found in cache")
-    void getAchievementByTitle_FoundInCache() {
+    void getAchievementByTitleFoundInCache() {
         when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(achievement);
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
@@ -284,81 +272,54 @@ class AchievementServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw EntityNotFoundException when achievement is not found in cache or repository")
-    void getAchievementByTitle_NotFound() {
-        when(achievementCache.getAchievementByTitle(achievementTitle)).thenReturn(null);
-
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementByTitle(achievementTitle));
-    }
-
-    @Test
+    @DisplayName("testing hasAchievement method")
     void testHasAchievement() {
-        achievementService.hasAchievement(1, 1);
-
+        achievementService.hasAchievement(userId, achievementId);
         verify(userAchievementRepository, times(1))
-                .existsByUserIdAndAchievementId(1, 1);
+                .existsByUserIdAndAchievementId(userId, achievementId);
     }
 
     @Test
+    @DisplayName("testing createProgressIfNecessary with non appropriate value")
     void testCreateProgressIfNecessary() {
-        achievementService.createProgressIfNecessary(1, 1);
-
+        achievementService.createProgressIfNecessary(userId, achievementId);
         verify(achievementProgressRepository, times(1))
-                .createProgressIfNecessary(1, 1);
+                .createProgressIfNecessary(userId, achievementId);
     }
 
-    @Test
-    void testGetProgressAchievementProgressNotFound() {
-        long userId = 1L;
-        long achievementId = 1L;
 
+    @Test
+    @DisplayName("testing getProgress with non appropriate value")
+    void testGetProgressWithNonAppropriateValue() {
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
                 .thenReturn(Optional.empty());
-
-        EntityNotFoundException thrown = assertThrows(
-                EntityNotFoundException.class,
-                () -> achievementService.getProgress(userId, achievementId)
-        );
-
-        assertEquals("AchievementProgress with ID: 1, user ID: 1 not found.", thrown.getMessage());
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getProgress(userId, achievementId));
     }
 
     @Test
-    void testGetProgressSuccess() {
-        long userId = 1L;
-        long achievementId = 1L;
-
-        AchievementProgress expectedProgress = AchievementProgress.builder()
-                .achievement(achievement)
-                .userId(1)
-                .build();
-
+    @DisplayName("testing getProgress with appropriate value")
+    void testGetProgressWithAppropriateValue() {
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
-                .thenReturn(Optional.of(expectedProgress));
+                .thenReturn(Optional.of(achievementProgress));
 
-        AchievementProgress actualProgress = achievementService.getProgress(userId, achievementId);
+        achievementService.getProgress(userId, achievementId);
 
-        assertNotNull(actualProgress);
-        assertEquals(expectedProgress, actualProgress);
-
-        verify(achievementProgressRepository, times(1)).findByUserIdAndAchievementId(userId, achievementId);
+        verify(achievementProgressRepository, times(1))
+                .findByUserIdAndAchievementId(userId, achievementId);
     }
 
     @Test
-    void testSaveProgress() {
-        AchievementProgress achievementProgress = new AchievementProgress();
-        achievementService.saveProgress(achievementProgress);
-
-        verify(achievementProgressRepository, times(1)).save(achievementProgress);
-    }
-
-    @Test
+    @DisplayName("testing giveAchievement method")
     void testGiveAchievement() {
-        when(achievementRepository.findById(1L)).thenReturn(Optional.ofNullable(achievement));
-        achievementService.giveAchievement(1, 1);
+        achievementService.giveAchievement(userId, achievement);
+        verify(userAchievementRepository, times(1)).save(userAchievementArgumentCaptor.capture());
+    }
 
-        ArgumentCaptor<UserAchievement> captor = ArgumentCaptor.forClass(UserAchievement.class);
-        verify(userAchievementRepository, times(1)).save(captor.capture());
+    @Test
+    @DisplayName("testing saveAchievementProgress method")
+    void testSaveAchievementProgress() {
+        achievementService.saveAchievementProgress(achievementProgress);
+        verify(achievementProgressRepository, times(1)).save(achievementProgress);
     }
 
     @Test

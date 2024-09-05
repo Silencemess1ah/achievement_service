@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        mentorship: mentorship_channel
         album: album_channel
         profile-picture: profile_pic_channel
         post: post_channel
@@ -38,11 +39,18 @@ cache:
 achievement-handler:
   handsome-achievement-handler:
     achievement-name: HANDSOME
+    points: 1
   librarian-achievement-handler:
     achievement-name: LIBRARIAN
+    points:
   writer-achievement-handler:
     achievement-name: WRITER
+    points: 100
+  sensei-achievement-handler:
+    achievement-name: SENSEI
+    points: 30
   comment-achievement-handler:
+    points:
     achievement-name: EXPERT
 
 server:
@@ -58,3 +66,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+handler:
+  achievement:
+    sensei:

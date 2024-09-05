@@ -9,22 +9,30 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class HandsomeAchievementHandler extends AbstractAchievementHandler implements EventHandler<ProfilePicEvent> {
+public class HandsomeAchievementHandler extends AbstractAchievementHandler<ProfilePicEvent> {
 
     @Value("${achievement-handler.handsome-achievement-handler.achievement-name}")
     private String achievementTitle;
+    @Value("${achievement-handler.handsome-achievement-handler.points}")
+    private long pointsToEarnAchievement;
 
-    public HandsomeAchievementHandler(AchievementService achievementService, AchievementCache achievementCache) {
-        super(achievementService, achievementCache);
+    public HandsomeAchievementHandler(AchievementCache achievementCache,
+                                      AchievementService achievementService) {
+        super(achievementCache, achievementService);
     }
 
     @Override
-    public void handleEvent(ProfilePicEvent event) {
-        processAchievementEvent(achievementTitle, event.getUserId());
+    protected String getAchievementTitle() {
+        return achievementTitle;
     }
 
     @Override
-    public Class<ProfilePicEvent> getType() {
-        return ProfilePicEvent.class;
+    protected long getUserId(ProfilePicEvent event) {
+        return event.getUserId();
+    }
+
+    @Override
+    protected long getPointsToEarnAchievement() {
+        return pointsToEarnAchievement;
     }
 }

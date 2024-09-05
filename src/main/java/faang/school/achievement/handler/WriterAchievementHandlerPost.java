@@ -7,22 +7,29 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WriterAchievementHandlerPost extends AbstractAchievementHandler implements EventHandler<PostEvent> {
+public class WriterAchievementHandlerPost extends AbstractAchievementHandler<PostEvent> {
 
     @Value("${achievement-handler.writer-achievement-handler.achievement-name}")
     private String achievementTitle;
+    @Value("${achievement-handler.writer-achievement-handler.points}")
+    private long pointsToEarnAchievement;
 
-    public WriterAchievementHandlerPost(AchievementService achievementService, AchievementCache achievementCache) {
-        super(achievementService, achievementCache);
+    public WriterAchievementHandlerPost(AchievementCache achievementCache, AchievementService achievementService) {
+        super(achievementCache, achievementService);
     }
 
     @Override
-    public void handleEvent(PostEvent event) {
-        processAchievementEvent(achievementTitle, event.getPostId());
+    protected String getAchievementTitle() {
+        return achievementTitle;
     }
 
     @Override
-    public Class<PostEvent> getType() {
-        return PostEvent.class;
+    protected long getUserId(PostEvent event) {
+        return event.getAuthorId();
+    }
+
+    @Override
+    protected long getPointsToEarnAchievement() {
+        return pointsToEarnAchievement;
     }
 }
