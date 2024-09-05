@@ -6,6 +6,7 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -16,7 +17,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -84,8 +84,10 @@ public class AchievementService {
                 UserAchievement.builder()
                         .userId(userId)
                         .achievement(achievement)
-                        .createdAt(LocalDateTime.now())
-                        .updatedAt(LocalDateTime.now())
                         .build());
+    }
+
+    public AchievementProgress saveProgress(AchievementProgress progress) {
+        return achievementProgressRepository.save(progress);
     }
 }

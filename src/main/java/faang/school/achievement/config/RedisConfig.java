@@ -1,5 +1,6 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.listener.FollowerEventListener;
 import faang.school.achievement.listener.TeamEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +20,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int redisPort;
     @Value("${spring.data.redis.channel.achievement}")
-    private String channelForAchievementEvent;
+    private String achievementChannelName;
+    @Value("${spring.data.redis.channel.follower}")
+    private String followerChannelName;
     @Value("${spring.data.redis.channel.team}")
     private String channelForTeamEvent;
 
@@ -39,8 +42,13 @@ public class RedisConfig {
     }
 
     @Bean
-    ChannelTopic topicForAchievementEvent() {
-        return new ChannelTopic(channelForAchievementEvent);
+    ChannelTopic achievementTopic() {
+        return new ChannelTopic(achievementChannelName);
+    }
+
+    @Bean
+    ChannelTopic followerTopic() {
+        return new ChannelTopic(followerChannelName);
     }
 
     @Bean
@@ -49,16 +57,22 @@ public class RedisConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter teamListener) {
-        RedisMessageListenerContainer container
-                = new RedisMessageListenerContainer();
-        container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(teamListener, topicForTeamEvent());
-        return container;
+    MessageListenerAdapter followerListener(FollowerEventListener followerEventListener) {
+        return new MessageListenerAdapter(followerEventListener);
     }
 
     @Bean
     MessageListenerAdapter teamListener(TeamEventListener teamEventListener) {
         return new MessageListenerAdapter(teamEventListener);
+    }
+
+    @Bean
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter followerListener,
+                                                 MessageListenerAdapter teamListener) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(jedisConnectionFactory());
+        container.addMessageListener(followerListener, followerTopic());
+        container.addMessageListener(teamListener, topicForTeamEvent());
+        return container;
     }
 }
