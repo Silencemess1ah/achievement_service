@@ -8,13 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -27,31 +25,14 @@ public class RedisMQConfig {
     private String host;
     @Value("${spring.data.redis.port}")
     private int port;
-    @Value("${spring.data.redis.connection_factory}")
-    private String factoryType;
 
 
     @Bean
     @Lazy
-    public JedisConnectionFactory jedisConnectionFactory() {
+    public LettuceConnectionFactory connectionFactory() {
         RedisStandaloneConfiguration configuration =
                 new RedisStandaloneConfiguration(host, port);
-        return new JedisConnectionFactory(configuration);
-    }
-
-    @Bean
-    @Lazy
-    public LettuceConnectionFactory lettuceConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
-    }
-
-    @Bean
-    public RedisConnectionFactory connectionFactory() {
-        return switch (factoryType) {
-            case "jedis" -> jedisConnectionFactory();
-            case "lettuce" -> lettuceConnectionFactory();
-            default -> throw new IllegalStateException("Unexpected value: " + factoryType);
-        };
+        return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
@@ -60,9 +41,7 @@ public class RedisMQConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory
-    ) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
@@ -86,14 +65,14 @@ public class RedisMQConfig {
     }
 
     @Bean
-    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementListener,
+    RedisMessageListenerContainer redisContainer(MessageListenerAdapter achievementMessageListener,
                                                  MessageListenerAdapter redisPostEventListener) {
         RedisMessageListenerContainer container =
                 new RedisMessageListenerContainer();
 
         container.setConnectionFactory(connectionFactory());
 
-        container.addMessageListener(achievementListener, achievementTopic());
+        container.addMessageListener(achievementMessageListener, achievementTopic());
         container.addMessageListener(redisPostEventListener, postEventTopic());
 
         return container;

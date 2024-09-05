@@ -7,6 +7,7 @@ import faang.school.achievement.dto.achievement.AchievementProgressDto;
 import faang.school.achievement.dto.achievement.UserAchievementDto;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -61,5 +63,21 @@ public class AchievementService {
         return achievementProgressRepository.findByUserId(userId).stream()
                 .map(achievementMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public boolean hasAchievement(long userId, long achievementId) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    public void createProgressIfNecessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+    }
+
+    public Optional<AchievementProgress> getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    public void giveAchievement() {
+
     }
 }
