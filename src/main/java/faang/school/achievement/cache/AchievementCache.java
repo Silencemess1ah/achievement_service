@@ -1,41 +1,41 @@
 package faang.school.achievement.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+/**
+ * @author Evgenii Malkov
+ */
 @Component
-@Slf4j
-@RequiredArgsConstructor
-public class AchievementCache {
+public class AchievementCache extends AbstractCacheManager<AchievementDto> {
+
+    private static final String ACHIEVEMENT_CACHE_KEY = "ACHIEVEMENTS";
     private final AchievementRepository achievementRepository;
-    private Map<String, Achievement> achievementsCacheMap;
+    private final AchievementMapper achievementMapper;
+
+    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate, AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
+        super(mapper, redisTemplate);
+        this.achievementRepository = achievementRepository;
+        this.achievementMapper = achievementMapper;
+    }
 
     @PostConstruct
-    private void initCache() {
-        achievementsCacheMap = StreamSupport.stream(achievementRepository.findAll().spliterator(), false)
-                .collect(Collectors.toMap(
-                        Achievement::getTitle,
-                        achievement -> achievement
-                ));
-        log.info("Achievement cache has been initialized/updated. Cache size = {}", achievementsCacheMap.size());
+    public void fillAchievements() {
+        Map<String, AchievementDto> allAchievements = achievementRepository.findAll().stream()
+                .collect(Collectors.toMap(Achievement::getTitle, achievementMapper::toDto));
+        put(ACHIEVEMENT_CACHE_KEY, allAchievements);
     }
 
-    public Achievement getAchievementByTitle(String title) {
-        return achievementsCacheMap.get(title);
-    }
-
-    @Scheduled(cron = "${cache.achievement.update-schedule}")
-    public void updateCache() {
-        log.info("Starting update of  Achievement cache");
-        this.initCache();
+    public AchievementDto get(String title) {
+        return get(ACHIEVEMENT_CACHE_KEY, title);
     }
 }

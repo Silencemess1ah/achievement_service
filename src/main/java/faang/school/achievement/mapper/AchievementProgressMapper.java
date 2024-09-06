@@ -1,22 +1,19 @@
 package faang.school.achievement.mapper;
 
-import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.model.AchievementProgress;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+/**
+ * @author Evgenii Malkov
+ */
+@Mapper(componentModel = "spring", uses = {AchievementMapper.class}, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AchievementProgressMapper {
-    @Mapping(source = "achievement.id", target = "achievementId")
-    AchievementProgressDto toDto(AchievementProgress achievementProgress);
 
-    @Mapping(source = "achievementId", target = "achievement.id")
-    AchievementProgress toEntity(AchievementProgressDto achievementProgressDto);
+    AchievementProgressDto toDto(AchievementProgress achievement);
 
-    List<AchievementProgressDto> toDtoList(List<AchievementProgress> achievementProgressList);
-    List<AchievementProgress> toEnityList(List<AchievementProgressDto> achievementProgressDtoList);
+    List<AchievementProgressDto> toListDto(List<AchievementProgress> achievement);
 }
