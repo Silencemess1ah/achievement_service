@@ -35,6 +35,8 @@ spring:
       project_topic: project_channel
     consumer:
       group-id: Group1
+    concurrency: 3
+    poll-timeout: 3000
 
 listener:
   type:

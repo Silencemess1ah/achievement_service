@@ -29,6 +29,12 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.consumer.group-id}")
     private String group;
 
+    @Value("${spring.kafka.concurrency}")
+    private int concurrency;
+
+    @Value("${spring.kafka.poll-timeout}")
+    private int pollTimeOut;
+
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -43,8 +49,8 @@ public class KafkaConsumerConfig {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, Object>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setConcurrency(3);
-        factory.getContainerProperties().setPollTimeout(3000);
+        factory.setConcurrency(concurrency);
+        factory.getContainerProperties().setPollTimeout(pollTimeOut);
         return factory;
     }
 }
