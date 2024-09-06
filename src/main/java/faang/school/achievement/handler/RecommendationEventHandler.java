@@ -23,7 +23,7 @@ public abstract class RecommendationEventHandler implements EventHandler<Recomme
         Achievement achievement = achievementCache.get(achievementName);
         long userId = event.getReceiverId();
         long achievementId = achievement.getId();
-        if (!achievementService.hasAchievement(userId, achievementId)) {
+        if (!achievementService.userHasAchievement(userId, achievementId)) {
             log.info("Achievement progress for user with ID = {} for achievement {} was created",
                     userId, achievementName);
             achievementService.createProgressIfNecessary(userId, achievementId);
