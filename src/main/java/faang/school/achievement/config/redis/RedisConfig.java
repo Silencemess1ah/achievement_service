@@ -49,13 +49,4 @@ public class RedisConfig {
         listenerTopicPairs.forEach(pair -> container.addMessageListener(pair.getFirst(), pair.getSecond()));
         return container;
     }
-    @Bean
-    public RedisCacheConfiguration redisCacheConfiguration() {
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
-        config.entryTtl(Duration.ofMinutes(15));
-        config.serializeValuesWith((RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string())));
-        config.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()));
-        config.disableCachingNullValues();
-        return config;
-    }
 }

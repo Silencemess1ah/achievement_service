@@ -18,6 +18,8 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
   data:
+    attempts:
+      max: 5
     redis:
       port: 6379
       host: localhost
@@ -26,11 +28,11 @@ spring:
         follower: follower_channel
         comment_achievement: post_comment_channel
         profile_pic_channel: profile_pic_channel
-    cache:
-      title:
-        expert: EXPERT
 achievements:
   handsome: HANDSOME
+  expert: EXPERT
+
+
 
 
 server:
@@ -44,7 +46,3 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-user-service:
-  host: localhost
-  port: 8080

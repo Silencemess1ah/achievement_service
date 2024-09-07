@@ -29,11 +29,10 @@ public interface AchievementProgressRepository extends JpaRepository<Achievement
 
     List<AchievementProgress> findByUserId(long userId);
 
-
     @Query(nativeQuery = true, value = """
-             UPDATE user_achievement_progress SET current_points = current_points + 1 WHERE
-            id = :progressId
+             UPDATE user_achievement_progress SET current_points = current_points + 1, version = version + 1 WHERE
+            id = :progressId returning *
             """)
-    @Modifying
-    void incrementCurrentPointsForUser(long progressId);
+
+    Optional<AchievementProgress> incrementCurrentPointsForUser(long progressId);
 }

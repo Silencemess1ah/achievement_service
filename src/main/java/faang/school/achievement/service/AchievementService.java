@@ -5,24 +5,24 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
-import faang.school.achievement.service.util.AchievementUtilService;
-import faang.school.achievement.redis.AchievementPublisher;
-import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.redis.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import org.springframework.transaction.annotation.Transactional;
+import faang.school.achievement.util.filter.AchievementFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -37,7 +37,6 @@ public class AchievementService {
     private final UserAchievementMapper userAchievementMapper;
     private final AchievementProgressMapper achievementProgressMapper;
     private final List<AchievementFilter> filters;
-    private final AchievementUtilService achievementUtilService;
     private final AchievementPublisher achievementPublisher;
 
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
@@ -117,30 +116,10 @@ public class AchievementService {
 
         achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
     }
-// Не знаю чьи методы оставлять. Делают примерно одно и тоже...
-    public boolean hasAchievement(long userId, Long achievementId) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
-    }
 
     @Transactional
-    public void createProgressIfNecessary(Long userId, Long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-        log.info("Created progress for user with ID = {}", userId);
-    }
-
-    @Transactional
-    public AchievementProgress getProgress(Long userId, Long achievementId) {
-        return achievementUtilService.getProgress(userId, achievementId);
-    }
-
-    @Transactional
-    public void giveAchievement(long userId, Long achievementId) {
-        achievementUtilService.giveAchievement(achievementId, userId);
-        log.info("Gave achievement with ID = {}", achievementId);
-    }
-
-    @Transactional
-    public void incrementCurrentPointsForUser(long progressId) {
-        achievementUtilService.incrementCurrentPointsForUser(progressId);
+    public AchievementProgress incrementCurrentPointsForUser(AchievementProgress progress) {
+        Optional<AchievementProgress> achievementProgress = achievementProgressRepository.incrementCurrentPointsForUser(progress.getId());
+        return achievementProgress.orElseThrow(() -> new NotFoundException("Progress with ID = " + progress.getId() + " not found!"));
     }
 }

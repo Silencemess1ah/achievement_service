@@ -1,26 +1,23 @@
 package faang.school.achievement.redis.listeners;
 
-import faang.school.achievement.converters.JsonConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.events.CommentEvent;
-import faang.school.achievement.handler.CommentEventHandler;
-import lombok.RequiredArgsConstructor;
+import faang.school.achievement.redis.listener.AbstractEventListener;
+import faang.school.achievement.service.eventhandler.AbstractEventHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
-public class CommentEventListener implements MessageListener {
-    private final JsonConverter<CommentEvent> jsonConverter;
-    private final List<CommentEventHandler> handlers;
+public class CommentEventListener extends AbstractEventListener<CommentEvent> {
+    public CommentEventListener(ObjectMapper objectMapper, List<AbstractEventHandler<CommentEvent>> handlers) {
+        super(objectMapper, handlers);
+    }
 
     @Override
-    public void onMessage(Message message, byte[] pattern) {
-        CommentEvent event = jsonConverter.fromJson(message.toString(), CommentEvent.class);
-        handlers.forEach(handler -> handler.handle(event));
+    protected Class<CommentEvent> getEventClassType() {
+        return CommentEvent.class;
     }
 }
