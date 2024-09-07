@@ -18,8 +18,6 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
 
   data:
-    attempts:
-      max: 5
     redis:
       port: 6379
       host: localhost
