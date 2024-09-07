@@ -2,7 +2,6 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.validator.AchievementCacheValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,9 +22,6 @@ public class AchievementCacheTest {
 
     @Mock
     private AchievementRepository achievementRepository;
-
-    @Mock
-    private AchievementCacheValidator achievementCacheValidator;
 
     @BeforeEach
     public void setUp() {
@@ -57,7 +53,7 @@ public class AchievementCacheTest {
     @Test
     public void testGetNonExistingAchievement() {
         doThrow(new IllegalArgumentException("Achievement with title 'Non Existing Achievement' not found in cache."))
-                .when(achievementCacheValidator).validateAchievementNotNull(null, "Non Existing Achievement");
+                .when(achievementRepository).findByTitle("Non Existing Achievement");
 
         assertThrows(IllegalArgumentException.class, () -> achievementCache.get("Non Existing Achievement"));
     }

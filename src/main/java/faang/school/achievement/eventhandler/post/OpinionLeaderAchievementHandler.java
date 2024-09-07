@@ -1,20 +1,14 @@
 package faang.school.achievement.eventhandler.post;
 
-import faang.school.achievement.event.post.PostEvent;
-import org.springframework.scheduling.annotation.Async;
+import faang.school.achievement.service.AchievementCache;
+import faang.school.achievement.service.achievement.AchievementService;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OpinionLeaderAchievementHandler extends PostEventHandler{
-    @Override
-    @Async
-    public void handle(PostEvent event) {
-
-    }
-
-    @Override
-    @Async
-    public boolean canBeHandled(PostEvent event) {
-        return false;
+public class OpinionLeaderAchievementHandler extends PostEventHandler {
+    public OpinionLeaderAchievementHandler(
+            AchievementService achievementService,
+            AchievementCache cache) {
+        super(achievementService, cache, "OPINION_LEADER");
     }
 }
