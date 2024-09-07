@@ -5,10 +5,10 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.CommentEvent;
 import faang.school.achievement.service.AchievementService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class CommentEventHandler implements EventHandler<CommentEvent> {
 
     private final AchievementCache achievementCache;

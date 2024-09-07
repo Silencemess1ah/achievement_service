@@ -15,8 +15,11 @@ import java.util.List;
 public abstract class AbstractListener<T> implements MessageListener {
     protected final ObjectMapper objectMapper;
     private final List<EventHandler<T>> eventHandlers;
+    private final Class<T> eventType;
 
-    protected abstract T handleEvent(Message message) throws IOException;
+    protected T handleEvent(Message message) throws IOException {
+        return null;
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {

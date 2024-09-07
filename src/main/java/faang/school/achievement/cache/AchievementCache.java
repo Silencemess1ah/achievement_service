@@ -28,6 +28,11 @@ public class AchievementCache {
     }
 
     public Achievement get(String achievementName) {
+        if (!CACHE.containsKey(achievementName)) {
+            Achievement newAchievement = achievementRepository.findByTitle(achievementName);
+            CACHE.put(achievementName, newAchievement);
+            return newAchievement;
+        }
         return CACHE.get(achievementName);
     }
 
