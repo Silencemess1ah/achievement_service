@@ -1,6 +1,7 @@
 package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
@@ -19,13 +20,15 @@ public class AbstractAchievementHandler<T> implements EventHandler<T> {
     protected final AchievementService achievementService;
     protected final AchievementCache achievementCache;
 
+
     private final String achievementTitle;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementMapper achievementMapper;
 
     @Async("achievementHandlerTaskExecutor")
     @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 10), retryFor = PrinterException.class)
     public void handle(long userId) {
-        Achievement achievement = achievementCache.getAchievementByTitle(achievementTitle);
+        Achievement achievement = achievementMapper.toEntity(achievementCache.get(achievementTitle));
         log.info("Achievement found {}, name{}", achievement.getId(), achievement.getTitle());
         if (!achievementService.hasAchievement(userId, achievement)) {
             achievementService.createProgressIfNecessary(userId, achievement.getId());

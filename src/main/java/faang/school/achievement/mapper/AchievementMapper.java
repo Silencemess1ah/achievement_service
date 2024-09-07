@@ -17,4 +17,6 @@ public interface AchievementMapper {
 
     List<AchievementDto> toListDto(List<Achievement> achievement);
 
+    Achievement toEntity(AchievementDto achievementDto);
+
 }

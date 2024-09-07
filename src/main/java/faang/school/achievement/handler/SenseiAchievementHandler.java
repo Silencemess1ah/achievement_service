@@ -2,6 +2,7 @@ package faang.school.achievement.handler;
 
 import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.event.MentorshipStartEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.service.AchievementService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,8 @@ public class SenseiAchievementHandler extends AbstractAchievementHandler<Mentors
 
     public SenseiAchievementHandler(AchievementService achievementService, AchievementCache achievementCache,
                                     @Value("${listener.type.achievements.sensei}") String achievementTitle,
-                                    AchievementProgressRepository achievementProgressRepository) {
-        super(achievementService, achievementCache, achievementTitle, achievementProgressRepository);
+                                    AchievementProgressRepository achievementProgressRepository,
+                                    AchievementMapper achievementMapper) {
+        super(achievementService, achievementCache, achievementTitle, achievementProgressRepository, achievementMapper);
     }
 }
