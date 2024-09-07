@@ -1,6 +1,6 @@
 package faang.school.achievement.config.redis.listener;
 
-import faang.school.achievement.redis.listener.ProfilePicEventListener;
+import faang.school.achievement.redis.listeners.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

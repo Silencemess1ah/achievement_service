@@ -2,7 +2,6 @@ package faang.school.achievement.redis.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.events.CommentEvent;
-import faang.school.achievement.redis.listener.AbstractEventListener;
 import faang.school.achievement.service.eventhandler.AbstractEventHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
