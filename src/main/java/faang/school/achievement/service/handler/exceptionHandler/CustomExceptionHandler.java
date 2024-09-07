@@ -31,14 +31,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(CustomReadValueException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleCustomReadValueException(CustomReadValueException e, HttpServletRequest request) {
         String error = messageSource.getMessage("error.read_value_exception", null, Locale.getDefault());
         log.error(error, e);
     }
 
     @ExceptionHandler(CustomJsonProcessingException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleCustomJsonProcessingException(CustomJsonProcessingException e, HttpServletRequest request) {
         String error = messageSource.getMessage("error.json_processing_exception", null, Locale.getDefault());
         log.error(error, e);
