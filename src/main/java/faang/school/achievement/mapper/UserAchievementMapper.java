@@ -17,6 +17,8 @@ public interface UserAchievementMapper {
 
     List<UserAchievementDto> toDtoList(List<UserAchievement> userAchievements);
 
+    UserAchievement toEntity(UserAchievementDto userAchievementDto);
+
     @Mapping(target = "id", source = "achievement.id")
     @Mapping(target = "title", source = "achievement.title")
     @Mapping(target = "userId", source = "userId")

@@ -2,6 +2,7 @@ package faang.school.achievement.redis.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.model.event.ProfilePicEvent;
+import faang.school.achievement.redis.listeners.ProfilePicEventListener;
 import faang.school.achievement.service.eventhandler.AbstractEventHandler;
 import faang.school.achievement.service.eventhandler.profilepic.HandsomeAchievementHandler;
 import org.junit.jupiter.api.Test;

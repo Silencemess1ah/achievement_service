@@ -5,23 +5,24 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
-import faang.school.achievement.redis.AchievementPublisher;
-import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.redis.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.util.filter.AchievementFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -41,7 +42,7 @@ public class AchievementService {
     public List<AchievementDto> getAllAchievement(AchievementFilterDto filterDto) {
         List<Achievement> achievements = achievementRepository.findAll();
 
-        if(filterDto != null) {
+        if (filterDto != null) {
             Stream<Achievement> achievementStream = achievements.stream();
             achievements = filters.stream()
                     .filter(filter -> filter.isApplicable(filterDto))
@@ -114,5 +115,11 @@ public class AchievementService {
         userAchievement = userAchievementRepository.save(userAchievement);
 
         achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
+    }
+
+    @Transactional
+    public AchievementProgress incrementCurrentPointsForUser(AchievementProgress progress) {
+        Optional<AchievementProgress> achievementProgress = achievementProgressRepository.incrementCurrentPointsForUser(progress.getId());
+        return achievementProgress.orElseThrow(() -> new NotFoundException("Progress with ID = " + progress.getId() + " not found!"));
     }
 }

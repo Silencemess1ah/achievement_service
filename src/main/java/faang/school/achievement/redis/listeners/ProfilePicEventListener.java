@@ -1,4 +1,4 @@
-package faang.school.achievement.redis.listener;
+package faang.school.achievement.redis.listeners;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.model.event.ProfilePicEvent;
