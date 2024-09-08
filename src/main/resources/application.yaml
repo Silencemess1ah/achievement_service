@@ -24,7 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-        mentorship: mentorship_check_channel
+        mentorship: mentorship_start_channel
 
 listener:
   type:

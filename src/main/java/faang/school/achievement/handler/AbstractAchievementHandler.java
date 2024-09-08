@@ -28,7 +28,7 @@ public class AbstractAchievementHandler<T> implements EventHandler<T> {
     @Async("achievementHandlerTaskExecutor")
     @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 10), retryFor = PrinterException.class)
     public void handle(long userId) {
-        Achievement achievement = achievementMapper.toEntity(achievementCache.get(achievementTitle));
+        Achievement achievement = achievementMapper.toEntity(achievementCache.getByTitle(achievementTitle));
         log.info("Achievement found {}, name{}", achievement.getId(), achievement.getTitle());
         if (!achievementService.hasAchievement(userId, achievement)) {
             achievementService.createProgressIfNecessary(userId, achievement.getId());
