@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis.listener;
 
-import faang.school.achievement.redis.listener.MentorshipEventListener;
-import org.springframework.beans.factory.annotation.Qualifier;
+import faang.school.achievement.redis.listeners.MentorshipEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
