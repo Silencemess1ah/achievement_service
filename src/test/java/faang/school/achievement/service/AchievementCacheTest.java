@@ -22,22 +22,26 @@ public class AchievementCacheTest {
 
     @Mock
     private AchievementRepository achievementRepository;
+    private Achievement achievement1 = Achievement.builder()
+            .id(1L)
+            .title("Achievement 1")
+            .description("Description 1")
+            .build();
 
+    private Achievement achievement2 = Achievement.builder()
+            .id(2L)
+            .title("Achievement 2")
+            .description("Description 2")
+            .build();
+
+    private Achievement achievement3 = Achievement.builder()
+            .id(3L)
+            .title("Achievement 3")
+            .description("Description 3")
+            .build();
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        Achievement achievement1 = Achievement.builder()
-                .id(1L)
-                .title("Achievement 1")
-                .description("Description 1")
-                .build();
-
-        Achievement achievement2 = Achievement.builder()
-                .id(2L)
-                .title("Achievement 2")
-                .description("Description 2")
-                .build();
 
         when(achievementRepository.findAll()).thenReturn(Arrays.asList(achievement1, achievement2));
 
@@ -47,14 +51,25 @@ public class AchievementCacheTest {
     @Test
     public void testGetAchievement() {
         Achievement achievement = achievementCache.get("Achievement 1");
-        assertEquals("Description 1", achievement.getDescription());
+        assertEquals(achievement1, achievement);
+    }
+
+    @Test
+    public void testAddToCache() {
+        achievementCache.addToCache(achievement3);
+        assertEquals(achievement3, achievementCache.get("Achievement 3"));
     }
 
     @Test
     public void testGetNonExistingAchievement() {
-        doThrow(new IllegalArgumentException("Achievement with title 'Non Existing Achievement' not found in cache."))
-                .when(achievementRepository).findByTitle("Non Existing Achievement");
+        String wrongTitle = "Non Existing Achievement";
+        String message = "Achievement with title " + wrongTitle + " doesn't exist.";
 
-        assertThrows(IllegalArgumentException.class, () -> achievementCache.get("Non Existing Achievement"));
+        doThrow(new IllegalArgumentException(message))
+                .when(achievementRepository).findByTitle(wrongTitle);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> achievementCache.get(wrongTitle));
+        assertEquals(message, e.getMessage());
     }
 }

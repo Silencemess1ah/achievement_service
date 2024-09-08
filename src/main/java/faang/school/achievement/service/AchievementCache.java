@@ -26,7 +26,7 @@ public class AchievementCache {
         Achievement achievement = achievementCache.get(title);
         if (achievement == null) {
             achievement = achievementRepository.findByTitle(title).orElseThrow(
-                    () -> new IllegalArgumentException("Achievement with title '" + title + " doesn't exist."));
+                    () -> new IllegalArgumentException("Achievement with title " + title + " doesn't exist."));
             addToCache(achievement);
         }
         return achievement;
