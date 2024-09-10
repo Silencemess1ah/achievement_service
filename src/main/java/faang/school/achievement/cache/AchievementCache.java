@@ -35,7 +35,11 @@ public class AchievementCache extends AbstractCacheManager<AchievementDto> {
         put(ACHIEVEMENT_CACHE_KEY, allAchievements);
     }
 
-    public AchievementDto get(String title) {
-        return get(ACHIEVEMENT_CACHE_KEY, title);
+    public AchievementDto getByTitle(String title) {
+        Object value = get(ACHIEVEMENT_CACHE_KEY, title);
+        if (value == null) {
+            return null;
+        }
+        return mapper.convertValue(value, AchievementDto.class);
     }
 }
