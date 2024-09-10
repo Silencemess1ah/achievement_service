@@ -35,6 +35,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(response(ex), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(DataValidationException.class)
     public ResponseEntity<Object> handleDataValidationException(DataValidationException ex) {
         return new ResponseEntity<>(response(ex), HttpStatus.BAD_REQUEST);
