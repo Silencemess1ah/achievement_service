@@ -21,8 +21,8 @@ public abstract class AbstractEventListener<T> implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            T mentorshipStartEvent = objectMapper.readValue(message.getBody(), type);
-            eventHandlers.forEach(eventHandler -> eventHandler.handleEvent(mentorshipStartEvent));
+            T event = objectMapper.readValue(message.getBody(), type);
+            eventHandlers.forEach(eventHandler -> eventHandler.handleEvent(event));
         } catch (IOException e) {
             log.error("Could not value from JSON: %s".formatted(message));
             throw new RuntimeException(e);
