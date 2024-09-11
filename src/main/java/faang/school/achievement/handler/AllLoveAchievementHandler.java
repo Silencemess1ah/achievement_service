@@ -9,7 +9,8 @@ import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.achievement.AchievementPublisher;
+import faang.school.achievement.publisher.AchievementEventDtoPublisher;
+import faang.school.achievement.publisher.AchievementEventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -26,6 +27,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class AllLoveAchievementHandler {
+    private final AchievementEventDtoPublisher achievementEventDtoPublisher;
     @Value("${achievement-handler.all-love-achievement-handler.achievement-name}")
     private String achievement_title;
 
@@ -35,13 +37,13 @@ public class AllLoveAchievementHandler {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementRepository achievementRepository;
-    private final AchievementPublisher achievementPublisher;
+    private final AchievementEventPublisher achievementEventPublisher;
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
     private final UserAchievementMapper userAchievementMapper;;
 
     @Transactional
-    public void handler(LikeEvent likeEvent) {
+    public void handle(LikeEvent likeEvent) {
         long userId = likeEvent.getAuthorPostId();
         long achievementId;
         Achievement allLoveAchievement = achievementCache.getAchievementByTitle(achievement_title);
@@ -62,22 +64,11 @@ public class AllLoveAchievementHandler {
 
     }
 
-    private boolean hasAchievement(long userId, long achievementId) {
-        return getAchievementsByUserId(userId).stream()
-                .anyMatch(userAchievementDto -> userAchievementDto.achievementId() == achievementId);
-    }
-
     public List<UserAchievementDto> getAchievementsByUserId(long userId) {
         List<UserAchievement> userAchievements = userAchievementRepository.findByUserId(userId);
         return userAchievements.stream()
                 .map(userAchievementMapper::toDto)
                 .toList();
-    }
-
-    protected AchievementProgress createProgressIfNeccessary(long userId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-        AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
-        return achievementProgress;
     }
 
     public void grantAchievement(long userId, long achievementId) {
@@ -86,12 +77,23 @@ public class AllLoveAchievementHandler {
                         .formatted(achievementId)));
 
         AchievementEventDto event = new AchievementEventDto(userId, achievementId);
-        achievementPublisher.publish(event);
+        achievementEventDtoPublisher.publish(event);
 
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
                 .achievement(achievement)
                 .build();
         userAchievementRepository.save(userAchievement);
+    }
+
+    private AchievementProgress createProgressIfNeccessary(long userId, long achievementId) {
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+        AchievementProgress achievementProgress = achievementService.getProgress(userId, achievementId);
+        return achievementProgress;
+    }
+
+    private boolean hasAchievement(long userId, long achievementId) {
+        return getAchievementsByUserId(userId).stream()
+                .anyMatch(userAchievementDto -> userAchievementDto.achievementId() == achievementId);
     }
 }

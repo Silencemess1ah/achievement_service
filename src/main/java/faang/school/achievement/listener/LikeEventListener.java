@@ -27,6 +27,6 @@ public class LikeEventListener implements MessageListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        allLoveAchievementHandler.handler(likeEvent);
+        allLoveAchievementHandler.handle(likeEvent);
     }
 }
