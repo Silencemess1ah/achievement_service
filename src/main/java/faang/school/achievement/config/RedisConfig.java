@@ -1,5 +1,7 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.listener.LikeEventListener;
+import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,9 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.channel.album}")
     private String albumTopicName;
+
+    @Value("${spring.data.redis.topic.likeChannel}")
+    public String likeChannel;
 
     @Value("${spring.data.redis.channel.mentorship}")
     private String mentorshipChannelTopicName;
@@ -93,14 +98,26 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic likeEventTopic() {
+        return new ChannelTopic(likeChannel);
+    }
+
+    @Bean
+    public MessageListenerAdapter likeEventListenerAdapter(LikeEventListener likeEventListener) {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
-                                                 PostEventListener postEventListener) {
+                                                 PostEventListener postEventListener,
+                                                 LikeEventListener likeEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
+        container.addMessageListener(likeEventListenerAdapter(likeEventListener), likeEventTopic());
 
         return container;
     }
