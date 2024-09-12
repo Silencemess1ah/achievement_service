@@ -4,6 +4,7 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,7 @@ class AchievementProgressServiceTest {
     @InjectMocks
     private AchievementProgressService achievementProgressService;
 
+    @DisplayName("Should return AchievementProgressDto list for user by id")
     @Test
     void getAchievementInProgressForUserById_ShouldReturnAchievementProgressDtoList() {
         long userId = 1L;
@@ -54,6 +56,7 @@ class AchievementProgressServiceTest {
         verify(achievementProgressMapper, times(1)).toDto(achievementProgress2);
     }
 
+    @DisplayName("Should return empty list when no achievements are found for user by id")
     @Test
     void getAchievementInProgressForUserById_ShouldReturnEmptyList_WhenNoAchievementsFound() {
         long userId = 2L;

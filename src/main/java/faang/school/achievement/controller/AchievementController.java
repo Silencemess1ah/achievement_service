@@ -8,6 +8,8 @@ import faang.school.achievement.service.AchievementProgressService;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.UserAchievementService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,13 +29,14 @@ public class AchievementController {
     private final AchievementProgressService achievementProgressService;
 
     @GetMapping("/filter")
-    public List<AchievementDto> getAchievementByFilter(@RequestBody AchievementFilterDto filter) {
-        return achievementService.getAchievementByFilter(filter);
+    public Page<AchievementDto> getAchievementByFilter(@RequestBody AchievementFilterDto filter,
+                                                       @RequestBody Pageable pageable) {
+        return achievementService.getAchievementByFilter(filter, pageable);
     }
 
     @GetMapping("/all")
-    public List<AchievementDto> getAllAchievement() {
-        return achievementService.getAllAchievement();
+    public Page<AchievementDto> getAllAchievement(@RequestBody Pageable pageable) {
+        return achievementService.getPageableAchievements(pageable);
     }
 
     @GetMapping("completed/{userId}")

@@ -9,6 +9,9 @@ import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.filter.AchievementFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +26,10 @@ public class AchievementService {
     private final List<AchievementFilter> achievementFilters;
 
     @Transactional(readOnly = true)
-    public List<AchievementDto> getAllAchievement() {
-        log.info("Getting all achievements");
-        return achievementMapper.toListDto(achievementRepository.findAll());
+    public Page<AchievementDto> getPageableAchievements(Pageable pageable) {
+        log.info("Getting all achievements with pagination");
+        return achievementRepository.findAll(pageable)
+                .map(achievementMapper::toDto);
     }
 
     @Transactional(readOnly = true)
@@ -36,12 +40,19 @@ public class AchievementService {
         return achievementMapper.toDto(achievement);
     }
 
-    public List<AchievementDto> getAchievementByFilter(AchievementFilterDto filters) {
-        List<Achievement> allAchievements = achievementRepository.findAll();
-        return achievementFilters.stream()
+    @Transactional(readOnly = true)
+    public Page<AchievementDto> getAchievementByFilter(AchievementFilterDto filters, Pageable pageable) {
+        Page<Achievement> pagedAchievements = achievementRepository.findAll(pageable);
+        List<Achievement> filteredAchievements = achievementFilters.stream()
                 .filter(filter -> filter.isApplicable(filters))
-                .flatMap(filter -> filter.apply(allAchievements, filters))
-                .map(achievementMapper::toDto)
+                .flatMap(filter -> filter.apply(pagedAchievements.getContent(), filters))
                 .toList();
+        return new PageImpl<>(
+                filteredAchievements.stream()
+                        .map(achievementMapper::toDto)
+                        .toList(),
+                pageable,
+                pagedAchievements.getTotalElements()
+        );
     }
 }
