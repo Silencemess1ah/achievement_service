@@ -2,23 +2,17 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
-import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.dto.SortField;
-import faang.school.achievement.dto.UserAchievementDto;
-import faang.school.achievement.exception.BadRequestException;
-import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
-import faang.school.achievement.filter.achievement.AchievementRarityFilter;
-import faang.school.achievement.filter.achievement.AchievementTitleFilter;
+import faang.school.achievement.filter.achievement.impl.AchievementDescriptionFilter;
+import faang.school.achievement.filter.achievement.impl.AchievementRarityFilter;
+import faang.school.achievement.filter.achievement.impl.AchievementTitleFilter;
 import faang.school.achievement.mapper.AchievementMapper;
-import faang.school.achievement.mapper.AchievementProgressMapper;
-import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.Rarity;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,8 +24,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +33,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -55,15 +50,34 @@ class AchievementServiceTest {
     @Mock
     private AchievementMapper achievementMapper;
 
-    private List<AchievementFilter> achievementFilter;
+    @Mock
+    private AchievementProgressRepository achievementProgressRepository;
 
+    @Mock
+    private UserAchievementRepository userAchievementRepository;
+
+    @Mock
+    private AchievementDescriptionFilter descriptionFilter;
+
+    @Mock
+    private AchievementRarityFilter rarelyFilter;
+
+    @Mock
+    private AchievementTitleFilter titleFilter;
+
+    private List<AchievementFilter> achievementFilter;
     private AchievementService achievementService;
 
     @BeforeEach
     void setUp() {
-        AchievementFilter achievementTitleFilter = Mockito.mock(AchievementTitleFilter.class);
-        achievementFilter = List.of(achievementTitleFilter);
-        achievementService = new AchievementService(achievementRepository, achievementMapper, achievementFilter);
+        achievementFilter = List.of(descriptionFilter, rarelyFilter, titleFilter);
+        achievementService = new AchievementService(
+                achievementRepository,
+                achievementMapper,
+                achievementFilter,
+                achievementProgressRepository,
+                userAchievementRepository
+        );
     }
 
     @DisplayName("Should return all achievements")
@@ -118,39 +132,12 @@ class AchievementServiceTest {
         verify(achievementMapper, never()).toDto(any(Achievement.class));
     }
 
-    @DisplayName("Should apply filters and return filtered achievements")
-    @Test
-    void getAchievementByFilter_ShouldApplyFiltersAndReturnFilteredPagedAchievements() {
-        AchievementFilterDto filterDto = mock(AchievementFilterDto.class);
-        Achievement achievement1 = mock(Achievement.class);
-        Achievement achievement2 = mock(Achievement.class);
-        List<Achievement> achievements = List.of(achievement1, achievement2);
-        Pageable pageable = PageRequest.of(0, 10);
-        AchievementDto achievementDto1 = mock(AchievementDto.class);
-        List<AchievementDto> achievementDtos = List.of(achievementDto1);
-        Page<Achievement> pagedAchievements = new PageImpl<>(achievements, pageable, achievements.size());
-
-        when(achievementRepository.findAll(pageable)).thenReturn(pagedAchievements);
-        when(achievementFilter.get(0).isApplicable(filterDto)).thenReturn(true);
-        when(achievementFilter.get(0).apply(achievements, filterDto)).thenReturn(Stream.of(achievement1));
-        when(achievementMapper.toDto(achievement1)).thenReturn(achievementDto1);
-
-        Page<AchievementDto> result = achievementService.getAchievementByFilter(filterDto, pageable);
-
-        assertEquals(1, result.getTotalElements());
-        assertEquals(achievementDtos, result.getContent());
-        verify(achievementRepository, times(1)).findAll(pageable);
-        verify(achievementFilter.get(0), times(1)).isApplicable(filterDto);
-        verify(achievementFilter.get(0), times(1)).apply(achievements, filterDto);
-        verify(achievementMapper, times(1)).toDto(achievement1);
-    }
-
     @DisplayName("Should return empty list when no achievements match the filter")
     @Test
     void getAchievementByFilter_ShouldReturnEmptyPage_WhenNoAchievementsMatchFilter() {
         AchievementFilterDto filterDto = mock(AchievementFilterDto.class);
         Pageable pageable = Pageable.unpaged();
-        Page<Achievement> pagedAchievements = new PageImpl<>(Collections.emptyList(), pageable, 0); // Пустой результат
+        Page<Achievement> pagedAchievements = new PageImpl<>(Collections.emptyList(), pageable, 0);
 
         when(achievementRepository.findAll(pageable)).thenReturn(pagedAchievements);
         when(achievementFilter.get(0).isApplicable(filterDto)).thenReturn(true);

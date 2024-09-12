@@ -1,6 +1,7 @@
 package faang.school.achievement.mapper;
 
 import faang.school.achievement.dto.UserAchievementDto;
+import faang.school.achievement.dto.UserAchievementEvent;
 import faang.school.achievement.model.UserAchievement;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

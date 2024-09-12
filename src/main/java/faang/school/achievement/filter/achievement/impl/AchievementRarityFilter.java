@@ -1,12 +1,17 @@
-package faang.school.achievement.service.filter.impl;
+package faang.school.achievement.filter.achievement.impl;
 
 import faang.school.achievement.dto.AchievementFilterDto;
+import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.filter.AchievementFilter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * @author Evgenii Malkov
+ */
+@Component
 public class AchievementRarityFilter implements AchievementFilter {
 
     @Override
@@ -16,7 +21,6 @@ public class AchievementRarityFilter implements AchievementFilter {
 
     @Override
     public Stream<Achievement> apply(List<Achievement> achievements, AchievementFilterDto filter) {
-        return achievements.stream()
-                .filter(achievement -> achievement.getRarity().equals(filter.getRarity()));
+        return achievements.filter((achieve) -> achieve.getRarity().equals(filter.getRarity()));
     }
 }

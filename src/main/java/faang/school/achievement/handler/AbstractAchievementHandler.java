@@ -19,8 +19,6 @@ import java.awt.print.PrinterException;
 public class AbstractAchievementHandler<T> implements EventHandler<T> {
     protected final AchievementService achievementService;
     protected final AchievementCache achievementCache;
-
-
     private final String achievementTitle;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementMapper achievementMapper;

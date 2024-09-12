@@ -8,12 +8,13 @@ import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
 
+@Mapper(componentModel = "spring",
+        uses = {AchievementMapper.class},
+        unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AchievementProgressMapper {
 
-    @Mapping(source = "achievement.id", target = "achievementId")
     AchievementProgressDto toDto(AchievementProgress achievementProgress);
 
-    @Mapping(source = "achievementId", target = "achievement.id")
     AchievementProgress toEntity(AchievementProgressDto achievementProgressDto);
 
     List<AchievementProgressDto> toListDto(List<AchievementProgress> achievementProgresses);

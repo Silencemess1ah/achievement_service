@@ -8,10 +8,8 @@ import faang.school.achievement.service.AchievementProgressService;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.UserAchievementService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +37,8 @@ public class AchievementController {
 
     @GetMapping("{id}")
     public AchievementDto getAchievementById(@PathVariable long id) {
+        return achievementService.getAchievementById(id);
+    }
     @GetMapping("/all")
     public Page<AchievementDto> getAllAchievement(@RequestBody Pageable pageable) {
         return achievementService.getPageableAchievements(pageable);
@@ -49,26 +49,8 @@ public class AchievementController {
         return userAchievementService.getAchievementFinishedForUserById(userId);
     }
 
-    @GetMapping("/{id}")
-    public AchievementDto getAchievementById(@PathVariable("id") Long id) {
-        return achievementService.getAchievementById(id);
-    }
-
     @GetMapping("progress/{userId}")
     public List<AchievementProgressDto> getAchievementInProgressForUserById(@PathVariable("userId") Long userId) {
         return achievementProgressService.getAchievementInProgressForUserById(userId);
-    @GetMapping("/all")
-    public List<AchievementDto> getAchievements(AchievementFilterDto filter) {
-        return achievementService.getAchievements(filter);
-    }
-
-    @GetMapping("user/{id}")
-    public List<UserAchievementDto> getCurrentUserAchievements(@PathVariable long id) {
-        return achievementService.getUserAchievements(id);
-    }
-
-    @GetMapping("user/{id}/progress")
-    public List<AchievementProgressDto> getCurrentUserAchievementsInProgress(@PathVariable long id) {
-        return achievementService.getUserAchievementsInProgress(id);
     }
 }
