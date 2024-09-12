@@ -12,11 +12,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class AchievementProgressDto {
-    private Long id;
-    private Long achievementId;
-    private Long userId;
-    private Long currentPoints;
+    private long id;
+    private AchievementDto achievement;
+    private long userId;
+    private long currentPoints;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long version;
+    private long version;
+    private AchievementDto achievementDto;
 }
