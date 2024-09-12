@@ -4,6 +4,7 @@ import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.mapper.UserAchievementMapper;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,7 @@ class UserAchievementServiceTest {
     @InjectMocks
     private UserAchievementService userAchievementService;
 
+    @DisplayName("Should return UserAchievementDto list for finished achievements by user id")
     @Test
     void getAchievementFinishedForUserById_ShouldReturnUserAchievementDtoList() {
         long userId = 1L;
@@ -55,6 +57,7 @@ class UserAchievementServiceTest {
         verify(userAchievementMapper, times(1)).toDto(userAchievement2);
     }
 
+    @DisplayName("Should return empty list when no finished achievements are found for user by id")
     @Test
     void getAchievementFinishedForUserById_ShouldReturnEmptyList_WhenNoAchievementsFound() {
         long userId = 2L;

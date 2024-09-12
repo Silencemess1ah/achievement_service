@@ -9,11 +9,16 @@ import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.filter.AchievementFilter;
 import faang.school.achievement.service.filter.impl.AchievementTitleFilter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,32 +54,32 @@ class AchievementServiceTest {
         achievementService = new AchievementService(achievementRepository, achievementMapper, achievementFilter);
     }
 
+    @DisplayName("Should return all achievements")
     @Test
-    void getAllAchievement_ShouldReturnAllAchievements() {
-        // Arrange
+    void getPageableAchievements_ShouldReturnPagedAchievements() {
+        Pageable pageable = PageRequest.of(0, 10);
         Achievement achievement1 = mock(Achievement.class);
         Achievement achievement2 = mock(Achievement.class);
         List<Achievement> achievements = List.of(achievement1, achievement2);
-
         AchievementDto achievementDto1 = mock(AchievementDto.class);
         AchievementDto achievementDto2 = mock(AchievementDto.class);
         List<AchievementDto> achievementDtos = List.of(achievementDto1, achievementDto2);
+        Page<Achievement> pagedAchievements = new PageImpl<>(achievements, pageable, achievements.size());
 
-        when(achievementRepository.findAll()).thenReturn(achievements);
-        when(achievementMapper.toListDto(achievements)).thenReturn(achievementDtos);
+        when(achievementRepository.findAll(pageable)).thenReturn(pagedAchievements);
+        when(achievementMapper.toDto(achievement1)).thenReturn(achievementDto1);
+        when(achievementMapper.toDto(achievement2)).thenReturn(achievementDto2);
 
-        // Act
-        List<AchievementDto> result = achievementService.getAllAchievement();
+        Page<AchievementDto> result = achievementService.getPageableAchievements(pageable);
 
-        // Assert
-        assertEquals(achievementDtos, result);
-        verify(achievementRepository, times(1)).findAll();
-        verify(achievementMapper, times(1)).toListDto(achievements);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(achievementDtos, result.getContent());
+        verify(achievementRepository, times(1)).findAll(pageable);
     }
 
+    @DisplayName("Should return achievement when it exists by id")
     @Test
     void getAchievementById_ShouldReturnAchievement_WhenAchievementExists() {
-        // Arrange
         long achievementId = 1L;
         Achievement achievement = mock(Achievement.class);
         AchievementDto achievementDto = mock(AchievementDto.class);
@@ -82,73 +87,69 @@ class AchievementServiceTest {
         when(achievementRepository.findById(achievementId)).thenReturn(Optional.of(achievement));
         when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
-        // Act
         AchievementDto result = achievementService.getAchievementById(achievementId);
 
-        // Assert
         assertEquals(achievementDto, result);
         verify(achievementRepository, times(1)).findById(achievementId);
         verify(achievementMapper, times(1)).toDto(achievement);
     }
 
+    @DisplayName("Should throw EntityNotFoundException when achievement does not exist by id")
     @Test
     void getAchievementById_ShouldThrowEntityNotFoundException_WhenAchievementDoesNotExist() {
-        // Arrange
         long achievementId = 1L;
 
         when(achievementRepository.findById(achievementId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievementById(achievementId));
         verify(achievementRepository, times(1)).findById(achievementId);
         verify(achievementMapper, never()).toDto(any(Achievement.class));
     }
 
+    @DisplayName("Should apply filters and return filtered achievements")
     @Test
-    void getAchievementByFilter_ShouldApplyFiltersAndReturnFilteredAchievements() {
-        // Arrange
+    void getAchievementByFilter_ShouldApplyFiltersAndReturnFilteredPagedAchievements() {
         AchievementFilterDto filterDto = mock(AchievementFilterDto.class);
         Achievement achievement1 = mock(Achievement.class);
         Achievement achievement2 = mock(Achievement.class);
         List<Achievement> achievements = List.of(achievement1, achievement2);
-
+        Pageable pageable = PageRequest.of(0, 10);
         AchievementDto achievementDto1 = mock(AchievementDto.class);
         List<AchievementDto> achievementDtos = List.of(achievementDto1);
+        Page<Achievement> pagedAchievements = new PageImpl<>(achievements, pageable, achievements.size());
 
-        when(achievementRepository.findAll()).thenReturn(achievements);
+        when(achievementRepository.findAll(pageable)).thenReturn(pagedAchievements);
         when(achievementFilter.get(0).isApplicable(filterDto)).thenReturn(true);
         when(achievementFilter.get(0).apply(achievements, filterDto)).thenReturn(Stream.of(achievement1));
         when(achievementMapper.toDto(achievement1)).thenReturn(achievementDto1);
 
-        // Act
-        List<AchievementDto> result = achievementService.getAchievementByFilter(filterDto);
+        Page<AchievementDto> result = achievementService.getAchievementByFilter(filterDto, pageable);
 
-        // Assert
-        assertEquals(achievementDtos, result);
-        verify(achievementRepository, times(1)).findAll();
+        assertEquals(1, result.getTotalElements());
+        assertEquals(achievementDtos, result.getContent());
+        verify(achievementRepository, times(1)).findAll(pageable);
         verify(achievementFilter.get(0), times(1)).isApplicable(filterDto);
         verify(achievementFilter.get(0), times(1)).apply(achievements, filterDto);
         verify(achievementMapper, times(1)).toDto(achievement1);
     }
 
+    @DisplayName("Should return empty list when no achievements match the filter")
     @Test
-    void getAchievementByFilter_ShouldReturnEmptyList_WhenNoAchievementsMatchFilter() {
-        // Arrange
+    void getAchievementByFilter_ShouldReturnEmptyPage_WhenNoAchievementsMatchFilter() {
         AchievementFilterDto filterDto = mock(AchievementFilterDto.class);
-        List<Achievement> achievements = List.of(mock(Achievement.class));
+        Pageable pageable = Pageable.unpaged();
+        Page<Achievement> pagedAchievements = new PageImpl<>(Collections.emptyList(), pageable, 0); // Пустой результат
 
-        when(achievementRepository.findAll()).thenReturn(achievements);
+        when(achievementRepository.findAll(pageable)).thenReturn(pagedAchievements);
         when(achievementFilter.get(0).isApplicable(filterDto)).thenReturn(true);
-        when(achievementFilter.get(0).apply(achievements, filterDto)).thenReturn(Stream.empty());
+        when(achievementFilter.get(0).apply(pagedAchievements.getContent(), filterDto)).thenReturn(Stream.empty());
 
-        // Act
-        List<AchievementDto> result = achievementService.getAchievementByFilter(filterDto);
+        Page<AchievementDto> result = achievementService.getAchievementByFilter(filterDto, pageable);
 
-        // Assert
-        assertEquals(Collections.emptyList(), result);
-        verify(achievementRepository, times(1)).findAll();
+        assertEquals(0, result.getTotalElements()); // Проверяем, что элементов нет
+        verify(achievementRepository, times(1)).findAll(pageable);
         verify(achievementFilter.get(0), times(1)).isApplicable(filterDto);
-        verify(achievementFilter.get(0), times(1)).apply(achievements, filterDto);
+        verify(achievementFilter.get(0), times(1)).apply(pagedAchievements.getContent(), filterDto);
         verify(achievementMapper, never()).toDto(any());
     }
 }
