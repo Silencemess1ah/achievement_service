@@ -22,6 +22,7 @@ spring:
       port: 6379
       host: localhost
       achievement-cache-key: achievement-cache-key
+      cache-ttl-hours: 24
       channel:
         achievement: achievement_channel
         follower: follower_channel

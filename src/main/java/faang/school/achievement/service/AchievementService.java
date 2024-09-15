@@ -34,9 +34,9 @@ public class AchievementService {
 
     @Transactional(readOnly = true)
     public AchievementDto getAchievementById(long achievementId) {
+        Achievement achievement = achievementRepository.findById(achievementId).orElseThrow(
+                () -> new EntityNotFoundException("Not found achievement by id: " + achievementId));
         log.info("Get achievement by id: {}", achievementId);
-        Achievement achievement = achievementRepository.findById(achievementId)
-                .orElseThrow(EntityNotFoundException::new);
         return achievementMapper.toDto(achievement);
     }
 
