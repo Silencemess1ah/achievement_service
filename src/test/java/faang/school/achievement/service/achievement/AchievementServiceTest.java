@@ -17,6 +17,7 @@ import faang.school.achievement.service.achievement.filter.AchievementFilter;
 import faang.school.achievement.service.achievement.filter.DescriptionFilter;
 import faang.school.achievement.service.achievement.filter.NameFilter;
 import faang.school.achievement.service.achievement.filter.RarityFilter;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,7 +145,7 @@ public class AchievementServiceTest {
     public void testGetProgressWithWrongId() {
         String message = "User with id " + userId + "hasn't achievement progress by achievement id: " + achievementId;
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
                 ()-> achievementService.getProgress(userId, achievementId));
 
         assertEquals(message, e.getMessage());

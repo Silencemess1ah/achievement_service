@@ -1,9 +1,8 @@
 package faang.school.achievement.eventhandler;
 
-public interface EventHandler<E> {
-    void handle(E event);
+import org.springframework.scheduling.annotation.Async;
 
-    default boolean canBeHandled(E event) {
-        return true;
-    }
+public interface EventHandler<T> {
+    @Async("commentEventPool")
+    public void handle(T event);
 }

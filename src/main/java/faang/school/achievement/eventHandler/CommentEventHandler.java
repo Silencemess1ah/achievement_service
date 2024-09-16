@@ -1,10 +1,10 @@
-package faang.school.achievement.eventHandler;
+package faang.school.achievement.eventhandler;
 
-import faang.school.achievement.cache.AchievementCache;
+import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.CommentEvent;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 

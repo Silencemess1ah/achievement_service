@@ -1,6 +1,6 @@
 package faang.school.achievement.listener;
 
-import faang.school.achievement.eventHandler.EventHandler;
+import faang.school.achievement.eventhandler.EventHandler;
 import faang.school.achievement.model.CommentEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

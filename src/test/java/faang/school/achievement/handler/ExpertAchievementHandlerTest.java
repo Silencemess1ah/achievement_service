@@ -1,11 +1,11 @@
 package faang.school.achievement.handler;
 
-import faang.school.achievement.cache.AchievementCache;
-import faang.school.achievement.eventHandler.ExpertAchievementHandler;
+import faang.school.achievement.service.AchievementCache;
+import faang.school.achievement.eventhandler.ExpertAchievementHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.CommentEvent;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

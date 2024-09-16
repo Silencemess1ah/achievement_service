@@ -13,6 +13,7 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.achievement.filter.AchievementFilter;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -80,12 +81,13 @@ public class AchievementService {
     @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+        log.info("user started to complete achievement: {}", achievementId);
     }
 
     @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new IllegalArgumentException("User with id " + userId +
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + userId +
                         "hasn't achievement progress by achievement id: " + achievementId));
     }
 

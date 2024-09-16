@@ -2,6 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -65,10 +66,10 @@ public class AchievementCacheTest {
         String wrongTitle = "Non Existing Achievement";
         String message = "Achievement with title " + wrongTitle + " doesn't exist.";
 
-        doThrow(new IllegalArgumentException(message))
+        doThrow(new EntityNotFoundException(message))
                 .when(achievementRepository).findByTitle(wrongTitle);
 
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        EntityNotFoundException e = assertThrows(EntityNotFoundException.class,
                 () -> achievementCache.get(wrongTitle));
         assertEquals(message, e.getMessage());
     }
