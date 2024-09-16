@@ -39,6 +39,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -75,7 +77,8 @@ class AchievementServiceTest {
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
-    private AchievementEventPublisher achievementPublisher;
+    private AchievementEventPublisher achievementEventPublisher;
+
 
     private AchievementFilterDto achievementFilterDto;
     private long userId;
@@ -121,6 +124,7 @@ class AchievementServiceTest {
         achievementProgressDto = AchievementProgressDto.builder().build();
         userAchievement = UserAchievement.builder()
                 .achievement(achievement)
+                .userId(userId)
                 .build();
         userAchievementDto = UserAchievementDto.builder().build();
 
@@ -141,7 +145,7 @@ class AchievementServiceTest {
                 .achievementProgressRepository(achievementProgressRepository)
                 .achievementFilters(achievementFiltersImpl)
                 .achievementCache(achievementCache)
-                .achievementEventPublisher(achievementPublisher)
+                .achievementEventPublisher(achievementEventPublisher)
                 .build();
     }
 
@@ -155,7 +159,7 @@ class AchievementServiceTest {
         achievementService.grantAchievement(achievementId);
 
         verify(achievementRepository).findById(achievementId);
-        verify(achievementPublisher).publish(any(AchievementEvent.class));
+        verify(achievementEventPublisher).publish(any(AchievementEvent.class));
         verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 
@@ -314,5 +318,14 @@ class AchievementServiceTest {
     void testSaveAchievementProgress() {
         achievementService.saveAchievementProgress(achievementProgress);
         verify(achievementProgressRepository, times(1)).save(achievementProgress);
+    }
+
+    @Test
+    @DisplayName("Получение прогресса по достижению")
+    void testGetProgress() {
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
+        achievementService.getProgress(userId, achievementId);
+
+        verify(achievementProgressRepository, times(1)).findByUserIdAndAchievementId(userId, achievementId);
     }
 }

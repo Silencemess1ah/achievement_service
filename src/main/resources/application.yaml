@@ -28,8 +28,9 @@ spring:
         follower: follower_channel
         mentorship: mentorship_channel
         album: album_channel
-        profile-picture:  profile_pic_channel
+        profile-picture: profile_pic_channel
         post: post_channel
+        comment_achievement: comment_channel
       cache:
         achievement-key: achievements
 
@@ -53,7 +54,9 @@ achievement-handler:
   sensei-achievement-handler:
     achievement-name: SENSEI
     points: 30
-
+  comment-achievement-handler:
+    achievement-name: EXPERT
+    points: 5
 
 server:
   port: 8085
@@ -72,5 +75,3 @@ project-service:
 handler:
   achievement:
     sensei:
-
-

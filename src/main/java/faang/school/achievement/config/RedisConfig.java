@@ -3,6 +3,7 @@ package faang.school.achievement.config;
 import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
+import faang.school.achievement.listener.CommentAchievementListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,9 @@ public class RedisConfig {
     @Value("${spring.data.redis.topic.likeChannel}")
     public String likeChannel;
 
+    @Value("${spring.data.redis.channel.comment_achievement}")
+    private String commentChannel;
+
     @Value("${spring.data.redis.channel.mentorship}")
     private String mentorshipChannelTopicName;
 
@@ -70,6 +74,11 @@ public class RedisConfig {
     @Bean
     public MessageListenerAdapter postListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    public MessageListenerAdapter commentListener(CommentAchievementListener commentEventListener) {
+        return new MessageListenerAdapter(commentEventListener);
     }
 
     @Bean
@@ -108,16 +117,23 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic commentAchievementChannel() {
+        return new ChannelTopic(commentChannel);
+    }
+
+    @Bean
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
                                                  PostEventListener postEventListener,
-                                                 LikeEventListener likeEventListener) {
+                                                 LikeEventListener likeEventListener,
+                                                 CommentAchievementListener commentEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
         container.addMessageListener(likeEventListenerAdapter(likeEventListener), likeEventTopic());
+        container.addMessageListener(commentListener(commentEventListener), commentAchievementChannel());
 
         return container;
     }
