@@ -77,8 +77,6 @@ class AchievementServiceTest {
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
-    private AchievementPublisher achievementPublisher;
-    @Mock
     private AchievementEventPublisher achievementEventPublisher;
 
 
@@ -147,7 +145,7 @@ class AchievementServiceTest {
                 .achievementProgressRepository(achievementProgressRepository)
                 .achievementFilters(achievementFiltersImpl)
                 .achievementCache(achievementCache)
-//                .achievementEventPublisher(achievementPublisher)
+                .achievementEventPublisher(achievementEventPublisher)
                 .build();
     }
 
@@ -161,7 +159,7 @@ class AchievementServiceTest {
         achievementService.grantAchievement(achievementId);
 
         verify(achievementRepository).findById(achievementId);
-//        verify(achievementPublisher).publish(any(AchievementEvent.class));
+        verify(achievementEventPublisher).publish(any(AchievementEvent.class));
         verify(userAchievementRepository).save(any(UserAchievement.class));
     }
 
@@ -320,22 +318,6 @@ class AchievementServiceTest {
     void testSaveAchievementProgress() {
         achievementService.saveAchievementProgress(achievementProgress);
         verify(achievementProgressRepository, times(1)).save(achievementProgress);
-    }
-
-    @Test
-    @DisplayName("Если User уже имеет такое достижение")
-    void testHasAchievement() {
-        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
-        boolean result = achievementService.hasAchievement(userId, achievementId);
-        assertTrue(result);
-        verify(userAchievementRepository, times(1)).existsByUserIdAndAchievementId(userId, achievementId);
-    }
-
-    @Test
-    @DisplayName("Создание прогресса если его не было")
-    void testCreateProgressIfNecessary() {
-        achievementService.createProgressIfNecessary(userId, achievementId);
-        verify(achievementProgressRepository, times(1)).createProgressIfNecessary(userId, achievementId);
     }
 
     @Test

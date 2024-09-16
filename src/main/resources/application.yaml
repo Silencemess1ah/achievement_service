@@ -50,8 +50,8 @@ achievement-handler:
     achievement-name: SENSEI
     points: 30
   comment-achievement-handler:
-    points:
     achievement-name: EXPERT
+    points: 5
 
 server:
   port: 8085
