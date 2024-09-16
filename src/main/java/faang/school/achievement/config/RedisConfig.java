@@ -1,5 +1,7 @@
 package faang.school.achievement.config;
 
+import faang.school.achievement.listener.LikeEventListener;
+import faang.school.achievement.listener.ProfilePicEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.listener.CommentAchievementListener;
 import faang.school.achievement.listener.ProfilePicEventListener;
@@ -39,6 +41,9 @@ public class RedisConfig {
 
     @Value("${spring.data.redis.channel.album}")
     private String albumTopicName;
+
+    @Value("${spring.data.redis.topic.likeChannel}")
+    public String likeChannel;
 
     @Value("${spring.data.redis.channel.comment_achievement}")
     private String commentChannel;
@@ -102,6 +107,16 @@ public class RedisConfig {
     }
 
     @Bean
+    public ChannelTopic likeEventTopic() {
+        return new ChannelTopic(likeChannel);
+    }
+
+    @Bean
+    public MessageListenerAdapter likeEventListenerAdapter(LikeEventListener likeEventListener) {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
     public ChannelTopic commentAchievementChannel() {
         return new ChannelTopic(commentChannel);
     }
@@ -110,12 +125,14 @@ public class RedisConfig {
     RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactory,
                                                  ProfilePicEventListener profilePicEventListener,
                                                  PostEventListener postEventListener,
+                                                 LikeEventListener likeEventListener,
                                                  CommentAchievementListener commentEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
         container.addMessageListener(profilePictureListener(profilePicEventListener), profilePictureTopic());
         container.addMessageListener(postListener(postEventListener), postChannelTopic());
+        container.addMessageListener(likeEventListenerAdapter(likeEventListener), likeEventTopic());
         container.addMessageListener(commentListener(commentEventListener), commentAchievementChannel());
 
         return container;

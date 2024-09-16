@@ -21,6 +21,8 @@ spring:
     redis:
       port: 6379
       host: localhost
+      topic:
+        likeChannel: like_channel
       channel:
         achievement: achievement_channel
         follower: follower_channel
@@ -37,6 +39,9 @@ cache:
     update-schedule: '0 */1 * * * *' # every minute
 
 achievement-handler:
+  all-love-achievement-handler:
+    achievement-name: ALL LOVE
+    achievement-required-likes: 1000
   handsome-achievement-handler:
     achievement-name: HANDSOME
     points: 1
