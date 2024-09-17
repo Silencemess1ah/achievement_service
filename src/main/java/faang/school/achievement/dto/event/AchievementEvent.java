@@ -1,4 +1,4 @@
-package faang.school.achievement.dto;
+package faang.school.achievement.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

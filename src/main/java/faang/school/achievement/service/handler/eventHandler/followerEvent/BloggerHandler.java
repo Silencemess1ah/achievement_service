@@ -1,4 +1,4 @@
-package faang.school.achievement.service.handler.eventHandler.teamEvent;
+package faang.school.achievement.service.handler.eventHandler.followerEvent;
 
 import faang.school.achievement.dto.event.EventInt;
 import faang.school.achievement.mapper.AchievementMapper;
@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ManagerAchievementHandler extends TeamEventHandler {
+public class BloggerHandler extends FollowerEventHandler {
 
-    public ManagerAchievementHandler(AchievementCache cache,
-                                     AchievementService service,
-                                     AchievementPublisher achievementPublisher,
-                                     @Value("${data.achievements.titles.manager}") String achievementsTitle,
-                                     AchievementMapper achievementMapper) {
+    public BloggerHandler(AchievementCache cache,
+                          AchievementService service,
+                          AchievementPublisher achievementPublisher,
+                          @Value("${data.achievements.titles.blogger}") String achievementsTitle,
+                          AchievementMapper achievementMapper) {
         super(cache, service, achievementPublisher, achievementsTitle, achievementMapper);
     }
 

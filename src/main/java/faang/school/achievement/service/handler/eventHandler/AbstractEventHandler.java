@@ -1,7 +1,7 @@
 package faang.school.achievement.service.handler.eventHandler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import faang.school.achievement.dto.AchievementEvent;
+import faang.school.achievement.dto.event.AchievementEvent;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.event.EventInt;
 import faang.school.achievement.mapper.AchievementMapper;

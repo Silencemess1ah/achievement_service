@@ -1,11 +1,13 @@
 package faang.school.achievement.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.dto.event.FollowerEvent;
 import faang.school.achievement.dto.event.CommentEvent;
 import faang.school.achievement.dto.event.TeamEvent;
 import faang.school.achievement.service.handler.eventHandler.AbstractEventHandler;
 import faang.school.achievement.service.listener.AbstractEventListener;
 import faang.school.achievement.service.listener.CommentEventListener;
+import faang.school.achievement.service.listener.FollowerEventListener;
 import faang.school.achievement.service.listener.TeamEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -52,4 +54,11 @@ public class RedisListenerConfig {
         return new TeamEventListener(objectMapper, eventHandlers, messageSource, TeamEvent.class, channelName);
     }
 
+    @Bean
+    public FollowerEventListener followerEventListener(ObjectMapper objectMapper,
+                                                        List<AbstractEventHandler<FollowerEvent>> eventHandlers,
+                                                        MessageSource messageSource,
+                                                        @Value("${spring.data.redis.channel.follower}") String channelName) {
+        return new FollowerEventListener(objectMapper, eventHandlers, messageSource, FollowerEvent.class, channelName);
+    }
 }

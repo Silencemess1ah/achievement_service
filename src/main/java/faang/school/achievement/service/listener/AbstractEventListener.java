@@ -9,7 +9,6 @@ import faang.school.achievement.service.handler.eventHandler.AbstractEventHandle
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 
@@ -19,7 +18,6 @@ import java.util.Locale;
 
 @RequiredArgsConstructor
 public abstract class AbstractEventListener<T extends EventInt> implements MessageListener {
-    private static final String CODE_MESSAGE_ERROR = "message.error.readValueException";
     private final ObjectMapper objectMapper;
     protected final List<AbstractEventHandler<T>> eventHandlers;
     private final MessageSource messageSource;

@@ -36,7 +36,6 @@ public class CommentEventListenerTest {
     @Mock
     private MessageSource messageSource;
     private final Class<CommentEvent> clazz = CommentEvent.class;
-    private final String channelName = "comment_channel";
     @Captor
     private ArgumentCaptor<CommentEvent> eventCaptor;
     private CommentEventListener listener;
@@ -54,6 +53,7 @@ public class CommentEventListenerTest {
     @BeforeEach
     void setUp() {
         List<AbstractEventHandler<CommentEvent>> handlers = List.of(handler);
+        String channelName = "comment_channel";
         listener = new CommentEventListener(objectMapper, handlers, messageSource, clazz, channelName);
         //Arrange
         message = new Message() {
@@ -87,9 +87,9 @@ public class CommentEventListenerTest {
 
     @Test
     void testOnMessageInvalid() throws IOException {
-        //Act
-        doThrow(RuntimeException.class).when(objectMapper).readValue(message.getBody(), CommentEvent.class);
-        //then
+        // given
+        doThrow(RuntimeException.class).when(objectMapper).readValue(message.getBody(), clazz);
+        // then
         assertThrows(RuntimeException.class, () -> listener.onMessage(message, new byte[]{}));
     }
 }

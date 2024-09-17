@@ -9,7 +9,8 @@ import faang.school.achievement.service.publisher.AchievementPublisher;
 
 public abstract class TeamEventHandler extends AbstractEventHandler<TeamEvent> {
 
-    public TeamEventHandler(AchievementCache cache, AchievementService service, AchievementPublisher publisher, String nameAchievement, AchievementMapper mapper) {
+    public TeamEventHandler(AchievementCache cache, AchievementService service, AchievementPublisher publisher,
+                            String nameAchievement, AchievementMapper mapper) {
         super(cache, service, publisher, nameAchievement, mapper);
     }
 }

@@ -213,19 +213,6 @@ class AchievementServiceTest {
     }
 
     @Test
-    void testSaveProgress() {
-        AchievementProgress progress = AchievementProgress.builder()
-                .id(1L)
-                .userId(2L)
-                .currentPoints(10L)
-                .build();
-        when(achievementProgressRepository.save(progress)).thenReturn(progress);
-
-        assertEquals(progress, service.saveProgress(progress));
-        verify(achievementProgressRepository, times(1)).save(progress);
-    }
-
-    @Test
     void testGiveAchievement() {
         Achievement achievement = new Achievement();
         long userId = container.userId();

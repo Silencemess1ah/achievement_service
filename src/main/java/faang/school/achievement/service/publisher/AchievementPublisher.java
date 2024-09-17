@@ -2,7 +2,7 @@ package faang.school.achievement.service.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.AchievementEvent;
+import faang.school.achievement.dto.event.AchievementEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;

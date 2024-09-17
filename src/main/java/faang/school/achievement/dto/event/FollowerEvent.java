@@ -1,4 +1,4 @@
-package faang.school.achievement.dto;
+package faang.school.achievement.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FollowerEvent {
+public class FollowerEvent implements EventInt {
+    private long userId;
     private long followerId;
-    private long followeeId;
+
+    @Override
+    public Long getUserId() {
+        return userId;
+    }
 }
