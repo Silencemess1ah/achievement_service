@@ -18,7 +18,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +53,7 @@ public class AchievementService {
                 .filter(filter -> filter.isApplicable(filters))
                 .toList();
 
-        return StreamSupport.stream(achievementRepository.findAll().spliterator(), false)
+        return achievementRepository.findAll().stream()
                 .filter(achievement -> actualFilters.stream()
                         .allMatch(filter -> filter.test(achievement, filters)))
                 .map(mapper::toAchievementDto)
@@ -87,7 +86,11 @@ public class AchievementService {
                         .build());
     }
 
-    public AchievementProgress saveProgress(AchievementProgress progress) {
-        return achievementProgressRepository.save(progress);
+    public void deleteAchievementProgress(long achievementProgressId) {
+        achievementProgressRepository.deleteById(achievementProgressId);
+    }
+
+    public void saveProgress(AchievementProgress achievementProgress) {
+        achievementProgressRepository.save(achievementProgress);
     }
 }

@@ -93,12 +93,15 @@ public class AchievementTestContainer {
                 .build();
     }
 
-    public AchievementProgressDto achievementProgresDto() {
+    public AchievementProgressDto achievementProgressDto() {
         return AchievementProgressDto.builder()
                 .id(achievementId)
                 .achievement(achievementDto())
                 .userId(userId)
                 .currentPoints(points)
+                .version(version)
+                .createdAt(createdAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 

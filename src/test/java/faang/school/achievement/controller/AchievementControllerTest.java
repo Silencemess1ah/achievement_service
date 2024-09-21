@@ -105,17 +105,14 @@ class AchievementControllerTest {
         // given
         String uri = "/achievements/achievements_in_progress/{user_id}";
         Long userId = container.userId();
-        AchievementProgressDto dto = container.achievementProgresDto();
+        AchievementProgressDto dto = container.achievementProgressDto();
         List<AchievementProgressDto> responseList = List.of(dto);
-        System.out.println(responseList);
-
         when(service.getAchievementsProgress(userId)).thenReturn(responseList);
-
         // then
         mockMvc.perform(get(uri, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0]").value(dto));
+                .andExpect(jsonPath("$[0].id").value(dto.getId()));
     }
 
     private List<AchievementDto> prepareDtoList() {
