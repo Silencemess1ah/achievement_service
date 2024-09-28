@@ -13,5 +13,5 @@ public interface AchievementFilter {
 
     boolean isApplicable(AchievementFilterDto filter);
 
-    Stream<Achievement> apply(List<Achievement> achievementStream, AchievementFilterDto filter);
+    Stream<Achievement> apply(Stream<Achievement> achievementStream, AchievementFilterDto filter);
 }

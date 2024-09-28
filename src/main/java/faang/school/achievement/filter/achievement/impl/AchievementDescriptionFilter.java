@@ -19,7 +19,7 @@ public class AchievementDescriptionFilter implements AchievementFilter {
     }
 
     @Override
-    public Stream<Achievement> apply(List<Achievement> achievements, AchievementFilterDto filter) {
+    public Stream<Achievement> apply(Stream<Achievement> achievements, AchievementFilterDto filter) {
         return achievements.filter((achieve) -> achieve.getDescription().toLowerCase()
                 .contains(filter.getDescription().toLowerCase()));
     }
