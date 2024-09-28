@@ -22,7 +22,8 @@ public class AchievementCache extends AbstractCacheManager<AchievementDto> {
     private final AchievementRepository achievementRepository;
     private final AchievementMapper achievementMapper;
 
-    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate, AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
+    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate,
+                            AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
         super(mapper, redisTemplate);
         this.achievementRepository = achievementRepository;
         this.achievementMapper = achievementMapper;

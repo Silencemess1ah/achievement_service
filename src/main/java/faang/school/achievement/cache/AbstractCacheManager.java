@@ -13,7 +13,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public abstract class AbstractCacheManager<T> {
-
     protected final ObjectMapper mapper;
     protected final RedisTemplate<String, Object> redisTemplate;
 
