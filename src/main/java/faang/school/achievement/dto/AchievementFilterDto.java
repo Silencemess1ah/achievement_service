@@ -1,15 +1,25 @@
 package faang.school.achievement.dto;
 
-import faang.school.achievement.model.Rarity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Sort;
 
-@Getter
-@Setter
+/**
+ * @author Evgenii Malkov
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class AchievementFilterDto {
+
     private String title;
     private String description;
-    private Rarity rarity;
+    private String rarity;
+    private SortField sortField = SortField.CREATED_AT;
+    private Sort.Direction direction = Sort.Direction.DESC;
+    private Integer page = 0;
+    private Integer size = 10;
 }

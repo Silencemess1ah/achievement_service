@@ -1,22 +1,26 @@
 package faang.school.achievement.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Evgenii Malkov
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter
+@Setter
 public class AchievementProgressDto {
-    private Long id;
-    private Long achievementId;
-    private Long userId;
-    private Long currentPoints;
+    private long id;
+    private AchievementDto achievement;
+    private long userId;
+    private long currentPoints;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long version;
+    private long version;
+    private AchievementDto achievementDto;
 }
