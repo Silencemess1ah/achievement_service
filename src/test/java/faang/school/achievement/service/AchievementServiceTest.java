@@ -201,7 +201,7 @@ public class AchievementServiceTest {
     @DisplayName("Узнать, существует ли достижение у пользователя: тест успешного выполнения, когда есть достижение")
     public void testHasAchievementReturnsTrue() {
         long userId = 1L;
-        long achievementId = 2L;
+        long achievementId = 1L;
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
 
         boolean result = achievementService.hasAchievement(userId, achievement);
@@ -214,7 +214,7 @@ public class AchievementServiceTest {
     @DisplayName("Узнать, существует ли достижение у пользователя: тест успешного выполнения, когда нет достижения")
     public void testHasAchievementReturnsFalse() {
         long userId = 1L;
-        long achievementId = 2L;
+        long achievementId = 1L;
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
 
         boolean result = achievementService.hasAchievement(userId, achievement);
@@ -229,7 +229,6 @@ public class AchievementServiceTest {
         long userId = 1L;
         long achievementId = 1L;
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
-        when(achievementProgressMapper.toDto(achievementProgress)).thenReturn(achievementProgressDto);
 
         AchievementProgress actual = achievementService.getAchievementProgress(userId, achievement);
 
@@ -262,17 +261,11 @@ public class AchievementServiceTest {
     @DisplayName("Создать полученное достижение пользователем: тест успешного выполнения")
     public void testGiveAchievement() {
         long userId = 1L;
-        when(achievementMapper.toEntity(achievementDto)).thenReturn(achievement);
         when(userAchievementRepository.save(any(UserAchievement.class))).thenReturn(userAchievement);
-        when(userAchievementMapper.toDto(userAchievement)).thenReturn(userAchievementDto);
 
         UserAchievement result = achievementService.giveAchievement(achievement, achievementProgress);
 
         assertNotNull(result);
         assertEquals(userAchievement, result);
-        verify(achievementMapper).toEntity(achievementDto);
-        verify(userAchievementRepository).save(any(UserAchievement.class));
-        verify(userAchievementMapper).toDto(any(UserAchievement.class));
     }
-
 }
