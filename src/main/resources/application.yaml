@@ -44,7 +44,7 @@ handler:
   achievement:
     names:
       writer: WRITER
-        mentorship: mentorship_start_channel
+      mentorship: mentorship_start_channel
 
 listener:
   type:
