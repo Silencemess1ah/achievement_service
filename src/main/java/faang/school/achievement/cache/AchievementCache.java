@@ -22,7 +22,8 @@ public class AchievementCache extends AbstractCacheManager<AchievementDto> {
     private final AchievementRepository achievementRepository;
     private final AchievementMapper achievementMapper;
 
-    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate, AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
+    public AchievementCache(ObjectMapper mapper, RedisTemplate<String, Object> redisTemplate,
+                            AchievementRepository achievementRepository, AchievementMapper achievementMapper) {
         super(mapper, redisTemplate);
         this.achievementRepository = achievementRepository;
         this.achievementMapper = achievementMapper;
@@ -35,7 +36,11 @@ public class AchievementCache extends AbstractCacheManager<AchievementDto> {
         put(ACHIEVEMENT_CACHE_KEY, allAchievements);
     }
 
-    public AchievementDto get(String title) {
-        return get(ACHIEVEMENT_CACHE_KEY, title, AchievementDto.class);
+    public AchievementDto getByTitle(String title) {
+        Object value = get(ACHIEVEMENT_CACHE_KEY, title);
+        if (value == null) {
+            return null;
+        }
+        return mapper.convertValue(value, AchievementDto.class);
     }
 }

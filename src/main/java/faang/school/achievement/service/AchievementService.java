@@ -3,11 +3,10 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.SortField;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.BadRequestException;
 import faang.school.achievement.filter.achievement.AchievementFilter;
-import faang.school.achievement.dto.SortField;
-import faang.school.achievement.exception.ResourceNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
@@ -17,7 +16,9 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class AchievementService {
 
     private final AchievementProgressRepository achievementProgressRepository;
@@ -76,38 +78,31 @@ public class AchievementService {
         return achievementProgressMapper.toListDto(achievements);
     }
 
-    @Transactional
-    public boolean hasAchievement(Long userId, Long achievementId) {
-        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
+
+    public boolean hasAchievement(long userId, Achievement achievement) {
+        return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievement.getId());
     }
 
     @Transactional
-    public AchievementProgressDto getAchievementProgress(Long userId, Long achievementId) {
-        AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("User %s doesn't have achievement progress %s", userId, achievementId)));
-        return achievementProgressMapper.toDto(achievementProgress);
-    }
-
-    @Transactional
-    public AchievementProgressDto saveAchievementProgress(AchievementProgressDto achievementProgressDto) {
-        AchievementProgress savedAchievementProgress = achievementProgressRepository.save(achievementProgressMapper.toEntity(achievementProgressDto));
-        return achievementProgressMapper.toDto(savedAchievementProgress);
-    }
-
-    @Transactional
-    public void createProgressIfNecessary(Long userId, Long achievementId) {
+    public void createProgressIfNecessary(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
+    @Transactional(readOnly = true)
+    public AchievementProgress getAchievementProgress(long userId, Achievement achievement) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievement.getId()).orElseThrow(() -> {
+            String errorMessage = "Couldn't find Achievement Progress entity. User ID = "
+                    + userId + " Achievement ID = " + achievement.getId();
+            log.error(errorMessage);
+            return new EntityNotFoundException(errorMessage);
+        });
+    }
+
     @Transactional
-    public UserAchievementDto giveAchievement(AchievementDto achievement, Long userId) {
-        UserAchievement userAchievementToSave = UserAchievement.builder()
-                .achievement(achievementMapper.toEntity(achievement))
-                .userId(userId)
+    public UserAchievement giveAchievement(Achievement achievement, AchievementProgress achievementProgress) {
+        UserAchievement userAchievement = UserAchievement.builder().userId(achievementProgress.getUserId())
+                .achievement(achievement)
                 .build();
-
-        UserAchievement savedUserAchievement = userAchievementRepository.save(userAchievementToSave);
-
-        return userAchievementMapper.toDto(savedUserAchievement);
+        return userAchievementRepository.save(userAchievement);
     }
 }

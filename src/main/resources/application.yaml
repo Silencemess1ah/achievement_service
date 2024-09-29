@@ -21,12 +21,21 @@ spring:
     redis:
       port: 6379
       host: localhost
+      achievement-cache-key: achievement-cache-key
+      cache-ttl-hours: 24
       channel:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
 
 handler:
+  executor-pool-parameters:
+    core-pool-size: 10
+    max-pool-capacity: 20
+    queue-capacity: 40
+    retry-parameters:
+      max-attempts: 5
+      backoff-delay: 10
   thread-pool-executor-parameters:
     core-pool-size: 10
     max-pool-size: 50
@@ -35,9 +44,16 @@ handler:
   achievement:
     names:
       writer: WRITER
+        mentorship: mentorship_start_channel
+
+listener:
+  type:
+    achievements:
+      sens
+
 
 server:
-  port: 8085
+  port: 8095
 
 logging:
   level:
@@ -46,3 +62,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+cache:
+    achievement:
+      update-schedule : "@hourly"
