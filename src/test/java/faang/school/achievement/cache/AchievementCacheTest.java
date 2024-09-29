@@ -1,13 +1,11 @@
 package faang.school.achievement.cache;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementDto;
-import faang.school.achievement.exception.EntityNotFoundException;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.validator.AchievementValidator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,21 +13,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.listener.ChannelTopic;
 
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,7 +33,7 @@ class AchievementCacheTest {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Mock
-    private ValueOperations<String, Object> valueOps;
+    private HashOperations<String, Object, Object> hashOperations;
 
     @Mock
     private AchievementRepository achievementRepository;
@@ -48,100 +42,72 @@ class AchievementCacheTest {
     private AchievementMapper achievementMapper;
 
     @Mock
-    private AchievementValidator achievementValidator;
-
-    @Mock
-    private ChannelTopic redisChannelTopic;
+    private ObjectMapper objectMapper;
 
     @InjectMocks
     private AchievementCache achievementCache;
 
-    private final String achievementCacheKey = "achievement-cache-key";
-    private final int cacheTTL = 24;
+    private String achievementTitle;
+    private String achievementsKey;
 
     @BeforeEach
     void setUp() {
-        when(redisTemplate.opsForValue()).thenReturn(valueOps);
-        // Установить значения через рефлексию
-        try {
-            var cacheKeyField = AchievementCache.class.getDeclaredField("achievementCacheKey");
-            cacheKeyField.setAccessible(true);
-            cacheKeyField.set(achievementCache, achievementCacheKey);
+        achievementTitle = "Test Achievement";
+        achievementsKey = "ACHIEVEMENTS";
 
-            var cacheTTLField = AchievementCache.class.getDeclaredField("cacheTTL");
-            cacheTTLField.setAccessible(true);
-            cacheTTLField.set(achievementCache, cacheTTL);
+        when(redisTemplate.opsForHash()).thenReturn(hashOperations);
+
+        try {
+            var cacheKeyField = AchievementCache.class.getDeclaredField("ACHIEVEMENT_CACHE_KEY");
+            cacheKeyField.setAccessible(true);
+            cacheKeyField.set(achievementCache, achievementsKey);
+
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-//    @Test
-//    @DisplayName("Test init() sends init message to Redis channel")
-//    void testInit() {
-//        achievementCache.init();
-//        verify(redisTemplate).convertAndSend(redisChannelTopic.getTopic(), "init");
-//    }
+    @Test
+    void shouldFillAchievements() {
+        Achievement achievement = new Achievement();
+        achievement.setTitle(achievementTitle);
+        AchievementDto achievementDto = new AchievementDto();
+        achievementDto.setTitle(achievementTitle);
+        when(achievementRepository.findAll()).thenReturn(List.of(achievement));
+        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
+
+        achievementCache.fillAchievements();
+
+        Map<String, AchievementDto> expectedCacheData = new HashMap<>();
+        expectedCacheData.put(achievementTitle, achievementDto);
+        verify(achievementRepository, times(1)).findAll();
+        verify(achievementMapper, times(1)).toDto(achievement);
+        verify(hashOperations, times(1)).putAll(achievementsKey, expectedCacheData);  // Мокаем и проверяем HashOperations
+    }
 
     @Test
-    @DisplayName("Test getAchievementFromCache when cache hit")
-    void testGetAchievementFromCache_CacheHit() {
-        String title = "Test Achievement";
-        AchievementDto dto = new AchievementDto();
+    void shouldReturnAchievementByTitleWhenExistsInCache() {
+        Object cachedAchievement = new Object();
+        AchievementDto expectedAchievementDto = new AchievementDto();
+        expectedAchievementDto.setTitle(achievementTitle);
+        when(redisTemplate.opsForHash().get(achievementsKey, achievementTitle)).thenReturn(cachedAchievement);
+        when(objectMapper.convertValue(cachedAchievement, AchievementDto.class)).thenReturn(expectedAchievementDto);
 
-        String buildCacheKey = achievementCacheKey + ":" + title;
+        AchievementDto result = achievementCache.getByTitle(achievementTitle);
 
-        when(valueOps.get(buildCacheKey)).thenReturn(dto);
+        assertNotNull(result);
+        assertEquals(expectedAchievementDto, result);
+        verify(objectMapper, times(1)).convertValue(cachedAchievement, AchievementDto.class);
+    }
+
+    @Test
+    void shouldReturnNullWhenAchievementNotInCache() {
+        String title = "Non Existent Achievement";
+        when(redisTemplate.opsForHash().get(achievementsKey, title)).thenReturn(null);
 
         AchievementDto result = achievementCache.getByTitle(title);
 
-        verify(valueOps, never()).set(anyString(), any(), anyLong(), any());
-        assertEquals(dto, result);
+        assertNull(result);
+        verify(objectMapper, never()).convertValue(any(), eq(AchievementDto.class));
     }
-
-//    @Test
-//    @DisplayName("Test getAchievementFromCache when cache miss and updates cache")
-//    void testGetAchievementFromCache_CacheMiss() {
-//        String title = "Test Achievement";
-//        Achievement achievement = new Achievement();
-//        AchievementDto dto = new AchievementDto();
-//
-//        String buildCacheKey = achievementCacheKey + ":" + title;
-//
-//        when(valueOps.get(buildCacheKey)).thenReturn(null);
-//        when(achievementRepository.findB(title)).thenReturn(Optional.of(achievement));
-//        when(achievementMapper.toDto(achievement)).thenReturn(dto);
-//
-//        AchievementDto result = achievementCache.getAchievementFromCache(title);
-//
-//        verify(valueOps).set(buildCacheKey, dto, cacheTTL, TimeUnit.HOURS);
-//        assertEquals(dto, result);
-//    }
-
-//    @Test
-//    @DisplayName("Test getAchievementFromCache throws exception when achievement not found in DB")
-//    void testGetAchievementFromCache_ThrowsEntityNotFoundException() {
-//        String title = "Nonexistent Achievement";
-//        String buildCacheKey = achievementCacheKey + ":" + title;
-//
-//        when(valueOps.get(buildCacheKey)).thenReturn(null);
-//        when(achievementRepository.findByTitle(title)).thenReturn(Optional.empty());
-//
-//        assertThrows(EntityNotFoundException.class, () -> achievementCache.getAchievementFromCache(title));
-//    }
-//
-//    @Test
-//    @DisplayName("Test updateAchievementInCache updates cache with new DTO")
-//    void testUpdateAchievementInCache() {
-//        String title = "Test Achievement";
-//        Achievement achievement = new Achievement();
-//        AchievementDto dto = new AchievementDto();
-//
-//        when(achievementRepository.findByTitle(title)).thenReturn(Optional.of(achievement));
-//        when(achievementMapper.toDto(achievement)).thenReturn(dto);
-//
-//        AchievementDto result = achievementCache.updateAchievementInCache(title);
-//
-//        assertEquals(dto, result);
-//    }
 }
