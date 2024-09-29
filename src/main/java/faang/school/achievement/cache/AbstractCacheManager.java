@@ -22,12 +22,7 @@ public abstract class AbstractCacheManager<T> {
         this.redisTemplate.opsForHash().putAll(key, values);
     }
 
-    protected T get(String key, String hashKey, Class<T> type) {
-        Object value = this.redisTemplate.opsForHash().get(key, hashKey);
-
-        if (value instanceof LinkedHashMap<?,?>) {
-            return mapper.convertValue(value, type);
-        }
+    protected T get(String key, String hashKey) {
         return (T) this.redisTemplate.opsForHash().get(key, hashKey);
     }
 

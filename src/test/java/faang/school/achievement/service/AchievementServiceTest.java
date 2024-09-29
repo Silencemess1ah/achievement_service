@@ -204,7 +204,7 @@ public class AchievementServiceTest {
         long achievementId = 2L;
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
 
-        boolean result = achievementService.hasAchievement(userId, achievementId);
+        boolean result = achievementService.hasAchievement(userId, achievement);
 
         assertTrue(result);
         verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
@@ -217,7 +217,7 @@ public class AchievementServiceTest {
         long achievementId = 2L;
         when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
 
-        boolean result = achievementService.hasAchievement(userId, achievementId);
+        boolean result = achievementService.hasAchievement(userId, achievement);
 
         assertFalse(result);
         verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
@@ -231,10 +231,10 @@ public class AchievementServiceTest {
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
         when(achievementProgressMapper.toDto(achievementProgress)).thenReturn(achievementProgressDto);
 
-        AchievementProgressDto actual = achievementService.getAchievementProgress(userId, achievementId);
+        AchievementProgress actual = achievementService.getAchievementProgress(userId, achievement);
 
         assertNotNull(actual);
-        assertEquals(achievementProgressDto, actual);
+        assertEquals(achievementProgress, actual);
     }
 
     @Test
@@ -244,23 +244,7 @@ public class AchievementServiceTest {
         long achievementId = 1L;
         doThrow(ResourceNotFoundException.class).when(achievementProgressRepository).findByUserIdAndAchievementId(userId, achievementId);
 
-        assertThrows(ResourceNotFoundException.class, () -> achievementService.getAchievementProgress(userId, achievementId));
-    }
-
-    @Test
-    @DisplayName("Сохранения прогресса пользователя: тест успешного выполнения")
-    void testSaveAchievementProgress() {
-        when(achievementProgressMapper.toEntity(achievementProgressDto)).thenReturn(achievementProgress);
-        when(achievementProgressRepository.save(achievementProgress)).thenReturn(achievementProgress);
-        when(achievementProgressMapper.toDto(achievementProgress)).thenReturn(achievementProgressDto);
-
-        AchievementProgressDto result = achievementService.saveAchievementProgress(achievementProgressDto);
-
-        assertNotNull(result);
-        assertEquals(achievementProgressDto, result);
-        verify(achievementProgressMapper).toEntity(achievementProgressDto);
-        verify(achievementProgressRepository).save(achievementProgress);
-        verify(achievementProgressMapper).toDto(achievementProgress);
+        assertThrows(ResourceNotFoundException.class, () -> achievementService.getAchievementProgress(userId, achievement));
     }
 
     @Test
@@ -282,10 +266,10 @@ public class AchievementServiceTest {
         when(userAchievementRepository.save(any(UserAchievement.class))).thenReturn(userAchievement);
         when(userAchievementMapper.toDto(userAchievement)).thenReturn(userAchievementDto);
 
-        UserAchievementDto result = achievementService.giveAchievement(achievementDto, userId);
+        UserAchievement result = achievementService.giveAchievement(achievement, achievementProgress);
 
         assertNotNull(result);
-        assertEquals(userAchievementDto, result);
+        assertEquals(userAchievement, result);
         verify(achievementMapper).toEntity(achievementDto);
         verify(userAchievementRepository).save(any(UserAchievement.class));
         verify(userAchievementMapper).toDto(any(UserAchievement.class));
