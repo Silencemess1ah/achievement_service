@@ -27,8 +27,4 @@ public class AchievementProgressDto {
     private LocalDateTime updatedAt;
     private long version;
     private AchievementDto achievementDto;
-
-    public void increment() {
-        currentPoints++;
-    }
 }
