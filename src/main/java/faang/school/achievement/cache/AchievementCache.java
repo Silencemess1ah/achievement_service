@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Component
 public class AchievementCache extends AbstractCacheManager<AchievementDto> {
 
-    private static final String ACHIEVEMENT_CACHE_KEY = "ACHIEVEMENTS";
+    private final String ACHIEVEMENT_CACHE_KEY = "ACHIEVEMENTS";
     private final AchievementRepository achievementRepository;
     private final AchievementMapper achievementMapper;
 

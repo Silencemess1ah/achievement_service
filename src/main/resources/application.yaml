@@ -26,21 +26,31 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
-        mentorship: mentorship_start_channel
+        post: post_channel
+
+handler:
+  executor-pool-parameters:
+    core-pool-size: 10
+    max-pool-capacity: 20
+    queue-capacity: 40
+    retry-parameters:
+      max-attempts: 5
+      backoff-delay: 10
+  thread-pool-executor-parameters:
+    core-pool-size: 10
+    max-pool-size: 50
+    queue-capacity: 100
+    await-termination-seconds: 60
+  achievement:
+    names:
+      writer: WRITER
+      mentorship: mentorship_start_channel
 
 listener:
   type:
     achievements:
-      sensei: SENSEI
+      sens
 
-handler:
-  executor-pool-parameters:
-    core-pool-size : 10
-    max-pool-capacity : 20
-    queue-capacity : 40
-  retry-parameters:
-    max-attempts : 5
-    backoff-delay : 10
 
 server:
   port: 8095

@@ -13,6 +13,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {AchievementMapper.class}, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AchievementProgressMapper {
 
+    AchievementProgress toEntity(AchievementProgressDto achievementProgressDto);
+
     AchievementProgressDto toDto(AchievementProgress achievement);
 
     List<AchievementProgressDto> toListDto(List<AchievementProgress> achievement);

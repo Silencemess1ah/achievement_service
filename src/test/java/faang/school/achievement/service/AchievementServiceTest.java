@@ -6,6 +6,7 @@ import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.SortField;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.BadRequestException;
+import faang.school.achievement.exception.ResourceNotFoundException;
 import faang.school.achievement.filter.achievement.AchievementDescriptionFilter;
 import faang.school.achievement.filter.achievement.AchievementFilter;
 import faang.school.achievement.filter.achievement.AchievementRarityFilter;
@@ -19,6 +20,7 @@ import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import org.apache.catalina.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +36,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,6 +79,10 @@ public class AchievementServiceTest {
     private List<AchievementDto> achievementDtoList;
     private AchievementFilterDto achievementFilterDto;
     private List<AchievementFilter> achievementFilters;
+    private AchievementProgress achievementProgress;
+    private AchievementProgressDto achievementProgressDto;
+    private UserAchievement userAchievement;
+    private UserAchievementDto userAchievementDto;
 
     @BeforeEach
     void setUp() {
@@ -102,6 +112,11 @@ public class AchievementServiceTest {
                 .sortField(SortField.CREATED_AT)
                 .direction(Sort.Direction.ASC)
                 .build();
+
+        achievementProgress = AchievementProgress.builder().id(1L).build();
+        achievementProgressDto = AchievementProgressDto.builder().id(1L).build();
+        userAchievement = UserAchievement.builder().id(1L).userId(1L).build();
+        userAchievementDto = UserAchievementDto.builder().id(1L).userId(1L).build();
 
         achievementService = new AchievementService(achievementProgressRepository, achievementProgressMapper, achievementRepository, achievementMapper, achievementFilters ,userAchievementRepository, userAchievementMapper);
     }
@@ -180,5 +195,77 @@ public class AchievementServiceTest {
 
         assertEquals(1, result.size());
         assertEquals(achievementProgressDto, result.get(0));
+    }
+
+    @Test
+    @DisplayName("Узнать, существует ли достижение у пользователя: тест успешного выполнения, когда есть достижение")
+    public void testHasAchievementReturnsTrue() {
+        long userId = 1L;
+        long achievementId = 1L;
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(true);
+
+        boolean result = achievementService.hasAchievement(userId, achievement);
+
+        assertTrue(result);
+        verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("Узнать, существует ли достижение у пользователя: тест успешного выполнения, когда нет достижения")
+    public void testHasAchievementReturnsFalse() {
+        long userId = 1L;
+        long achievementId = 1L;
+        when(userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId)).thenReturn(false);
+
+        boolean result = achievementService.hasAchievement(userId, achievement);
+
+        assertFalse(result);
+        verify(userAchievementRepository).existsByUserIdAndAchievementId(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("Получение прогресса пользователя: тест успешного выполнения")
+    void testGetAchievementProgress() {
+        long userId = 1L;
+        long achievementId = 1L;
+        when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)).thenReturn(Optional.of(achievementProgress));
+
+        AchievementProgress actual = achievementService.getAchievementProgress(userId, achievement);
+
+        assertNotNull(actual);
+        assertEquals(achievementProgress, actual);
+    }
+
+    @Test
+    @DisplayName("Получение прогресса пользователя: тест на случай, если у пользователя нет прогресса по достижению")
+    void testGetAchievementProgressResourceNotFoundException() {
+        long userId = 1L;
+        long achievementId = 1L;
+        doThrow(ResourceNotFoundException.class).when(achievementProgressRepository).findByUserIdAndAchievementId(userId, achievementId);
+
+        assertThrows(ResourceNotFoundException.class, () -> achievementService.getAchievementProgress(userId, achievement));
+    }
+
+    @Test
+    @DisplayName("Создание прогресса достижения, если необходимо: тест успешного выполнения")
+    void testCreateProgressIfNecessary() {
+        long userId = 1L;
+        long achievementId = 2L;
+
+        achievementService.createProgressIfNecessary(userId, achievementId);
+
+        verify(achievementProgressRepository).createProgressIfNecessary(userId, achievementId);
+    }
+
+    @Test
+    @DisplayName("Создать полученное достижение пользователем: тест успешного выполнения")
+    public void testGiveAchievement() {
+        long userId = 1L;
+        when(userAchievementRepository.save(any(UserAchievement.class))).thenReturn(userAchievement);
+
+        UserAchievement result = achievementService.giveAchievement(achievement, achievementProgress);
+
+        assertNotNull(result);
+        assertEquals(userAchievement, result);
     }
 }
