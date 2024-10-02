@@ -5,8 +5,6 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
-import faang.school.achievement.redis.AchievementPublisher;
-import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
