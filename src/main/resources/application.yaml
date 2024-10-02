@@ -24,6 +24,7 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+        comment_achievement: post_comment_channel
         profile_pic_channel: profile_pic_channel
         mentorship_channel: mentorship_offered_channel
         recommendation: recommendation_channel
@@ -32,6 +33,9 @@ spring:
 achievements:
   handsome: HANDSOME
   sensei: SENSEI
+  expert: EXPERT
+
+
 
 
 

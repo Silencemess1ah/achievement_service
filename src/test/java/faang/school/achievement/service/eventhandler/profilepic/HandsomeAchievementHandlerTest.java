@@ -6,8 +6,11 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.event.ProfilePicEvent;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,6 +70,15 @@ class HandsomeAchievementHandlerTest {
         when(achievementCache.get(achievementTitle)).thenReturn(achievement);
         when(achievementService.userHasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(progress);
+        when(achievementService.incrementCurrentPointsForUser(progress)).thenAnswer(new Answer<AchievementProgress>() {
+            @Override
+            public AchievementProgress answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                AchievementProgress progress =(AchievementProgress) args[0];
+                progress.setCurrentPoints(initialPoints+1);
+                return progress;
+            }
+        });
 
         handsomeAchievementHandler.handle(event);
 
@@ -74,7 +86,7 @@ class HandsomeAchievementHandlerTest {
         verify(achievementService, times(1)).userHasAchievement(userId, achievementId);
         verify(achievementService, times(1)).createProgressIfNecessary(userId, achievementId);
         verify(achievementService, times(1)).getProgress(userId, achievementId);
-        verify(achievementService, times(1)).saveProgress(progress);
+        verify(achievementService, times(1)).incrementCurrentPointsForUser(progress);
         assertEquals(initialPoints + 1, progress.getCurrentPoints());
         verifyNoMoreInteractions(achievementCache, achievementService);
     }
@@ -94,12 +106,23 @@ class HandsomeAchievementHandlerTest {
 
         long initialPoints = 0L;
         AchievementProgress progress = AchievementProgress.builder()
+                .id(12L)
+                .userId(userId)
                 .currentPoints(initialPoints)
                 .build();
 
         when(achievementCache.get(achievementTitle)).thenReturn(achievement);
         when(achievementService.userHasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(progress);
+        when(achievementService.incrementCurrentPointsForUser(progress)).thenAnswer(new Answer<AchievementProgress>() {
+            @Override
+            public AchievementProgress answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                AchievementProgress progress =(AchievementProgress) args[0];
+                progress.setCurrentPoints(initialPoints+1);
+                return progress;
+            }
+        });
 
         handsomeAchievementHandler.handle(event);
 
@@ -107,10 +130,9 @@ class HandsomeAchievementHandlerTest {
         verify(achievementService, times(1)).userHasAchievement(userId, achievementId);
         verify(achievementService, times(1)).createProgressIfNecessary(userId, achievementId);
         verify(achievementService, times(1)).getProgress(userId, achievementId);
-        verify(achievementService, times(1)).saveProgress(progress);
         assertEquals(initialPoints + 1, progress.getCurrentPoints());
         verify(achievementService, times(1)).giveAchievement(userId, achievement);
+        verify(achievementService, times(1)).incrementCurrentPointsForUser(progress);
         verifyNoMoreInteractions(achievementCache, achievementService);
     }
-
 }

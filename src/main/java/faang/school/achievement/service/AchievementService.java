@@ -5,6 +5,8 @@ import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.dto.AchievementProgressDto;
 import faang.school.achievement.dto.UserAchievementDto;
 import faang.school.achievement.exception.NotFoundException;
+import faang.school.achievement.redis.AchievementPublisher;
+import faang.school.achievement.util.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.mapper.UserAchievementMapper;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -114,5 +117,11 @@ public class AchievementService {
         userAchievement = userAchievementRepository.save(userAchievement);
 
         achievementPublisher.publishMessage(userAchievementMapper.toEvent(userAchievement));
+    }
+
+    @Transactional
+    public AchievementProgress incrementCurrentPointsForUser(AchievementProgress progress) {
+        Optional<AchievementProgress> achievementProgress = achievementProgressRepository.incrementCurrentPointsForUser(progress.getId());
+        return achievementProgress.orElseThrow(() -> new NotFoundException("Progress with ID = " + progress.getId() + " not found!"));
     }
 }
