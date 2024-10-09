@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -33,11 +32,8 @@ public class EventHandlerManagerImpl<T extends Event> implements EventHandlerMan
     @Async("mainExecutorService")
     public void processEvent(T event) {
         log.info("Processing event: {}", event);
-        List<EventHandler<? extends T>> eventHandlers = mapEventByHandler.get(event.getClass());
-
-        Optional.ofNullable(eventHandlers).ifPresent(handlers -> handlers.forEach(
-                handler -> invokeHandler(handler, event)
-        ));
+        var handlers = mapEventByHandler.getOrDefault(event.getClass(), new ArrayList<>());
+        handlers.forEach(handler -> invokeHandler(handler, event));
     }
 
     @Async("mainExecutorService")

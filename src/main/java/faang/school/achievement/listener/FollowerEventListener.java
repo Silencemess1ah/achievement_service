@@ -21,14 +21,10 @@ public class FollowerEventListener implements EventListener<byte[]> {
 
     @Override
     @KafkaListener(topics = "${spring.kafka.topics.follower.name}", groupId = "${spring.kafka.consumer.group-id}")
-    public void onMessage(byte[] byteEvent) {
+    public void onMessage(byte[] byteEvent) throws InvalidProtocolBufferException {
         log.info("Received follower event from follower topic");
-        try {
-            FollowerEventProto.FollowerEvent protoEvent = FollowerEventProto.FollowerEvent.parseFrom(byteEvent);
-            FollowerEvent followerEvent = followerEventMapper.toFollowerEvent(protoEvent);
-            eventHandlerManager.processEvent(followerEvent);
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException(e);
-        }
+        FollowerEventProto.FollowerEvent protoEvent = FollowerEventProto.FollowerEvent.parseFrom(byteEvent);
+        FollowerEvent followerEvent = followerEventMapper.toFollowerEvent(protoEvent);
+        eventHandlerManager.processEvent(followerEvent);
     }
 }

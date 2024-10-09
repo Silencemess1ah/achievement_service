@@ -10,5 +10,5 @@ public interface CacheService<T> {
 
     T get(String key, Class<T> clazz);
 
-    Boolean existsBy(String key);
+    boolean exists(String key);
 }

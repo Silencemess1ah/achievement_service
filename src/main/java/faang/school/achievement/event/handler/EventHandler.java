@@ -20,7 +20,7 @@ public abstract class EventHandler<T extends Event> {
     @Transactional
     public void handleEventIfNotProcessed(T event) {
         String key = generateKey(event.getEventTime());
-        if (!cacheService.existsBy(key)) {
+        if (!cacheService.exists(key)) {
             handleEvent(event);
             cacheService.put(key, key, Duration.ofMinutes(lifeTimeMinutes));
         }

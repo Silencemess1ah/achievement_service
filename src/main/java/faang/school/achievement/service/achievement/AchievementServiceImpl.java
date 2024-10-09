@@ -9,6 +9,7 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,8 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public AchievementProgress getProgress(long userId, long achievementId) {
-        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow();
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Achievement progress not found"));
     }
 
     @Override

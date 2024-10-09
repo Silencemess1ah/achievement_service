@@ -22,6 +22,9 @@ spring:
       port: 6379
       host: localhost
       life-time-minutes: 120
+      retry:
+        max-attempts: 5
+        backoff: 1000
       channels:
         achievement: achievement_channel
         follower: follower_channel
