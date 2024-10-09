@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
 
+    private static final String ACHIEVEMENT_KEY = "BLOGGER";
+
     private final CacheService<Achievement> achievementCacheService;
     private final AchievementService achievementService;
 
@@ -26,7 +28,7 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
     @Override
     protected void handleEvent(FollowerEvent event) {
         log.info("Handling follower event: {}", event);
-        Achievement achievement = achievementCacheService.get("BLOGGER", Achievement.class);
+        Achievement achievement = achievementCacheService.get(ACHIEVEMENT_KEY, Achievement.class);
         long userId = event.getUserId(), achievementId = achievement.getId();
 
         if (!achievementService.hasAchievement(userId, achievementId)) {
@@ -35,7 +37,7 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
             achievementProgress.increment();
             tryGiveAchievement(achievementProgress, achievement, userId);
         } else {
-            log.info("User {} has already achievement with id {}", event.getUserId(), achievementId);
+            log.info("User {} has already achievement with id {}", userId, achievementId);
         }
     }
 

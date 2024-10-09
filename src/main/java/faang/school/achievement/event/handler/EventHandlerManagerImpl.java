@@ -2,6 +2,7 @@ package faang.school.achievement.event.handler;
 
 import faang.school.achievement.event.Event;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Getter
 @Component
 @RequiredArgsConstructor
 public class EventHandlerManagerImpl<T extends Event> implements EventHandlerManager<T> {

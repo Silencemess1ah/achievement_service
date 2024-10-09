@@ -3,12 +3,14 @@ package faang.school.achievement.event.handler;
 import faang.school.achievement.event.Event;
 import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@Slf4j
 @RequiredArgsConstructor
 public abstract class EventHandler<T extends Event> {
 
@@ -23,6 +25,8 @@ public abstract class EventHandler<T extends Event> {
         if (!cacheService.exists(key)) {
             handleEvent(event);
             cacheService.put(key, key, Duration.ofMinutes(lifeTimeMinutes));
+        } else {
+            log.info("Event already processed, ignore it");
         }
     }
 
