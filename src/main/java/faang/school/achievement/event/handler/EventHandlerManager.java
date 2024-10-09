@@ -1,7 +1,6 @@
 package faang.school.achievement.event.handler;
 
-public interface EventHandlerManager {
+public interface EventHandlerManager<T> {
 
-    <T> void processEvent(T event);
+    void processEvent(T event);
 }
-

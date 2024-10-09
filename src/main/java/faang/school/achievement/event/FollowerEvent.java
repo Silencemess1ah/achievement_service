@@ -1,13 +1,19 @@
 package faang.school.achievement.event;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
-@NoArgsConstructor
-public class FollowerEvent {
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
+public class FollowerEvent extends Event {
     private Long userId;
-    private LocalDateTime eventTime;
+
+    public FollowerEvent(LocalDateTime eventTime, Long userId) {
+        super(eventTime);
+        this.userId = userId;
+    }
 }

@@ -1,5 +1,6 @@
 package faang.school.achievement.event.handler;
 
+import faang.school.achievement.event.Event;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,10 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventHandlerManagerImpl implements EventHandlerManager {
+public class EventHandlerManagerImpl<T extends Event> implements EventHandlerManager<T> {
 
-    private final List<EventHandler<?>> eventHandlers;
-    private final Map<Class<?>, List<EventHandler<?>>> mapEventByHandler = new HashMap<>();
+    private final List<EventHandler<? extends T>> eventHandlers;
+    private final Map<Class<?>, List<EventHandler<? extends T>>> mapEventByHandler = new HashMap<>();
 
     @PostConstruct
     public void initHandlers() {
@@ -30,9 +31,10 @@ public class EventHandlerManagerImpl implements EventHandlerManager {
 
     @Override
     @Async("mainExecutorService")
-    public <T> void processEvent(T event) {
+    public void processEvent(T event) {
         log.info("Processing event: {}", event);
-        List<EventHandler<?>> eventHandlers = mapEventByHandler.get(event.getClass());
+        List<EventHandler<? extends T>> eventHandlers = mapEventByHandler.get(event.getClass());
+
         Optional.ofNullable(eventHandlers).ifPresent(handlers -> handlers.forEach(
                 handler -> invokeHandler(handler, event)
         ));
@@ -40,8 +42,8 @@ public class EventHandlerManagerImpl implements EventHandlerManager {
 
     @Async("mainExecutorService")
     @SuppressWarnings("unchecked")
-    public <T> void invokeHandler(EventHandler<?> handler, T event) {
+    public void invokeHandler(EventHandler<? extends T> handler, T event) {
         EventHandler<T> typedHandler = (EventHandler<T>) handler;
-        typedHandler.handleEvent(event);
+        typedHandler.handleEventIfNotProcessed(event);
     }
 }

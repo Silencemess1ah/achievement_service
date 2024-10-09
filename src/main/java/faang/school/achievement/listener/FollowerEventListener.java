@@ -1,14 +1,13 @@
 package faang.school.achievement.listener;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import faang.school.achievement.config.kafka.KafkaProperties;
+import faang.school.achievement.event.Event;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.event.handler.EventHandlerManager;
 import faang.school.achievement.mapper.FollowerEventMapper;
 import faang.school.achievement.protobuf.generate.FollowerEventProto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class FollowerEventListener implements EventListener<byte[]> {
 
     private final FollowerEventMapper followerEventMapper;
-    private final EventHandlerManager eventHandlerManager;
+    private final EventHandlerManager<Event> eventHandlerManager;
 
     @Override
     @KafkaListener(topics = "${spring.kafka.topics.follower.name}", groupId = "${spring.kafka.consumer.group-id}")
