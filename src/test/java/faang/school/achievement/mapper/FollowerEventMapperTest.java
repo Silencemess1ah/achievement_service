@@ -1,7 +1,5 @@
 package faang.school.achievement.mapper;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
