@@ -12,26 +12,32 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventHandlerManagerImplTest {
 
-    private final TestEvent event = new TestEvent(LocalDateTime.now());
     @Mock
     private EventHandler<TestEvent> firstMockEventHandler;
 
     @Mock
     private EventHandler<TestEvent> secondMockEventHandler;
 
+    @Mock
+    private ExecutorService executorService;
+
     @InjectMocks
     private EventHandlerManagerImpl<TestEvent> eventHandlerManager;
+
+    private final TestEvent event = new TestEvent(LocalDateTime.now());
 
     @BeforeEach
     void setUp() {
@@ -60,8 +66,7 @@ class EventHandlerManagerImplTest {
 
         eventHandlerManager.processEvent(event);
 
-        verify(firstMockEventHandler).handleEventIfNotProcessed(event);
-        verify(secondMockEventHandler).handleEventIfNotProcessed(event);
+        verify(executorService, times(2)).execute(any(Runnable.class));
     }
 
     @Test
@@ -70,13 +75,7 @@ class EventHandlerManagerImplTest {
 
         verify(firstMockEventHandler, never()).handleEventIfNotProcessed(any(TestEvent.class));
         verify(secondMockEventHandler, never()).handleEventIfNotProcessed(any(TestEvent.class));
-    }
-
-    @Test
-    void testInvokeHandler() {
-        eventHandlerManager.invokeHandler(firstMockEventHandler, event);
-
-        verify(firstMockEventHandler).handleEventIfNotProcessed(event);
+        verify(executorService, never()).execute(any(Runnable.class));
     }
 
     private static class TestEvent extends Event {
