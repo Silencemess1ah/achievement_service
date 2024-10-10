@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Getter
@@ -19,6 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EventHandlerManagerImpl<T extends Event> implements EventHandlerManager<T> {
 
+    private final ExecutorService executorService;
     private final List<EventHandler<? extends T>> eventHandlers;
     private final Map<Class<?>, List<EventHandler<? extends T>>> mapEventByHandler = new HashMap<>();
 
@@ -38,10 +41,11 @@ public class EventHandlerManagerImpl<T extends Event> implements EventHandlerMan
         handlers.forEach(handler -> invokeHandler(handler, event));
     }
 
-    @Async("mainExecutorService")
     @SuppressWarnings("unchecked")
-    public void invokeHandler(EventHandler<? extends T> handler, T event) {
-        EventHandler<T> typedHandler = (EventHandler<T>) handler;
-        typedHandler.handleEventIfNotProcessed(event);
+    private void invokeHandler(EventHandler<? extends T> handler, T event) {
+        executorService.execute(() -> {
+            EventHandler<T> typedHandler = (EventHandler<T>) handler;
+            typedHandler.handleEventIfNotProcessed(event);
+        });
     }
 }
