@@ -1,11 +1,10 @@
-package faang.school.achievement.event.handler;
+package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.event.Event;
+import faang.school.achievement.dto.Event;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
-package faang.school.achievement.event.handler;
+package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.event.FollowerEvent;
+import faang.school.achievement.dto.FollowerEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
 
-    private static final String ACHIEVEMENT_KEY = "BLOGGER";
+    private static final String ACHIEVEMENT_NAME = "BLOGGER";
 
     private final CacheService<Achievement> achievementCacheService;
     private final AchievementService achievementService;
@@ -28,7 +28,7 @@ public class BloggerAchievementHandler extends EventHandler<FollowerEvent> {
     @Override
     protected void handleEvent(FollowerEvent event) {
         log.info("Handling follower event: {}", event);
-        Achievement achievement = achievementCacheService.get(ACHIEVEMENT_KEY, Achievement.class);
+        Achievement achievement = achievementCacheService.get(ACHIEVEMENT_NAME, Achievement.class);
         long userId = event.getUserId(), achievementId = achievement.getId();
 
         if (!achievementService.hasAchievement(userId, achievementId)) {

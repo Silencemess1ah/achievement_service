@@ -1,6 +1,6 @@
-package faang.school.achievement.event.handler;
+package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.event.Event;
+import faang.school.achievement.dto.Event;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

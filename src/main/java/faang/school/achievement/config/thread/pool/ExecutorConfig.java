@@ -1,7 +1,7 @@
 package faang.school.achievement.config.thread.pool;
 
-import faang.school.achievement.config.ApplicationProperties;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -14,10 +14,11 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class ExecutorConfig {
 
-    private final ApplicationProperties properties;
+    @Value("${server.main-thread-pool-size}")
+    private int threadPoolSize;
 
     @Bean
     public ExecutorService mainExecutorService() {
-        return Executors.newFixedThreadPool(properties.getMainThreadPoolSize());
+        return Executors.newFixedThreadPool(threadPoolSize);
     }
 }

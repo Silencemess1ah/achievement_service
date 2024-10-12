@@ -38,7 +38,7 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     public AchievementProgress getProgress(long userId, long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement progress not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Achievement %d progress not found".formatted(achievementId)));
     }
 
     @Override

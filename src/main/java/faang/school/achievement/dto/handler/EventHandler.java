@@ -1,6 +1,6 @@
-package faang.school.achievement.event.handler;
+package faang.school.achievement.dto.handler;
 
-import faang.school.achievement.event.Event;
+import faang.school.achievement.dto.Event;
 import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public abstract class EventHandler<T extends Event> {
             handleEvent(event);
             cacheService.put(key, key, Duration.ofMinutes(lifeTimeMinutes));
         } else {
-            log.info("Event already processed, ignore it");
+            log.info("Event already processed, ignore this key: {}", key);
         }
     }
 

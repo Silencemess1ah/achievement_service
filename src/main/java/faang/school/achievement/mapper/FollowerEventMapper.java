@@ -1,7 +1,7 @@
 package faang.school.achievement.mapper;
 
 import com.google.protobuf.Timestamp;
-import faang.school.achievement.event.FollowerEvent;
+import faang.school.achievement.dto.FollowerEvent;
 import faang.school.achievement.protobuf.generate.FollowerEventProto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
