@@ -93,7 +93,7 @@ class AchievementServiceImplTest {
 
     @Test
     void getProgress_shouldThrowExceptionWhenNotFound() {
-        String message = "Achievement progress not found";
+        String message = "Achievement %d progress not found".formatted(achievementId);
         when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
                 .thenReturn(Optional.empty());
 
