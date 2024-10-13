@@ -9,6 +9,5 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AchievementProgressMapper {
     @Mapping(target = "achievementId", source = "achievement.id")
-    @Mapping(target = "achievementId", source = "achievement.id")
     AchievementProgressDto toDto(AchievementProgress progress);
 }
