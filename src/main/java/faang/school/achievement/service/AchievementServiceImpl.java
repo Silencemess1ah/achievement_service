@@ -1,8 +1,8 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.AchievementProgressMapper;
-import faang.school.achievement.dto.AchievementDto;
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.mapper.AchievementProgressMapper;
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -29,10 +29,12 @@ public class AchievementServiceImpl implements AchievementService {
                 achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow());
     }
 
-    public void giveAchievement(long userId, AchievementDto dto) {
-        UserAchievement achievement = new UserAchievement();
-        achievement.setUserId(userId);
+    public void giveAchievement(long userId, Achievement achievement) {
+        UserAchievement userAchievement = new UserAchievement();
 
-        userAchievementRepository.save(achievement);
+        userAchievement.setUserId(userId);
+        userAchievement.setAchievement(achievement);
+
+        userAchievementRepository.save(userAchievement);
     }
 }
