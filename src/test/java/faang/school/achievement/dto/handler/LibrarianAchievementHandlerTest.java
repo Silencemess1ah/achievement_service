@@ -37,7 +37,7 @@ class LibrarianAchievementHandlerTest {
 
     @Test
     void shouldExtractUserIdFromEvent() {
-        AlbumCreatedEvent event = new AlbumCreatedEvent(LocalDateTime.now());
+        AlbumCreatedEvent event = new AlbumCreatedEvent(LocalDateTime.now(), 1L, 2L, "name");
         event.setUserId(123L);
 
         long userId = librarianAchievementHandler.getUserIdFromEvent(event);

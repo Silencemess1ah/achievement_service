@@ -14,7 +14,10 @@ public class AlbumCreatedEvent extends Event {
     private Long albumId;
     private String albumName;
 
-    public AlbumCreatedEvent(LocalDateTime eventTime) {
+    public AlbumCreatedEvent(LocalDateTime eventTime, Long userId, Long albumId, String albumName) {
         super(eventTime);
+        this.userId = userId;
+        this.albumId = albumId;
+        this.albumName = albumName;
     }
 }
