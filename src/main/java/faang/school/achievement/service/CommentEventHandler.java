@@ -3,7 +3,6 @@ package faang.school.achievement.service;
 import faang.school.achievement.dto.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,7 +15,6 @@ public class CommentEventHandler implements EventHandler<CommentEvent> {
 
     private final AchievementService achievementService;
     private final AchievementRepository achievementRepository;
-    private final UserAchievementRepository userAchievementRepository;
 
     private final static String ACHIEVEMENT_TITLE = "EXPERT";
     private final static Long ACHIEVEMENT_PROGRESS_POINTS = 1000L;
@@ -31,7 +29,7 @@ public class CommentEventHandler implements EventHandler<CommentEvent> {
         Achievement achievement = achievementRepository.findByTitle(ACHIEVEMENT_TITLE).orElseThrow(
                 () -> new EntityNotFoundException("Achievement %s progress not found".formatted(ACHIEVEMENT_TITLE)));
 
-        if (!userAchievementRepository.existsByUserIdAndAchievementId(event.getIdAuthor(), achievement.getId())) {
+        if (!achievementService.hasAchievement(event.getIdAuthor(), achievement.getId())) {
             achievementService.createProgressIfNecessary(event.getIdAuthor(), achievement.getId());
         }
 

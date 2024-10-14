@@ -33,7 +33,6 @@ public class CommentEventListener implements MessageListener {
             handlers.forEach(handler -> handler.handleEvent(event));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            e.printStackTrace();
         }
 
         log.info("Received message channel: {}", channel);
