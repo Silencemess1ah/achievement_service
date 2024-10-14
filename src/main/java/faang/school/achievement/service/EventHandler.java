@@ -2,8 +2,9 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.dto.CommentEvent;
 
-public interface EventHandler {
+public interface EventHandler<T> {
 
-    void handleEvent(CommentEvent event);
+    void handleEvent(T event);
 
+    Class<T> getEventClass();
 }
