@@ -1,10 +1,10 @@
 package faang.school.achievement.dto.handler2;
 
-import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.dto.EventBase;
 import faang.school.achievement.dto.PostEvent;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -16,19 +16,20 @@ public class OpinionLeaderAchievementHandler extends EventHandler<PostEvent> {
 
     private final AchievementService achievementService;
 
-
+    private final CacheService<Achievement> cacheService;
 
     @Override
     @Async
     public void handle(PostEvent event) {
-        Achievement achievement = new Achievement();//тут надо получить достижение из кеша по названию
+        Achievement achievement = cacheService.get(ACHIEVEMENT_NAME, Achievement.class);
+
         if (!achievementService.hasAchievement(event.getAuthorId(), achievement.getId())) {
             achievementService.createProgressIfNecessary(event.getAuthorId(), achievement.getId());
 
-            AchievementProgressDto achievementProgressDto = achievementService.getProgress(event.getAuthorId(), achievement.getId());
-            achievementProgressDto.setCurrentPoints(achievementProgressDto.getCurrentPoints() + 1);
+            AchievementProgress achievementProgress = achievementService.getProgress(event.getAuthorId(), achievement.getId());
+            achievementProgress.increment();
 
-            if (achievementProgressDto.getCurrentPoints() >= achievement.getPoints()) {
+            if (achievementProgress.getCurrentPoints() >= achievement.getPoints()) {
                 achievementService.giveAchievement(event.getAuthorId(), achievement);
             }
         }
