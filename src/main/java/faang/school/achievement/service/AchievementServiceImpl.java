@@ -1,8 +1,7 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.dto.AchievementProgressDto;
-import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class AchievementServiceImpl implements AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
-    private final AchievementProgressMapper achievementProgressMapper;
 
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -24,9 +22,8 @@ public class AchievementServiceImpl implements AchievementService {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
-    public AchievementProgressDto getProgress(long userId, long achievementId) {
-        return achievementProgressMapper.toDto(
-                achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow());
+    public AchievementProgress getProgress(long userId, long achievementId) {
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId).orElseThrow();
     }
 
     public void giveAchievement(long userId, Achievement achievement) {

@@ -1,6 +1,5 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.mapper.AchievementProgressMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -28,9 +27,6 @@ class AchievementServiceImplTest {
 
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
-
-    @Mock
-    private AchievementProgressMapper achievementProgressMapper;
 
     private long userId;
     private long achievementId;
@@ -64,14 +60,12 @@ class AchievementServiceImplTest {
     @Test
     void getProgress_whenOk() {
         Mockito.when(achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId))
-                        .thenReturn(Optional.ofNullable(achievementProgress));
+                .thenReturn(Optional.ofNullable(achievementProgress));
 
         service.getProgress(userId, achievementId);
 
         Mockito.verify(achievementProgressRepository, Mockito.times(1))
                 .findByUserIdAndAchievementId(userId, achievementId);
-        Mockito.verify(achievementProgressMapper, Mockito.times(1))
-                .toDto(achievementProgress);
     }
 
     @Test
@@ -83,8 +77,6 @@ class AchievementServiceImplTest {
 
         Mockito.verify(achievementProgressRepository, Mockito.times(1))
                 .findByUserIdAndAchievementId(userId, achievementId);
-        Mockito.verify(achievementProgressMapper, Mockito.never())
-                .toDto(achievementProgress);
     }
 
     @Test
@@ -95,7 +87,7 @@ class AchievementServiceImplTest {
         userAchievement.setAchievement(achievement);
         userAchievement.setUserId(userId);
 
-       Mockito.verify(userAchievementRepository, Mockito.times(1))
-               .save(userAchievement);
+        Mockito.verify(userAchievementRepository, Mockito.times(1))
+                .save(userAchievement);
     }
 }
