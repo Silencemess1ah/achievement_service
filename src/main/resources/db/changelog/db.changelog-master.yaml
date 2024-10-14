@@ -7,6 +7,10 @@ databaseChangeLog:
       id: 1
       author: Vanchous
       comment: "Добавление в базу достижения Лидер Мнений"
+      preConditions:
+        - sqlCheck:
+            expectedResult: 0
+            sql: select count(*) from achievement where title = 'OPINION_LEADER'
       changes:
         - sql:
             sql: INSERT INTO achievement(title, description, rarity, points, created_at, updated_at) VALUES ('OPINION_LEADER', 'For 1000 posts', 3, 1000, now(), now())
