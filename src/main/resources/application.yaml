@@ -27,6 +27,7 @@ spring:
         comment-channel: comment_channel
 
 server:
+  main-thread-pool-size: 6
   port: 8085
 
 logging:

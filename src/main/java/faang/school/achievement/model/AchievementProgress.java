@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Data
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class AchievementProgress {
     private long userId;
 
     @Column(name = "current_points", nullable = false)
-    private long currentPoints;
+    private Long currentPoints;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,7 +47,19 @@ public class AchievementProgress {
     @Column(name = "version", nullable = false)
     private long version;
 
+    private transient AtomicLong atomicCurrentPoints = new AtomicLong(0);
+
     public void increment() {
-        currentPoints++;
+        atomicCurrentPoints.incrementAndGet();
+        currentPoints = atomicCurrentPoints.get();
+    }
+
+    public long getCurrentPoints() {
+        return atomicCurrentPoints.get();
+    }
+
+    public void setCurrentPoints(long points) {
+        this.currentPoints = points;
+        this.atomicCurrentPoints.set(points);
     }
 }
