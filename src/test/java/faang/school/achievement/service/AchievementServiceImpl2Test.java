@@ -18,9 +18,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class AchievementServiceImplTest {
+class AchievementServiceImpl2Test {
     @InjectMocks
-    private AchievementServiceImpl service;
+    private AchievementServiceImpl2 service;
 
     @Mock
     private UserAchievementRepository userAchievementRepository;

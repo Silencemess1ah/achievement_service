@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AchievementServiceImpl implements AchievementService {
+public class AchievementServiceImpl2 implements AchievementService {
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
 
