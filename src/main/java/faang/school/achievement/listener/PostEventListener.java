@@ -2,7 +2,7 @@ package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.PostEvent;
-import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.dto.handler2.EventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class PostEventListener implements MessageListener {
-    private final List<EventHandler> handlers;
+    private final List<EventHandler<PostEvent>> handlers;
     private final ObjectMapper objectMapper;
 
     @Override

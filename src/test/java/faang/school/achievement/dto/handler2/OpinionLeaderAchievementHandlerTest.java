@@ -1,4 +1,4 @@
-package faang.school.achievement.handler;
+package faang.school.achievement.dto.handler2;
 
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.extension.ExtendWith;

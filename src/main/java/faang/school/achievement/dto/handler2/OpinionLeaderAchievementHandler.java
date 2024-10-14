@@ -1,6 +1,7 @@
-package faang.school.achievement.handler;
+package faang.school.achievement.dto.handler2;
 
 import faang.school.achievement.dto.AchievementProgressDto;
+import faang.school.achievement.dto.EventBase;
 import faang.school.achievement.dto.PostEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
@@ -10,8 +11,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OpinionLeaderAchievementHandler implements EventHandler {
+public class OpinionLeaderAchievementHandler extends EventHandler<PostEvent> {
+    private static final String ACHIEVEMENT_NAME = "OPINION_LEADER";
+
     private final AchievementService achievementService;
+
+
 
     @Override
     @Async
