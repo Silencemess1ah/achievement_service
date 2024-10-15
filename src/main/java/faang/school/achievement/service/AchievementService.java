@@ -13,4 +13,6 @@ public interface AchievementService {
     void createProgressIfNecessary(long userId, long achievementId);
 
     void giveAchievement(long userId, Achievement achievement);
+
+    void uploadAchievement();
 }

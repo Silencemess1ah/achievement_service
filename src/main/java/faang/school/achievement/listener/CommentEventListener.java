@@ -19,7 +19,7 @@ import java.util.List;
 public class CommentEventListener implements MessageListener {
 
     private final ObjectMapper objectMapper;
-    private final List<EventHandler<CommentEvent>> handlers;
+    private final EventDispatcher dispatcher;
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
@@ -30,7 +30,7 @@ public class CommentEventListener implements MessageListener {
 
         try {
             CommentEvent event = objectMapper.readValue(message.getBody(), CommentEvent.class);
-            handlers.forEach(handler -> handler.handleEvent(event));
+            dispatcher.handleEvent(event);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

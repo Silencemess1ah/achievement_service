@@ -4,11 +4,16 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
+import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.service.cache.CacheService;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +21,8 @@ public class AchievementServiceImpl implements AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementRepository achievementRepository;
+    private final CacheService<Achievement> cacheService;
 
     @Override
     public boolean hasAchievement(long userId, long achievementId) {
@@ -40,5 +47,14 @@ public class AchievementServiceImpl implements AchievementService {
                 .achievement(achievement)
                 .build();
         userAchievementRepository.save(userAchievement);
+    }
+
+    @Override
+    @PostConstruct
+    public void uploadAchievement() {
+        List<Achievement> achievementList = achievementRepository.findAll();
+
+        achievementList
+                .forEach(achievement -> cacheService.setCacheValue(achievement.getTitle(), achievement));
     }
 }

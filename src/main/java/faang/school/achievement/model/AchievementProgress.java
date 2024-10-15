@@ -47,19 +47,7 @@ public class AchievementProgress {
     @Column(name = "version", nullable = false)
     private long version;
 
-    private transient AtomicLong atomicCurrentPoints = new AtomicLong(0);
-
-    public void increment() {
-        atomicCurrentPoints.incrementAndGet();
-        currentPoints = atomicCurrentPoints.get();
-    }
-
-    public long getCurrentPoints() {
-        return atomicCurrentPoints.get();
-    }
-
-    public void setCurrentPoints(long points) {
-        this.currentPoints = points;
-        this.atomicCurrentPoints.set(points);
+    public synchronized void increment() {
+        currentPoints++;
     }
 }
