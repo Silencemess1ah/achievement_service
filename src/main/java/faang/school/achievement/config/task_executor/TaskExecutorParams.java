@@ -1,0 +1,14 @@
+package faang.school.achievement.config.task_executor;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "task-executor")
+public class TaskExecutorParams {
+    private int corePoolSize;
+    private int maxPoolSize;
+    private int queueCapacity;
+}
