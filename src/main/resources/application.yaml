@@ -26,6 +26,18 @@ spring:
           name: achievement_channel
         follower-channel:
           name: follower_channel
+        like-channel:
+          name: like_channel
+
+achievements:
+  like-achievements:
+    ALL_LOVE:
+      name: ALL LOVE
+
+task-executor:
+  core-pool-size: 10
+  max-pool-size: 20
+  queue_capacity: 1000
 
 server:
   port: 8085
