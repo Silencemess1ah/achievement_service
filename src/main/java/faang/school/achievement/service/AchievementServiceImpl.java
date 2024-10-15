@@ -10,10 +10,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AchievementServiceImpl implements AchievementService {
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -27,7 +29,6 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     public void createProgressIfNeccessary(Long userId, Long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
-        log.info("Created achievement progress for user {} with achievement {}", userId, achievementId);
     }
 
     @Override
@@ -36,6 +37,12 @@ public class AchievementServiceImpl implements AchievementService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Achievement %d for user %d not found".formatted(achievementId, userId))
                 );
+    }
+
+    @Override
+    public void updateProgress(AchievementProgress achievementProgress) {
+        achievementProgressRepository.save(achievementProgress);
+        log.info("Progress {} updated successfully", achievementProgress.getId());
     }
 
     @Override

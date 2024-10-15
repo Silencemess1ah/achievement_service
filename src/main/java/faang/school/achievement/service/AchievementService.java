@@ -10,5 +10,7 @@ public interface AchievementService {
 
     AchievementProgress getProgress(Long userId, Long achievementId);
 
+    void updateProgress(AchievementProgress progress);
+
     void giveAchievement(Long userId, Long achievementId);
 }
