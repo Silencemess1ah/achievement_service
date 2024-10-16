@@ -1,5 +1,6 @@
 package faang.school.achievement.config.redis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.comment.CommentEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfiguration {
 
     private final RedisProperties redisProperties;
+    private final ObjectMapper objectMapper;
 
     @Bean
     RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent) {
@@ -48,7 +50,7 @@ public class RedisConfiguration {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
         return template;
     }
 

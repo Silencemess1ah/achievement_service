@@ -41,8 +41,8 @@ public class AchievementService {
         log.debug("Getting user {} progress on achievement {}", userId, achievementId);
         return achievementProgressRepository
                 .findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("There achievement with id " +
-                        achievementId + " found!"));
+                .orElseThrow(() -> new EntityNotFoundException("There are no achievement progress with id " +
+                        achievementId + " for user " + userId + " found!"));
     }
 
     public void giveAchievement(UserAchievement achievement) {
@@ -52,7 +52,7 @@ public class AchievementService {
                 achievement.getUserId());
         userAchievementPublisher.publish(achievementMapper.toUserAchievementDto(achievement));
         log.debug("Published achievement {} to {}", achievement.getAchievement().getTitle(),
-                userAchievementPublisher.getAchievementChannelTopic().getTopic());
+                userAchievementPublisher.getAchievementChannelTopic());
     }
 
     public void saveAchievementProgress(AchievementProgress achievementProgress) {
