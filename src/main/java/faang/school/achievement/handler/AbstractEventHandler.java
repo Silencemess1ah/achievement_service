@@ -26,7 +26,7 @@ public abstract class AbstractEventHandler<T> implements EventHandler<T> {
             log.info("User %d already has achievement %d".formatted(userId, achievement.getId()));
             return;
         }
-        achievementService.createProgressIfNeccessary(userId, achievementId);
+        achievementService.createProgressIfNecessary(userId, achievementId);
         AchievementProgress progress = achievementService.getProgress(userId, achievementId);
         progress.increment();
         if (progress.getCurrentPoints() >= achievement.getPoints()) {
