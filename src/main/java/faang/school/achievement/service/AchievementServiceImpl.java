@@ -27,7 +27,7 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     @Override
-    public void createProgressIfNeccessary(Long userId, Long achievementId) {
+    public void createProgressIfNecessary(Long userId, Long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 

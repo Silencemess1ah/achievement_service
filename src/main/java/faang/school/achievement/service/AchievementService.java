@@ -6,7 +6,7 @@ public interface AchievementService {
 
     boolean hasAchievement(Long userId, Long achievementId);
 
-    void createProgressIfNeccessary(Long userId, Long achievementId);
+    void createProgressIfNecessary(Long userId, Long achievementId);
 
     AchievementProgress getProgress(Long userId, Long achievementId);
 
