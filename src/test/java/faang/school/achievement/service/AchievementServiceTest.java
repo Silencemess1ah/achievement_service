@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
-
     private final static Long USER_ID = 1L;
     private final static Long ACHIEVEMENT_ID = 1L;
 
@@ -58,8 +57,6 @@ public class AchievementServiceTest {
                 .achievement(achievement)
                 .userId(USER_ID)
                 .build();
-
-
     }
 
     @Test
