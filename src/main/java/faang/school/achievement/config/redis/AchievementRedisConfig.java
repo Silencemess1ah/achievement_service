@@ -1,7 +1,6 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.publisher.AchievementPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class AchievementRedisConfig {
 
     @Bean
     public AchievementPublisher achievementPublisher(
-            RedisTemplate<String, AchievementEvent> redisTemplate, ChannelTopic achievementChannelTopic) {
+            RedisTemplate<String, Object> redisTemplate, ChannelTopic achievementChannelTopic) {
         return new AchievementPublisher(redisTemplate, achievementChannelTopic, objectMapper);
     }
 

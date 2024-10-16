@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AchievementPublisher {
 
-    private final RedisTemplate<String, AchievementEvent> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final ChannelTopic achievementTopic;
     private final ObjectMapper objectMapper;
 
