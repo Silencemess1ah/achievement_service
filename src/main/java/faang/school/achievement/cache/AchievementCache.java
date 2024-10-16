@@ -6,14 +6,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Component
 @Getter
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 public class AchievementCache {
 
     private final Map<String, Achievement> cache = new HashMap<>();
@@ -25,7 +28,7 @@ public class AchievementCache {
             return cache.get(achievementTitle);
         } else {
             log.error("Such title {} does not exist!", achievementTitle);
-            throw new RuntimeException();
+            throw new NoSuchElementException();
         }
     }
 }
