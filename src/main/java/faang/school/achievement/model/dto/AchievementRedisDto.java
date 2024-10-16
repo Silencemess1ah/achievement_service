@@ -1,4 +1,4 @@
-package faang.school.achievement.dto;
+package faang.school.achievement.model.dto;
 
 import lombok.Data;
 

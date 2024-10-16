@@ -1,6 +1,6 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.dto.AchievementRedisDto;
+import faang.school.achievement.model.dto.AchievementRedisDto;
 
 public interface AchievementCache {
 

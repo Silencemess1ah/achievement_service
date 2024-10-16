@@ -1,7 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.AchievementRedisDto;
+import faang.school.achievement.model.dto.AchievementRedisDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
