@@ -3,6 +3,7 @@ package faang.school.achievement.cache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,8 @@ public class AchievementCache {
         log.info("Achievements cached successfully. Size of cache is {}", cache.size());
     }
 
-    public Optional<Achievement> getByTitle(String title) {
-        return Optional.ofNullable(cache.get(title));
+    public Achievement getByTitle(String title) {
+        return Optional.ofNullable(cache.get(title))
+                .orElseThrow(() -> new EntityNotFoundException("Achievement with title %s did not found".formatted(title)));
     }
 }

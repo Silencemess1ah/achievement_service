@@ -6,7 +6,7 @@ import faang.school.achievement.handler.AbstractEventHandler;
 import faang.school.achievement.handler.EventHandler;
 import faang.school.achievement.service.AchievementService;
 
-public abstract class LikeEventHandler extends AbstractEventHandler<LikeEventDto> implements EventHandler<LikeEventDto> {
+public abstract class LikeEventHandler extends AbstractEventHandler<LikeEventDto> {
 
     public LikeEventHandler(AchievementService achievementService, AchievementCache achievementCache) {
         super(achievementService, achievementCache);

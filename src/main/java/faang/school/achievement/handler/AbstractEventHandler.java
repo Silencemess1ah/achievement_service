@@ -4,7 +4,6 @@ import faang.school.achievement.cache.AchievementCache;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -19,10 +18,9 @@ public abstract class AbstractEventHandler<T> implements EventHandler<T> {
     private final AchievementCache achievementCache;
 
     @Async("taskExecutor")
-    @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttempts = 5, backoff = @Backoff(delay = 5000))
+    @Retryable(retryFor = ObjectOptimisticLockingFailureException.class, maxAttemptsExpression = "${retryable.max-attempts}", backoff = @Backoff(delayExpression = "${retryable.delay}"))
     protected void handleAchievement(Long userId, String achievementTitle) {
-        Achievement achievement = achievementCache.getByTitle(achievementTitle)
-                .orElseThrow(() -> new EntityNotFoundException("Achievement with title %s did not found".formatted(achievementTitle)));
+        Achievement achievement = achievementCache.getByTitle(achievementTitle);
         Long achievementId = achievement.getId();
         if (achievementService.hasAchievement(userId, achievementId)) {
             log.info("User %d already has achievement %d".formatted(userId, achievement.getId()));
