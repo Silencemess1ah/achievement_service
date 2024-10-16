@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -32,7 +31,7 @@ public class EvilCommenterAchievementHandlerTest {
     private static final long AUTHOR_ID_ONE = 1L;
     private static final String DESCRIPTION = "For 100 comments";
     private static final int CURRENT_POINTS = 99;
-    private static final LocalDateTime TIME = LocalDateTime.of(2024,10,10,10,10);
+    private static final LocalDateTime TIME = LocalDateTime.of(2024, 10, 10, 10, 10);
     @InjectMocks
     private EvilCommenterAchievementHandler handler;
     @Mock
@@ -46,7 +45,7 @@ public class EvilCommenterAchievementHandlerTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         achievement = Achievement.builder()
                 .id(ACHIEVEMENT_ID_NINE)
                 .title(TITLE)
@@ -70,14 +69,14 @@ public class EvilCommenterAchievementHandlerTest {
 
     @Test
     @DisplayName("When commentEventDto passed then verify it")
-    public void whenCommentDtoPassedThenVerifyIt(){
+    public void whenCommentDtoPassedThenVerifyIt() {
         when(achievementRepository.findById(ACHIEVEMENT_ID_NINE)).thenReturn(Optional.of(achievement));
         when(achievementService.hasAchievement(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(false);
-        when(achievementService.getProgress(AUTHOR_ID_ONE,ACHIEVEMENT_ID_NINE)).thenReturn(achievementProgress);
+        when(achievementService.getProgress(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(achievementProgress);
 
         handler.verifyAchievement(eventDto);
 
-        verify(achievementService).createProgressIfNecessary(AUTHOR_ID_ONE,ACHIEVEMENT_ID_NINE);
+        verify(achievementService).createProgressIfNecessary(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE);
         verify(achievementService).saveAchievementProgress(achievementProgress);
         verify(achievementService).giveAchievement(userAchievement);
     }

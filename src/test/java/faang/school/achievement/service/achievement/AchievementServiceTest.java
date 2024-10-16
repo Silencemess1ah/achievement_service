@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 
 import java.util.Optional;
 
@@ -32,7 +31,7 @@ public class AchievementServiceTest {
     private static final long USER_ID_ONE = 1L;
     private static final long ACHIEVEMENT_ID_ONE = 1L;
     private static final String TITLE = "EVIL COMMENTER";
-    private static final RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
+    private static final RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
     @InjectMocks
     private AchievementService achievementService;
     @Mock
@@ -51,7 +50,7 @@ public class AchievementServiceTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         achievement = Achievement.builder()
                 .title(TITLE)
                 .id(ACHIEVEMENT_ID_ONE)
@@ -76,9 +75,9 @@ public class AchievementServiceTest {
 
     @Test
     @DisplayName("When userId and achievementId passed then return AchievementProgressDto")
-    public void whenUserAndAchievementValidIdsPassedThenReturnAchievementProgressDto(){
+    public void whenUserAndAchievementValidIdsPassedThenReturnAchievementProgressDto() {
         when(achievementProgressRepository
-                .findByUserIdAndAchievementId(USER_ID_ONE,ACHIEVEMENT_ID_ONE))
+                .findByUserIdAndAchievementId(USER_ID_ONE, ACHIEVEMENT_ID_ONE))
                 .thenReturn(Optional.of(achievementProgress));
         when(achievementMapper.toAchievementProgressDto(achievementProgress))
                 .thenReturn(achievementProgressDto);
@@ -89,26 +88,26 @@ public class AchievementServiceTest {
 
     @Test
     @DisplayName("When user has achievement then return true")
-    public void whenUserHasAchievementThenReturnTrue(){
-        when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID_ONE,ACHIEVEMENT_ID_ONE))
+    public void whenUserHasAchievementThenReturnTrue() {
+        when(userAchievementRepository.existsByUserIdAndAchievementId(USER_ID_ONE, ACHIEVEMENT_ID_ONE))
                 .thenReturn(true);
 
-        boolean result = achievementService.hasAchievement(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+        boolean result = achievementService.hasAchievement(USER_ID_ONE, ACHIEVEMENT_ID_ONE);
 
         assertTrue(result);
     }
 
     @Test
     @DisplayName("If no achievement create progress")
-    public void whenUserHasNoAchievementThenCreateIt(){
-        achievementService.createProgressIfNecessary(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+    public void whenUserHasNoAchievementThenCreateIt() {
+        achievementService.createProgressIfNecessary(USER_ID_ONE, ACHIEVEMENT_ID_ONE);
 
-        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID_ONE, ACHIEVEMENT_ID_ONE);
     }
 
     @Test
     @DisplayName("Saves given achievement to DB and publish it to achievement_channel")
-    public void whenAchievementPassedThenSaveItToDbAndPublish(){
+    public void whenAchievementPassedThenSaveItToDbAndPublish() {
         when(achievementMapper.toUserAchievementDto(userAchievement)).thenReturn(userAchievementDto);
         achievementService.giveAchievement(userAchievement);
         verify(userAchievementRepository).save(userAchievement);
@@ -117,7 +116,7 @@ public class AchievementServiceTest {
 
     @Test
     @DisplayName("When AchievementProgress passed save it")
-    public void whenThen(){
+    public void whenThen() {
         when(achievementProgressRepository.save(achievementProgress)).thenReturn(achievementProgress);
         achievementService.saveAchievementProgress(achievementProgress);
     }

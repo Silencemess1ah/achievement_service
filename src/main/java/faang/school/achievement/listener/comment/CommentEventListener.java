@@ -2,7 +2,6 @@ package faang.school.achievement.listener.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.comment.CommentEventDto;
-import faang.school.achievement.handler.EventHandler;
 import faang.school.achievement.handler.comment.CommentEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +10,6 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 @Component

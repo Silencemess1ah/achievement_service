@@ -41,8 +41,8 @@ public class CommentEventListenerTest {
     }
 
     @Test
-    @DisplayName("When json object passed readValue, map to dto and save it")
-    public void whenJsonStringPassedThenFilterReadItsValueAndSaveIt() throws IOException {
+    @DisplayName("When json object passed readValue, and pass for all handlers")
+    public void whenJsonPassedThenPassItToAllHandlers() throws IOException {
         when(message.getBody()).thenReturn(new byte[0]);
         when(objectMapper.readValue(any(byte[].class), eq(CommentEventDto.class))).thenReturn(commentEventDto);
         commentEventListener.onMessage(message, null);
