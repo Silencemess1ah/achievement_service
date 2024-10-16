@@ -1,8 +1,8 @@
 package faang.school.achievement.service.impl;
 
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.entity.Achievement;
+import faang.school.achievement.model.entity.AchievementProgress;
+import faang.school.achievement.model.entity.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -43,7 +43,10 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     @Transactional
     public void giveAchievement(long userId, long achievementId) {
-        Achievement achievement = achievementRepository.findById(achievementId).get();
+        Achievement achievement = achievementRepository.findById(achievementId)
+                .orElseThrow(() -> new EntityNotFoundException("Achievement with id %s does not exist"
+                        .formatted(achievementId)));
+
         UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(achievement)
                 .userId(userId)

@@ -39,3 +39,7 @@ project-service:
 
 achievement-titles:
   leader: LEADER
+
+thread-pool:
+  fixed:
+    size: 5

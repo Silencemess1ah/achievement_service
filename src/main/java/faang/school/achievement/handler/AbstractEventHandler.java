@@ -1,6 +1,6 @@
 package faang.school.achievement.handler;
 
-import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.entity.AchievementProgress;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import faang.school.achievement.model.event.AuthorSearcher;
 import faang.school.achievement.service.AchievementService;
@@ -15,7 +15,7 @@ public abstract class AbstractEventHandler<T extends AuthorSearcher> implements 
 
 
     @Override
-    @Async
+    @Async("fixedThreadPool")
     public void handle(T event) {
         AchievementRedisDto achievementRedisDto = new AchievementRedisDto(9, "LEADER", 15);/*achievementCache.getAchievementCache(leaderTitle)*/;
         long userId = event.getAuthorForAchievements();
