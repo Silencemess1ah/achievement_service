@@ -23,8 +23,7 @@ public class CommentEventListener implements MessageListener {
         try {
             CommentEventDto commentEventDto = objectMapper.readValue(message.getBody(),
                     CommentEventDto.class);
-            //todo связать со списком handlers и определить по дто в какие хэндлеры отправлять эти события
-            //todo логику кэша, и дальнейшей отправке в EvilCommenterHandler
+            handlers.forEach(handler -> handler.verifyAchievement(commentEventDto));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

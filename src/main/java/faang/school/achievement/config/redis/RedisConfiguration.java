@@ -34,6 +34,11 @@ public class RedisConfiguration {
     }
 
     @Bean
+    ChannelTopic achievementChannelTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getAchievement());
+    }
+
+    @Bean
     MessageListenerAdapter commentEvent(CommentEventListener commentEventListener) {
         return new MessageListenerAdapter(commentEventListener);
     }
