@@ -34,6 +34,11 @@ achievements:
     ALL_LOVE:
       name: ALL LOVE
 
+retryable:
+  max-attempts: 5
+  delay: 5000
+
+
 task-executor:
   core-pool-size: 10
   max-pool-size: 20
