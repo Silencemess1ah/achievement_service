@@ -7,6 +7,7 @@ import faang.school.achievement.model.dto.AchievementRedisDto;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AchievementCacheImpl implements AchievementCache {
     private final AchievementRepository achievementRepository;
     private final CacheManager cacheManager;
@@ -33,8 +35,10 @@ public class AchievementCacheImpl implements AchievementCache {
     @Override
     @Cacheable(key = "#title", value = "achievement")
     public AchievementRedisDto getAchievementCache(String title) {
-        Achievement achievement = achievementRepository.findByTitle(title).orElseThrow(() ->
-                new IllegalArgumentException("An achievement with this name does not exist in the database"));
+        Achievement achievement = achievementRepository.findByTitle(title).orElseThrow(() -> {
+            log.error("An achievement with this name does not exist in the database. Title: {}", title);
+            return new IllegalArgumentException("An achievement with this name does not exist in the database");
+        });
         return mapper.toDto(achievement);
     }
 }
