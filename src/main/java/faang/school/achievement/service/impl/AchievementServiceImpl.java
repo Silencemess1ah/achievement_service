@@ -51,4 +51,9 @@ public class AchievementServiceImpl implements AchievementService {
 
         userAchievementRepository.save(userAchievement);
     }
+
+    @Override
+    public void saveProgress(AchievementProgress progress) {
+        progressRepository.save(progress);
+    }
 }

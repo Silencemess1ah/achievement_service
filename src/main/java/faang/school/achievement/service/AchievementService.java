@@ -10,4 +10,6 @@ public interface AchievementService {
     AchievementProgress getProgress(long userId, long achievementId);
 
     void giveAchievement(long userId, long achievementId);
+
+    void saveProgress(AchievementProgress progress);
 }
