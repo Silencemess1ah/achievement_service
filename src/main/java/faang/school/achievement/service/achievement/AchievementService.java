@@ -8,6 +8,7 @@ import faang.school.achievement.publisher.achievement.UserAchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class AchievementService {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
 
+    @Transactional
     public void createProgressIfNecessary(long userId, long achievementId) {
         log.debug("Checking whether user with id {} has progress on {}", userId, achievementId);
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
@@ -44,7 +46,7 @@ public class AchievementService {
                 .orElseThrow(() -> new EntityNotFoundException("There are no achievement progress with id " +
                         achievementId + " for user " + userId + " found!"));
     }
-
+    @Transactional
     public void giveAchievement(UserAchievement achievement) {
         log.info("User {} has achieved {}!", achievement.getUserId(), achievement.getAchievement().getTitle());
         userAchievementRepository.save(achievement);
@@ -54,7 +56,7 @@ public class AchievementService {
         log.debug("Published achievement {} to {}", achievement.getAchievement().getTitle(),
                 userAchievementPublisher.getAchievementChannelTopic());
     }
-
+    @Transactional
     public void saveAchievementProgress(AchievementProgress achievementProgress) {
         log.debug("Saving achievement progress... {}", achievementProgress.getAchievement().getTitle());
         achievementProgressRepository.save(achievementProgress);
