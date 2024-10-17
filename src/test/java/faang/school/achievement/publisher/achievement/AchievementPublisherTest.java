@@ -7,12 +7,10 @@ import faang.school.achievement.dto.AchievementEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.Topic;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 
@@ -31,24 +29,31 @@ class AchievementPublisherTest {
     @Mock
     private Topic topic;
 
-    @InjectMocks
     private AchievementPublisher achievementPublisher;
+    private final String achievementChannelName = "achievementChannel";
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(achievementPublisher, "achievementChannel", "achievementChannel");
+        when(redisTopicsFactory.getTopic(achievementChannelName)).thenReturn(topic);
+        achievementPublisher = new AchievementPublisher(
+                redisTemplate,
+                objectMapper,
+                redisTopicsFactory,
+                achievementChannelName
+        );
     }
 
     @Test
-    void publishCommentEvent_shouldPublishAchievementEventToRedis() throws JsonProcessingException {
+    void publishAchievementEvent_shouldPublishAchievementEventToRedis() throws JsonProcessingException {
         AchievementEvent event = new AchievementEvent(
                 1L,
                 "Str",
                 "AchievementTitle",
-                "Rarity.Description",
+                "Description",
                 1,
-                LocalDateTime.now(),
-                LocalDateTime.now());
+                LocalDateTime.parse("2024-10-14T23:07:09"),
+                LocalDateTime.parse("2024-10-14T23:07:09")
+        );
 
         String eventJson = "{" +
                 "\"id\":1," +
@@ -59,12 +64,12 @@ class AchievementPublisherTest {
                 "\"createdAt\":\"2024-10-14T23:07:09\"," +
                 "\"updatedAt\":\"2024-10-14T23:07:09\"" +
                 "}";
+
         when(objectMapper.writeValueAsString(event)).thenReturn(eventJson);
-        when(redisTopicsFactory.getTopic("achievementChannel")).thenReturn(topic);
-        when(topic.getTopic()).thenReturn("achievementChannel");
+        when(topic.getTopic()).thenReturn(achievementChannelName);
 
-        achievementPublisher.publishCommentEvent(event);
+        achievementPublisher.publishAchievementEvent(event);
 
-        verify(redisTemplate, times(1)).convertAndSend(topic.getTopic(), eventJson);
+        verify(redisTemplate, times(1)).convertAndSend(achievementChannelName, eventJson);
     }
 }

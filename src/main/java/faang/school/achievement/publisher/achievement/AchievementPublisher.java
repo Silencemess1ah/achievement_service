@@ -11,20 +11,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AchievementPublisher extends AbstractEventPublisher<AchievementEvent> {
-    @Value("${spring.data.redis.channel.achievement}")
-    private String achievementChannel;
-    private final RedisTopicsFactory redisTopicsFactory;
+    private final Topic achievementChannel;
 
-    public AchievementPublisher(RedisTemplate<String, Object> redisTemplate,
-                                      ObjectMapper objectMapper,
-                                      RedisTopicsFactory redisTopicsFactory) {
+    public AchievementPublisher(
+            RedisTemplate<String, Object> redisTemplate,
+            ObjectMapper objectMapper,
+            RedisTopicsFactory redisTopicsFactory,
+            @Value("${spring.data.redis.channel.achievement}") String achievementChannel) {
         super(redisTemplate, objectMapper);
-        this.redisTopicsFactory = redisTopicsFactory;
+        this.achievementChannel = redisTopicsFactory.getTopic(achievementChannel);
     }
 
-    // TODO: 14.10.2024 Использовать этот метод для отправки события в Редис после сохранения достижения в БД
-    public void publishCommentEvent(AchievementEvent event) {
-        Topic commentTopic = redisTopicsFactory.getTopic(achievementChannel);
-        publish(event, commentTopic);
+    public void publishAchievementEvent(AchievementEvent event) {
+        publish(event, achievementChannel);
     }
 }
