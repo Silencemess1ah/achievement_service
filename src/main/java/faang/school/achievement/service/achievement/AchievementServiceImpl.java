@@ -15,19 +15,18 @@ import faang.school.achievement.service.CacheService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AchievementServiceImpl implements AchievementService {
 
     private static final String ACHIEVEMENTS_CACHE_NAME = "achievements";
-    private static final Logger log = LoggerFactory.getLogger(AchievementServiceImpl.class);
 
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
