@@ -4,12 +4,11 @@ import faang.school.achievement.dto.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.cache.CacheService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +27,7 @@ public class CommentEventHandler implements EventHandler<CommentEvent> {
 
     @Override
     @Async("mainExecutorService")
+    @Transactional
     public void handleEvent(CommentEvent event) {
         Achievement achievement = achievementCacheService.getCacheValue(ACHIEVEMENT_TITLE, Achievement.class);
         if (!achievementService.hasAchievement(event.getIdAuthor(), achievement.getId())) {
@@ -35,7 +35,7 @@ public class CommentEventHandler implements EventHandler<CommentEvent> {
             achievementService.createProgressIfNecessary(event.getIdAuthor(), achievement.getId());
             AchievementProgress progress = achievementService.getProgress(event.getIdAuthor(), achievement.getId());
 
-            if (progress.getCurrentPoints() < achievement.getPoints()) {
+            if (progress.getCurrentPoints() <= achievement.getPoints()) {
                 progress.increment();
                 achievementProgressRepository.save(progress);
             } else if (progress.getCurrentPoints().equals(achievement.getPoints())) {
