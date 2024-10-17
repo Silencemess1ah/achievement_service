@@ -19,7 +19,7 @@ spring:
 
   data:
     redis:
-      port: 6989
+      port: 6379
       host: localhost
       life-time-minutes: 120
       retry:
