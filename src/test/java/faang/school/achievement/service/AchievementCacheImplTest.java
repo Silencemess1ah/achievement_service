@@ -1,7 +1,7 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.mapper.AchievementMapper;
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.entity.Achievement;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import faang.school.achievement.repository.AchievementRepository;
 import org.junit.jupiter.api.BeforeEach;

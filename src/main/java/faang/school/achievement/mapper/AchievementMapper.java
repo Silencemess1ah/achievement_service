@@ -1,7 +1,7 @@
 package faang.school.achievement.mapper;
 
 import faang.school.achievement.model.dto.AchievementRedisDto;
-import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.entity.Achievement;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

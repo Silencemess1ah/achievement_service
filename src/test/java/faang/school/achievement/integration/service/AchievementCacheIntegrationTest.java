@@ -29,7 +29,6 @@ public class AchievementCacheIntegrationTest extends ConfigurationRedisTest {
         cacheManager.getCache("achievement").clear();
     }
 
-
     @Test
     void getAchievementCacheOk() {
         //given
