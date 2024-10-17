@@ -2,10 +2,8 @@ package faang.school.achievement.cache;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,15 +12,15 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
-@Getter
 @Slf4j
 public class AchievementCache {
     private final Map<String, Achievement> cache = new HashMap<>();
-    private final AchievementRepository achievementRepository;
 
-    @PostConstruct
-    private void fillCache() {
+    public AchievementCache(AchievementRepository achievementRepository) {
+        fillCache(achievementRepository);
+    }
+
+    private void fillCache(AchievementRepository achievementRepository) {
         Iterable<Achievement> achievements = achievementRepository.findAll();
         achievements.forEach(achievement -> cache.put(achievement.getTitle(), achievement));
         log.info("Achievements cached successfully. Size of cache is {}", cache.size());

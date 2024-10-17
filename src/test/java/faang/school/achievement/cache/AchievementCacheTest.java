@@ -31,4 +31,5 @@ public class AchievementCacheTest {
     public void testGetByNonExistsTitle() {
         assertThrows(EntityNotFoundException.class, () -> achievementCache.getByTitle("Non existent title"));
     }
+
 }
