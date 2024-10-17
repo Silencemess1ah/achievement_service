@@ -11,13 +11,13 @@ import org.springframework.scheduling.annotation.Async;
 public abstract class AbstractEventHandler<T extends AuthorSearcher> implements EventHandler<T> {
 //    private final AchievementCache achievementCache;
     private final AchievementService achievementService;
-    private final String leaderTitle;
+    private final String achievementTitle;
 
 
     @Override
     @Async("fixedThreadPool")
     public void handle(T event) {
-        AchievementRedisDto achievementRedisDto = new AchievementRedisDto(9, "LEADER", 15);/*achievementCache.getAchievementCache(leaderTitle)*/;
+        AchievementRedisDto achievementRedisDto = new AchievementRedisDto(9, "LEADER", 15);/*achievementCache.getAchievementCache(achievementTitle)*/;
         long userId = event.getAuthorForAchievements();
         long achievementId = achievementRedisDto.getId();
 
