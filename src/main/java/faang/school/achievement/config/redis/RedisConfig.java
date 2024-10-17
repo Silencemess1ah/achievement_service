@@ -15,15 +15,6 @@ public class RedisConfig {
 
     private final RedisProperties redisProperties;
 
-//    @Bean
-//    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-//        RedisTemplate<String, Object> template = new RedisTemplate<>();
-//        template.setConnectionFactory(connectionFactory);
-//        template.setKeySerializer(new StringRedisSerializer());
-//        template.setValueSerializer(new StringRedisSerializer());
-//        return template;
-//    }
-
     @Bean
     public MessageListenerAdapter mentorshipStartEventListenerAdapter(MentorshipStartEventListener mentorshipEventListener) {
         return new MessageListenerAdapter(mentorshipEventListener);
