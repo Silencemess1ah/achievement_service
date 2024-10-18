@@ -10,6 +10,6 @@ public interface AchievementMapper {
 
     @Mapping(source = "achievement.title", target = "title")
     @Mapping(source = "achievement.rarity", target = "rarity")
-    @Mapping(source ="achievement.achievementId",target = "achievementId")
+    @Mapping(source ="achievement.id",target = "achievementId")
     UserAchievementEventDto toUserAchievementEventDto(UserAchievement userAchievement);
 }
