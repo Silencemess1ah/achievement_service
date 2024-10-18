@@ -8,6 +8,7 @@ import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class OpinionLeaderAchievementHandler extends EventHandler<PostEvent> {
 
     private final CacheService<Achievement> cacheService;
 
+    @Transactional
     @Override
     @Async
     public void handle(PostEvent event) {
