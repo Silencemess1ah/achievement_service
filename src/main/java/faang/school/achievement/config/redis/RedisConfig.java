@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
@@ -26,6 +27,17 @@ import java.time.Duration;
 public class RedisConfig {
 
     private final RedisProperties redisProperties;
+
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+        return redisTemplate;
+    }
 
     @Bean
     public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
@@ -46,6 +58,7 @@ public class RedisConfig {
     public ChannelTopic postListenerTopic(){
         return new ChannelTopic(redisProperties.channels().get("post"));
     }
+
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory,
                                      RedisCacheConfiguration redisCacheConfiguration) {
