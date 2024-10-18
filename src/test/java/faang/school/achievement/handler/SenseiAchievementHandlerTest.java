@@ -1,8 +1,10 @@
 package faang.school.achievement.handler;
 
+import faang.school.achievement.model.dto.AchievementRedisDto;
 import faang.school.achievement.model.entity.Achievement;
 import faang.school.achievement.model.entity.AchievementProgress;
 import faang.school.achievement.model.event.MentorshipStartEvent;
+import faang.school.achievement.service.AchievementCache;
 import faang.school.achievement.service.impl.AchievementServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -21,8 +23,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SenseiAchievementHandlerTest {
 
-//    @Mock
-//    private AchievementCache achievementCache;
+    @Mock
+    private AchievementCache achievementCache;
 
     @Mock
     private AchievementServiceImpl achievementService;
@@ -51,9 +53,15 @@ class SenseiAchievementHandlerTest {
                 .achievement(achievement)
                 .currentPoints(0)
                 .build();
+        AchievementRedisDto achievementRedisDto = AchievementRedisDto.builder()
+                .id(4L)
+                .title("SENSEI")
+                .points(20)
+                .build();
+        when(achievementCache.getAchievementCache(senseiTitle)).thenReturn(achievementRedisDto);
         when(achievementService.hasAchievement(1L, 4)).thenReturn(false);
         when(achievementService.getProgress(anyLong(), anyLong())).thenReturn(achievementProgress);
-        senseiAchievementHandler = new SenseiAchievementHandler(achievementService, senseiTitle);
+        senseiAchievementHandler = new SenseiAchievementHandler(achievementCache, achievementService, senseiTitle);
         // when
         senseiAchievementHandler.handle(event);
         // then
