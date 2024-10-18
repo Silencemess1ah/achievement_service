@@ -3,15 +3,5 @@ databaseChangeLog:
       file: db/changelog/changeset/achievement_V001__initial.sql
   - include:
       file: db/changelog/changeset/achievement_setup_V002.sql
-  - changeSet:
-      id: 1
-      author: Vanchous
-      comment: "Добавление в базу достижения Лидер Мнений"
-      preConditions:
-        - onFail: MARK_RAN
-        - sqlCheck:
-            expectedResult: 0
-            sql: select count(*) from achievement where title = 'OPINION_LEADER'
-      changes:
-        - sql:
-            sql: INSERT INTO achievement(title, description, rarity, points, created_at, updated_at) VALUES ('OPINION_LEADER', 'For 1000 posts', 3, 1000, now(), now())
+  - include:
+      file: db/changelog/changeset/achievement_V001_insertAchievement.sql
