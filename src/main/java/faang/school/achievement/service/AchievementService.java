@@ -56,6 +56,4 @@ public class AchievementService {
                 .userId(progress.getUserId())
                 .build();
     }
-
-
 }
