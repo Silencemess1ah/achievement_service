@@ -25,7 +25,7 @@ public class CommentEventListener implements MessageListener {
         try {
             CommentEventDto commentEventDto = objectMapper.readValue(message.getBody(),
                     CommentEventDto.class);
-            log.debug("Sending sending comment event to all handlers");
+            log.debug("Sending comment event to all handlers");
             handlers.forEach(handler -> handler.verifyAchievement(commentEventDto));
             log.debug("Sent event dto successfully");
         } catch (IOException e) {

@@ -36,3 +36,9 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  achievements-title:
+    evil-commenter: "EVIL COMMENTER"
+  achievement-points-needed:
+    evil-commenter: 100

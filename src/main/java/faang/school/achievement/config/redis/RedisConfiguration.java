@@ -5,7 +5,6 @@ import faang.school.achievement.listener.comment.CommentEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -56,9 +55,6 @@ public class RedisConfiguration {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(
-                redisProperties.getHost(),
-                redisProperties.getPort());
-        return new JedisConnectionFactory(redisStandaloneConfiguration);
+        return new JedisConnectionFactory();
     }
 }

@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/achievements/")
+@RequestMapping("/v1/achievements")
 public class AchievementController {
 
     private final AchievementService achievementService;
     private final UserContext userContext;
 
-    @GetMapping("{achievementId}")
+    @GetMapping("/{achievementId}")
     public AchievementProgressDto getAchievementStats(@PathVariable long achievementId) {
         long userId = userContext.getUserId();
         return achievementService.getAchievementProgress(userId, achievementId);

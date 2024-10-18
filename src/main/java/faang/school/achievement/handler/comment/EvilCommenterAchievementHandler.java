@@ -6,17 +6,23 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.achievement.AchievementService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Getter
 @Slf4j
 public class EvilCommenterAchievementHandler extends CommentEventHandler {
-    private static final String EVIL_COMMENTER = "EVIL COMMENTER";
-    private static final int POINTS_TO_ACHIEVE = 100;
+
+    @Value("${spring.achievements.achievements-title.evil-commenter}")
+    private String evilCommenterAchievement;
+    @Value("${spring.achievements.achievement-points-needed.evil-commenter}")
+    private int pointsToAchieve;
 
     private final AchievementService achievementService;
 //    private final AchievementCache achievementCache;
@@ -27,7 +33,7 @@ public class EvilCommenterAchievementHandler extends CommentEventHandler {
     @Override
     public void verifyAchievement(CommentEventDto commentEventDto) {
         //waiting for cache PR
-//        Achievement evilCommenter = achievementCache.get(EVIL_COMMENTER);
+//        Achievement evilCommenter = achievementCache.get(evilCommenterAchievement);
 //        Achievement evilCommenter = new Achievement();
         // ***
         //made to pass test
@@ -41,12 +47,12 @@ public class EvilCommenterAchievementHandler extends CommentEventHandler {
             long progressPoints = progress.getCurrentPoints();
             progress.setCurrentPoints(progressPoints + 1);
             achievementService.saveAchievementProgress(progress);
-            if (progress.getCurrentPoints() == POINTS_TO_ACHIEVE) {
+            if (progress.getCurrentPoints() == pointsToAchieve) {
                 UserAchievement userAchievement = UserAchievement.builder()
                         .achievement(evilCommenter)
                         .userId(userId)
                         .build();
-                log.debug("Giving achievement {}! To user {}!", EVIL_COMMENTER, userId);
+                log.debug("Giving achievement {}! To user {}!", evilCommenterAchievement, userId);
                 achievementService.giveAchievement(userAchievement);
             }
         }

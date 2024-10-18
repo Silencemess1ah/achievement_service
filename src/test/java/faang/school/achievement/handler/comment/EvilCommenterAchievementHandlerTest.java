@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -32,7 +33,6 @@ public class EvilCommenterAchievementHandlerTest {
     private static final String DESCRIPTION = "For 100 comments";
     private static final int CURRENT_POINTS = 99;
     private static final LocalDateTime TIME = LocalDateTime.of(2024, 10, 10, 10, 10);
-    @InjectMocks
     private EvilCommenterAchievementHandler handler;
     @Mock
     private AchievementService achievementService;
@@ -70,6 +70,8 @@ public class EvilCommenterAchievementHandlerTest {
     @Test
     @DisplayName("When commentEventDto passed then verify it")
     public void whenCommentDtoPassedThenVerifyIt() {
+        handler = new EvilCommenterAchievementHandler(achievementService, achievementRepository);
+        ReflectionTestUtils.setField(handler, "pointsToAchieve", 100);
         when(achievementRepository.findById(ACHIEVEMENT_ID_NINE)).thenReturn(Optional.of(achievement));
         when(achievementService.hasAchievement(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(false);
         when(achievementService.getProgress(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(achievementProgress);
