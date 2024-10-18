@@ -24,22 +24,22 @@ public class BusinessmanAchievementHandler implements AchievementHandler {
 
     @Override
     @Async("taskExecutor")
-    public void handleAchievement(ProjectEvent event) {
+    public void handleAchievement(Object event) {
         log.info("Handling achievement for event: {}", event);
         Achievement businessman = achievementRepository.findByTitle("Businessman");
-        if (hasAchievement(event, businessman)) {
-            achievementProgressRepository.createProgressIfNecessary(event.getAuthorId(), businessman.getId());
+        if (!hasAchievement((ProjectEvent) event, businessman)) {
+            achievementProgressRepository.createProgressIfNecessary(((ProjectEvent) event).getAuthorId(), businessman.getId());
         }
-        AchievementProgress achievementProgress = achievementService.getProgress(event.getAuthorId(), businessman.getId());
-        achievementProgress.setCurrentPoints(achievementProgress.getCurrentPoints() + 1);
+        AchievementProgress achievementProgress = achievementService.getProgress(((ProjectEvent) event).getAuthorId(), businessman.getId());
+        achievementProgress.increment();
         achievementProgressRepository.save(achievementProgress);
-        if (achievementProgress.getCurrentPoints() > businessman.getPoints()) {
-            achievementService.giveAchievement(event.getAuthorId(), businessman);
+        if (achievementProgress.getCurrentPoints() >= businessman.getPoints()) {
+            achievementService.giveAchievement(((ProjectEvent) event).getAuthorId(), businessman);
         }
     }
 
-    private boolean hasAchievement(ProjectEvent event, Achievement businessman) {
+    @Override
+    public boolean hasAchievement(ProjectEvent event, Achievement businessman) {
         return userAchievementRepository.existsByUserIdAndAchievementId(event.getAuthorId(), businessman.getId());
     }
 }
-

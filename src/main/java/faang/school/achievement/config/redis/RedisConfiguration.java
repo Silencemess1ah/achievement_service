@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import faang.school.achievement.listener.ProjectEventListener;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -13,23 +14,10 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@RequiredArgsConstructor
 public class RedisConfiguration {
-    RedisProperties redisProperties;
+   private final RedisProperties redisProperties;
 
-    @Bean
-    public JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisConfig = new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
-        return new JedisConnectionFactory(redisConfig);
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        return template;
-    }
 
     @Bean
     MessageListenerAdapter projectEventListenerAdapter(ProjectEventListener projectEventListener) {
@@ -39,7 +27,6 @@ public class RedisConfiguration {
     @Bean
     public RedisMessageListenerContainer redisContainer(ProjectEventListener projectEventListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(projectEventListenerAdapter(projectEventListener), projectEventTopic());
         return container;
     }

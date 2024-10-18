@@ -2,22 +2,18 @@ package faang.school.achievement.event;
 
 import faang.school.achievement.dto.ProjectEvent;
 import faang.school.achievement.handler.AchievementHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-public class AchievementEventDispatcher {
-    private final List<AchievementHandler> handlers;
+@RequiredArgsConstructor
+public class AchievementEventDispatcher<T> {
+    private final List<AchievementHandler<T>> handlers;
 
-    @Autowired
-    public AchievementEventDispatcher(List<AchievementHandler> handlers) {
-        this.handlers = handlers;
-    }
-
-    public void dispatchEvent(ProjectEvent event) {
-        for (AchievementHandler handler : handlers) {
+    public void dispatchEvent(T event) {
+        for (AchievementHandler<T> handler : handlers) {
             handler.handleAchievement(event);
         }
     }
