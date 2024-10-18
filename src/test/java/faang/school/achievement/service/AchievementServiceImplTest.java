@@ -29,17 +29,24 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(.class)
 public class AchievementServiceImplTest {
 
-    @InjectMocks private AchievementServiceImpl achievementService;
+    @InjectMocks
+    private AchievementServiceImpl achievementService;
 
-    @Mock private AchievementRepository achievementRepository;
-    @Mock private UserAchievementRepository userAchievementRepository;
-    @Mock private AchievementProgressRepository achievementProgressRepository;
-    @Mock private AchievementMapper achievementMapper;
-    @Mock private UserAchievementMapper userAchievementMapper;
-    @Mock private AchievementProgressMapper achievementProgressMapper;
+    @Mock
+    private AchievementRepository achievementRepository;
+    @Mock
+    private UserAchievementRepository userAchievementRepository;
+    @Mock
+    private AchievementProgressRepository achievementProgressRepository;
+    @Mock
+    private AchievementMapper achievementMapper;
+    @Mock
+    private UserAchievementMapper userAchievementMapper;
+    @Mock
+    private AchievementProgressMapper achievementProgressMapper;
 
     private Achievement achievement1;
     private Achievement achievement2;
@@ -48,7 +55,6 @@ public class AchievementServiceImplTest {
 
     @BeforeEach
     public void setup() {
-        // Инициализация объектов
         achievement1 = new Achievement();
         achievement1.setId(1L);
         achievement1.setTitle("Achievement 1");
@@ -75,7 +81,8 @@ public class AchievementServiceImplTest {
         achievementProgress.setCurrentPoints(50);
     }
 
-    @Test public void testGetAllAchievements() {
+    @Test
+    public void testGetAllAchievements() {
         List<Achievement> achievements = new ArrayList<>();
         achievements.add(achievement1);
         achievements.add(achievement2);
