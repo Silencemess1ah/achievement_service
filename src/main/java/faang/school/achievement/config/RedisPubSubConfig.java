@@ -13,6 +13,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 public class RedisPubSubConfig {
     @Value("${spring.data.redis.channels.post-channel}")
     private String postTopic;
+
     @Bean
     MessageListenerAdapter postEventListenerAdapter(PostEventListener eventListener) {
         return new MessageListenerAdapter(eventListener);
