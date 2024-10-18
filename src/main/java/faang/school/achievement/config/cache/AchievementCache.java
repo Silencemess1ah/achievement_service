@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,14 +25,9 @@ public class AchievementCache {
     private final AchievementRepository achievementRepository;
     private Map<String, Achievement> cache = new ConcurrentHashMap<>();
 
-    @Scheduled(cron = "${schedule.cron-task}")
     @PostConstruct
     protected void initCache() {
-        cache = updateCache();
-    }
-
-    public Map<String, Achievement> updateCache() {
-        return achievementRepository.findAll()
+        cache = achievementRepository.findAll()
                 .stream()
                 .collect(Collectors.toMap(Achievement::getTitle,
                         achievement -> achievement));
