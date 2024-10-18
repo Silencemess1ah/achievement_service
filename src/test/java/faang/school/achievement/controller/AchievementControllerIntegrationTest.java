@@ -93,7 +93,7 @@ public class AchievementControllerIntegrationTest {
     }
 
     @Test
-    void testGetAchievementsByFilter() throws Exception {
+    void testGetAchievementsByUserByFilter() throws Exception {
         AchievementDto correctResult = achievementMapper.toDto(achievement1);
         AchievementFilterDto filter = AchievementFilterDto
                 .builder()

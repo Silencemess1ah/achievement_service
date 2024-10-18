@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -26,7 +27,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class AchievementServiceImpl implements AchievementService {
 
-    private static final String ACHIEVEMENTS_CACHE_NAME = "achievements";
+    private static final String ACHIEVEMENTS_CACHE_NAME_BY_TITLE = "achievements-by-title";
+    private static final String ACHIEVEMENTS_CACHE_NAME_BY_ID = "achievements-by-id";
 
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -38,8 +40,10 @@ public class AchievementServiceImpl implements AchievementService {
     @PostConstruct
     public void initAchievements() {
         List<Achievement> achievements = achievementRepository.findAll();
-        achievements.forEach(achievement ->
-                cacheService.put(ACHIEVEMENTS_CACHE_NAME, achievement.getTitle(), achievement));
+        achievements.forEach(achievement -> {
+            cacheService.put(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, achievement.getTitle(), achievement);
+            cacheService.put(ACHIEVEMENTS_CACHE_NAME_BY_ID, achievement.getId().toString(), achievement);
+        });
     }
 
     @Override
@@ -69,7 +73,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public List<AchievementDto> getAchievements(AchievementFilterDto filterDto) {
-        List<Achievement> achievements = cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class);
+        List<Achievement> achievements = cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, Achievement.class);
         return achievementFilters.stream()
                 .filter(filter -> filter.isAccepted(filterDto))
                 .reduce(achievements.stream(),
@@ -87,10 +91,12 @@ public class AchievementServiceImpl implements AchievementService {
 
     @Override
     public AchievementDto getAchievement(long achievementId) {
-        List<Achievement> achievements = cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class);
-        return achievements.stream()
-                .filter(achievement -> achievement.getId() == achievementId)
-                .findFirst()
+        Achievement achievement = cacheService.getFromMap(
+                ACHIEVEMENTS_CACHE_NAME_BY_ID,
+                Long.toString(achievementId),
+                Achievement.class
+        );
+        return Optional.ofNullable(achievement)
                 .map(achievementMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Achievement %d not found".formatted(achievementId)));
     }

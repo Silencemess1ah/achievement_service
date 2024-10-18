@@ -26,13 +26,13 @@ public class AchievementController {
     private final AchievementService achievementService;
 
     @PostMapping
-    public List<AchievementDto> getAchievements(@RequestBody AchievementFilterDto filter) {
+    public List<AchievementDto> getAchievementsByUser(@RequestBody AchievementFilterDto filter) {
         log.info("Get achievements by filter: {}", filter);
         return achievementService.getAchievements(filter);
     }
 
     @GetMapping
-    public List<AchievementDto> getAchievements() {
+    public List<AchievementDto> getAchievementsByUser() {
         long userId = userContext.getUserId();
         log.info("Get achievements by user: {}", userId);
         return achievementService.getAchievementsBy(userId);

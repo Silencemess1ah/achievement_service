@@ -23,7 +23,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -34,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -42,7 +42,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceImplTest {
 
-    private static final String ACHIEVEMENTS_CACHE_NAME = "achievements";
+    private static final String ACHIEVEMENTS_CACHE_NAME_BY_TITLE = "achievements-by-title";
+    private static final String ACHIEVEMENTS_CACHE_NAME_BY_ID = "achievements-by-id";
 
     @Mock
     private AchievementRepository achievementRepository;
@@ -96,15 +97,23 @@ class AchievementServiceImplTest {
 
     @Test
     void initAchievements_shouldCacheAllAchievements() {
-        Achievement first = Achievement.builder().title("first").build();
-        Achievement second = Achievement.builder().title("second").build();
+        Achievement first = Achievement.builder()
+                .id(1L)
+                .title("first")
+                .build();
+        Achievement second = Achievement.builder()
+                .id(2L)
+                .title("second")
+                .build();
         List<Achievement> achievements = List.of(first, second);
         when(achievementRepository.findAll()).thenReturn(achievements);
 
         achievementService.initAchievements();
 
-        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME, first.getTitle(), first);
-        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME, second.getTitle(), second);
+        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, first.getTitle(), first);
+        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, second.getTitle(), second);
+        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME_BY_ID, first.getId().toString(), first);
+        verify(cacheService).put(ACHIEVEMENTS_CACHE_NAME_BY_ID, second.getId().toString(), second);
     }
 
     @Test
@@ -183,7 +192,7 @@ class AchievementServiceImplTest {
             Stream<Achievement> stream = invocation.getArgument(0);
             return stream.filter(achievement -> achievement.getTitle().equals(title));
         });
-        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class)).thenReturn(achievements);
+        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, Achievement.class)).thenReturn(achievements);
 
         List<AchievementDto> result = achievementService.getAchievements(filterDto);
 
@@ -198,7 +207,7 @@ class AchievementServiceImplTest {
 
         when(filter1.isAccepted(filterDto)).thenReturn(false);
         when(filter2.isAccepted(filterDto)).thenReturn(false);
-        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class)).thenReturn(achievements);
+        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, Achievement.class)).thenReturn(achievements);
 
         List<AchievementDto> result = achievementService.getAchievements(filterDto);
 
@@ -209,7 +218,7 @@ class AchievementServiceImplTest {
 
     @Test
     void testGetAchievements_ShouldReturnEmptyListWhenNoAchievements() {
-        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class)).thenReturn(List.of());
+        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME_BY_TITLE, Achievement.class)).thenReturn(List.of());
 
         List<AchievementDto> result = achievementService.getAchievements(filterDto);
 
@@ -241,29 +250,41 @@ class AchievementServiceImplTest {
 
     @Test
     void testGetAchievement_ShouldReturnAchievementWhenFoundInCache() {
-        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class)).thenReturn(achievements);
+        AchievementDto correctResult = getAchievementDtos().get(1);
+        when(cacheService.getFromMap(
+                ACHIEVEMENTS_CACHE_NAME_BY_ID,
+                Long.toString(achievementId),
+                Achievement.class
+        )).thenReturn(achievement2);
 
         AchievementDto result = achievementService.getAchievement(achievementId);
 
         assertNotNull(result);
-        assertEquals(2L, result.getId());
-        assertEquals("Achievement 2", result.getTitle());
+        assertEquals(correctResult, result);
 
-        verify(cacheService).getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class);
+        verify(cacheService).getFromMap(ACHIEVEMENTS_CACHE_NAME_BY_ID, Long.toString(achievementId), Achievement.class);
         verify(achievementMapper).toDto(achievement2);
     }
 
     @Test
     void testGetAchievement_ShouldThrowEntityNotFoundExceptionWhenNotFoundInCache() {
         String message = "Achievement 123 not found";
-        when(cacheService.getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class)).thenReturn(achievements);
+        when(cacheService.getFromMap(
+                eq(ACHIEVEMENTS_CACHE_NAME_BY_ID),
+                anyString(),
+                eq(Achievement.class)
+        )).thenReturn(null);
 
         Exception exception = assertThrows(EntityNotFoundException.class,
                 () -> achievementService.getAchievement(123L));
 
         assertEquals(message, exception.getMessage());
-        verify(cacheService).getValuesFromMap(ACHIEVEMENTS_CACHE_NAME, Achievement.class);
-        verify(achievementMapper, never()).toDto(achievement1);
+        verify(cacheService, never()).getFromMap(
+                ACHIEVEMENTS_CACHE_NAME_BY_ID,
+                Long.toString(achievementId),
+                Achievement.class
+        );
+        verify(achievementMapper, never()).toDto(any(Achievement.class));
     }
 
     @Test
