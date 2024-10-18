@@ -1,8 +1,11 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.AchievementEvent;
+import faang.school.achievement.mapper.AchievementEventMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.transaction.Transactional;
@@ -18,6 +21,8 @@ public class AchievementServiceImpl implements AchievementService{
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementPublisher achievementPublisher;
+    private final AchievementEventMapper achievementEventMapper;
 
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -39,7 +44,14 @@ public class AchievementServiceImpl implements AchievementService{
         achievementList.add(userAchievement);
         achievement.setUserAchievements(achievementList);
 
+        achievementEventPublish(achievement, userId);
         userAchievementRepository.save(userAchievement);
+    }
+
+    private void achievementEventPublish(Achievement achievement, long userId) {
+        AchievementEvent achievementEvent = achievementEventMapper.toDto(achievement);
+        achievementEvent.setUserId(userId);
+        achievementPublisher.publish(achievementEvent);
     }
 
 }
