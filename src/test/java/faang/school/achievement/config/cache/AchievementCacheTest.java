@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,18 +45,17 @@ public class AchievementCacheTest {
     @DisplayName("Init cache of 2 achievements given by DB")
     public void whenInitMethodCalledThenFillUpCacheFromDB() {
         when(achievementRepository.findAll()).thenReturn(Arrays.asList(achievement1, achievement2));
-        Map<String, Achievement> cache = achievementCache.updateCache();
+        achievementCache.initCache();
 
-        assertEquals(2, cache.size());
-        assertEquals(achievement1, cache.get(achievement1.getTitle()));
-        assertEquals(achievement2, cache.get(achievement2.getTitle()));
+        assertEquals(2, achievementCache.getCache().size());
+        assertEquals(achievement1, achievementCache.getCache().get(achievement1.getTitle()));
+        assertEquals(achievement2, achievementCache.getCache().get(achievement2.getTitle()));
     }
 
     @Test
     @DisplayName("When correct title passed return achievement by title")
     public void whenExistingTitlePassedThenReturnAchievement() {
         when(achievementRepository.findAll()).thenReturn(Collections.singletonList(achievement1));
-
         achievementCache.initCache();
         Achievement result = achievementCache.getAchievement(achievement1.getTitle());
 
