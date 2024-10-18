@@ -26,18 +26,20 @@ public class AchievementServiceImpl implements AchievementService{
     public AchievementProgress getProgress(long userId, long achievementId) {
         achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new NoSuchElementException("Прогресс достижения не найдено для пользователя с ID: " + userId));
+                .orElseThrow(() -> new NoSuchElementException("Progress achievements not found for user ID: " + userId));
     }
 
     @Transactional
     public void giveAchievement(Achievement achievement, long userId) {
-        List<UserAchievement> achievementList = userAchievementRepository.findByUserId(userId);
         UserAchievement userAchievement = new UserAchievement();
         userAchievement.setAchievement(achievement);
         userAchievement.setUserId(userId);
-        achievementList.add(userAchievement); // не уверен что он будет перезаписываться у сущности, подскажите плз
+
+        List<UserAchievement> achievementList = achievement.getUserAchievements();
+        achievementList.add(userAchievement);
+        achievement.setUserAchievements(achievementList);
+
         userAchievementRepository.save(userAchievement);
     }
-
 
 }
