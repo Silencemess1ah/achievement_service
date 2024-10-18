@@ -2,8 +2,10 @@ package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.FollowerEvent;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,13 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BloggerAchievementHandlerTest {
-
-    @Mock
-    private CacheService<String> cacheService;
 
     @Mock
     private CacheService<Achievement> achievementCacheService;
@@ -29,21 +32,60 @@ class BloggerAchievementHandlerTest {
     @InjectMocks
     private BloggerAchievementHandler bloggerAchievementHandler;
 
-    @Test
-    void shouldReturnCorrectAchievementName() {
-        String achievementName = bloggerAchievementHandler.getAchievementName();
-        assertEquals("BLOGGER", achievementName);
+    private Long userId;
+    private FollowerEvent followerEvent;
+    private int achievementId;
+    private AchievementProgress achievementProgress;
+    private Achievement achievement;
+
+    @BeforeEach
+    void setUp() {
+        userId = 123L;
+        followerEvent = new FollowerEvent(LocalDateTime.now(), userId);
+        achievementId = 100;
+        achievementProgress = AchievementProgress.builder()
+                .build();
+        String achievementName = "BLOGGER";
+        achievement = Achievement.builder()
+                .id(achievementId)
+                .title(achievementName)
+                .build();
+        when(achievementCacheService.get(achievementName, Achievement.class)).thenReturn(achievement);
     }
 
     @Test
-    void shouldExtractUserIdFromEvent() {
-        FollowerEvent event = new FollowerEvent(LocalDateTime.now(), 123L);
-        long userId = bloggerAchievementHandler.getUserIdFromEvent(event);
-        assertEquals(123L, userId);
+    void handleEvent_userDoesNotHaveAchievement_createsProgressAndGivesAchievement() {
+        achievement.setPoints(5);
+        achievementProgress.setCurrentPoints(10);
+        when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
+        when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);
+
+        bloggerAchievementHandler.handleEvent(followerEvent);
+
+        verify(achievementService).createProgressIfNecessary(userId, achievementId);
+        verify(achievementService).giveAchievement(userId, achievement);
     }
 
     @Test
-    void shouldReturnCorrectEventClass() {
-        assertEquals(FollowerEvent.class, bloggerAchievementHandler.getEventClass());
+    void handleEvent_userAlreadyHasAchievement_doesNotCreateProgressOrGiveAchievement() {
+        when(achievementService.hasAchievement(userId, achievementId)).thenReturn(true);
+
+        bloggerAchievementHandler.handleEvent(followerEvent);
+
+        verify(achievementService, never()).createProgressIfNecessary(anyLong(), anyLong());
+        verify(achievementService, never()).giveAchievement(anyLong(), any(Achievement.class));
+    }
+
+    @Test
+    void handleEvent_userHasNotReachedPoints_doesNotGiveAchievement() {
+        achievement.setPoints(10);
+        achievementProgress.setCurrentPoints(5);
+        when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
+        when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);
+
+        bloggerAchievementHandler.handleEvent(followerEvent);
+
+        verify(achievementService).createProgressIfNecessary(userId, achievementId);
+        verify(achievementService, never()).giveAchievement(anyLong(), any(Achievement.class));
     }
 }
