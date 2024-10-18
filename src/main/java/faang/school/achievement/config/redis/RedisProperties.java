@@ -1,6 +1,5 @@
 package faang.school.achievement.config.redis;
 
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.Map;

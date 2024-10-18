@@ -1,4 +1,4 @@
-package faang.school.achievement.model.entity;
+package faang.school.achievement.model.enums;
 
 public enum Rarity {
     COMMON,

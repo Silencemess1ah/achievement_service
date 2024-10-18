@@ -1,5 +1,6 @@
 package faang.school.achievement.model.entity;
 
+import faang.school.achievement.model.enums.Rarity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,7 +26,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "achievement")
+@Table(name="achievement")
 public class Achievement {
 
     @Id
