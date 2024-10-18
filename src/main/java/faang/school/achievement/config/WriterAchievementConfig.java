@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class WriterAchievementHandlerConfig {
+public class WriterAchievementConfig {
 
     private final AchievementService achievementService;
 
