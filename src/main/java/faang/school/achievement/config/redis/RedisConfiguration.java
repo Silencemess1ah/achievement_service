@@ -14,7 +14,6 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 public class RedisConfiguration {
    private final RedisProperties redisProperties;
 
-
     @Bean
     MessageListenerAdapter projectEventListenerAdapter(ProjectEventListener projectEventListener) {
         return new MessageListenerAdapter(projectEventListener);
