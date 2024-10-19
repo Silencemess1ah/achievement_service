@@ -1,6 +1,5 @@
 package faang.school.achievement.event;
 
-import faang.school.achievement.dto.ProjectEvent;
 import faang.school.achievement.handler.AchievementHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

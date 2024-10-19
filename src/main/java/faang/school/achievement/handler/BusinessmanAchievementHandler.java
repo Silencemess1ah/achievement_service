@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BusinessmanAchievementHandler implements AchievementHandler {
+public class BusinessmanAchievementHandler implements AchievementHandler<ProjectEvent> {
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -24,17 +24,17 @@ public class BusinessmanAchievementHandler implements AchievementHandler {
 
     @Override
     @Async("taskExecutor")
-    public void handleAchievement(Object event) {
+    public void handleAchievement(ProjectEvent event) {
         log.info("Handling achievement for event: {}", event);
         Achievement businessman = achievementRepository.findByTitle("Businessman");
-        if (!hasAchievement((ProjectEvent) event, businessman)) {
-            achievementProgressRepository.createProgressIfNecessary(((ProjectEvent) event).getAuthorId(), businessman.getId());
+        if (!hasAchievement(event, businessman)) {
+            achievementProgressRepository.createProgressIfNecessary(event.getAuthorId(), businessman.getId());
         }
-        AchievementProgress achievementProgress = achievementService.getProgress(((ProjectEvent) event).getAuthorId(), businessman.getId());
+        AchievementProgress achievementProgress = achievementService.getProgress(event.getAuthorId(), businessman.getId());
         achievementProgress.increment();
         achievementProgressRepository.save(achievementProgress);
         if (achievementProgress.getCurrentPoints() >= businessman.getPoints()) {
-            achievementService.giveAchievement(((ProjectEvent) event).getAuthorId(), businessman);
+            achievementService.giveAchievement(event.getAuthorId(), businessman);
         }
     }
 

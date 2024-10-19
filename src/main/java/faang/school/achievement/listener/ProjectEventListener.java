@@ -6,30 +6,32 @@ import faang.school.achievement.dto.ProjectEvent;
 import faang.school.achievement.event.AchievementEventDispatcher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ProjectEventListener {
+public class ProjectEventListener implements MessageListener {
     private final ObjectMapper objectMapper;
-    private final AchievementEventDispatcher eventDispatcher;
+    private final AchievementEventDispatcher<ProjectEvent> eventDispatcher;
 
-    @EventListener
-    public void handleMessage(String jsonEvent) {
-        ProjectEvent event = readEvent(jsonEvent);
-        log.info("Received message from channel: {}", jsonEvent);
-        eventDispatcher.dispatchEvent(event);
-    }
-
-    private ProjectEvent readEvent(String jsonEvent) {
+    @Override
+    public void onMessage(Message message, byte[] pattern) {
+        log.info("Received message from channel: {}", message.toString());
         try {
-            log.info("reading message {}", jsonEvent);
-            return objectMapper.readValue(jsonEvent, ProjectEvent.class);
+            String body = new String(message.getBody());
+            log.info("reading message {}", body);
+            ProjectEvent event = objectMapper.readValue(message.getBody(), ProjectEvent.class);
+            eventDispatcher.dispatchEvent(event);
         } catch (JsonProcessingException exception) {
             log.error("message was not downloaded {}", exception.getMessage());
             throw new RuntimeException(exception);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
