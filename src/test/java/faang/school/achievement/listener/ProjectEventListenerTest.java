@@ -58,9 +58,7 @@ public class ProjectEventListenerTest {
         when(objectMapper.readValue(message.getBody(), ProjectEvent.class)).thenThrow(new JsonProcessingException("Test exception") {
         });
 
-        assertThrows(RuntimeException.class, () -> {
-            projectEventListener.onMessage(message, null);
-        });
+        assertThrows(RuntimeException.class, () -> projectEventListener.onMessage(message, null));
 
         verify(eventDispatcher, never()).dispatchEvent(any());
     }
