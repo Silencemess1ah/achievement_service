@@ -11,6 +11,9 @@ import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final MessagePublisher<AchievementEvent> achievementPublisher;
 
     @Override
+    @Cacheable(value = "achievementService::hasAchievement", key = "#userId" + '.' + "#achievementId")
     public boolean hasAchievement(Long userId, Long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
     }
@@ -35,6 +39,7 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     @Override
+    @Cacheable(value = "achievementService::getProgress", key = "#userId" + '.' + "#achievementId")
     public AchievementProgress getProgress(Long userId, Long achievementId) {
         return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() ->
@@ -43,12 +48,15 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     @Override
+    @CachePut(value = "achievementService::getProgress",
+            key = "#achievementProgress.id" + '.' + "#achievementProgress.userId")
     public void updateProgress(AchievementProgress achievementProgress) {
         achievementProgressRepository.save(achievementProgress);
         log.info("Progress {} updated successfully", achievementProgress.getId());
     }
 
     @Override
+    @CacheEvict(value = "achievementService::getProgress", key = "#userId" + '.' + "#achievementId")
     public void giveAchievement(Long userId, Long achievementId) {
         UserAchievement userAchievement = UserAchievement.builder()
                 .userId(userId)
@@ -64,7 +72,7 @@ public class AchievementServiceImpl implements AchievementService {
                 .build();
         achievementPublisher.publish(achievementEvent);
     }
-
+    
     private Achievement getAchievementById(Long achievementId) {
         return achievementRepository.findById(achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Achievement %d not found".formatted(achievementId)));
