@@ -64,6 +64,7 @@ public class AchievementService {
         return achievementProgressRepository.save(achievementProgress);
     }
 
+    @Transactional
     public AchievementProgress proceedAchievementProgress(long userId, long achievementId) {
         createProgressIfNecessary(userId, achievementId);
         AchievementProgress progress = getProgress(userId, achievementId);
