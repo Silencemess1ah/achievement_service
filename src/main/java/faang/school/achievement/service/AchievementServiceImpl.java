@@ -1,8 +1,10 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.MessagePublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -20,6 +22,7 @@ public class AchievementServiceImpl implements AchievementService {
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
+    private final MessagePublisher<AchievementEvent> achievementPublisher;
 
     @Override
     public boolean hasAchievement(Long userId, Long achievementId) {
@@ -53,6 +56,13 @@ public class AchievementServiceImpl implements AchievementService {
                 .build();
         userAchievementRepository.save(userAchievement);
         log.info("An achievement {} is given for user {}", achievementId, userId);
+
+        AchievementEvent achievementEvent = AchievementEvent.builder()
+                .achievementId(achievementId)
+                .userId(userId)
+                .createdAt(userAchievement.getCreatedAt())
+                .build();
+        achievementPublisher.publish(achievementEvent);
     }
 
     private Achievement getAchievementById(Long achievementId) {
