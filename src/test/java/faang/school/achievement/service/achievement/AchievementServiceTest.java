@@ -61,6 +61,7 @@ public class AchievementServiceTest {
         achievementProgress = AchievementProgress.builder()
                 .userId(USER_ID_ONE)
                 .achievement(achievement)
+                .currentPoints(99)
                 .build();
         userAchievement = UserAchievement.builder()
                 .achievement(achievement)
@@ -116,8 +117,22 @@ public class AchievementServiceTest {
 
     @Test
     @DisplayName("When AchievementProgress passed save it")
-    public void whenThen() {
+    public void whenAchievementProgressPassedThenSaveAndReturnIt() {
         when(achievementProgressRepository.save(achievementProgress)).thenReturn(achievementProgress);
-        achievementService.saveAchievementProgress(achievementProgress);
+        AchievementProgress achievementSaved = achievementService.saveAchievementProgress(achievementProgress);
+        assertEquals(achievementSaved, achievementProgress);
+    }
+
+    @Test
+    @DisplayName("When ids passed, createProgress if needed give it plus one point, save and return it")
+    public void whenIdsPassedCreateProgressIfNeededGetItFromDbThenGiveItPlusOnePointAndSaveIt(){
+        when(achievementProgressRepository
+                .findByUserIdAndAchievementId(USER_ID_ONE, ACHIEVEMENT_ID_ONE))
+                .thenReturn(Optional.of(achievementProgress));
+        when(achievementService.saveAchievementProgress(achievementProgress)).thenReturn(achievementProgress);
+        AchievementProgress result = achievementService.proceedAchievementProgress(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+
+        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+        assertEquals(100, result.getCurrentPoints());
     }
 }

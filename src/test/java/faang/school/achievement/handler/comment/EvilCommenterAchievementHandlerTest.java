@@ -1,6 +1,7 @@
 package faang.school.achievement.handler.comment;
 
-import faang.school.achievement.dto.comment.CommentEventDto;
+import faang.school.achievement.config.cache.AchievementCache;
+import faang.school.achievement.dto.comment.NewCommentEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
@@ -16,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,15 +30,17 @@ public class EvilCommenterAchievementHandlerTest {
     private static final Rarity UNCOMMON = Rarity.UNCOMMON;
     private static final long AUTHOR_ID_ONE = 1L;
     private static final String DESCRIPTION = "For 100 comments";
-    private static final int CURRENT_POINTS = 99;
+    private static final int CURRENT_POINTS = 100;
     private static final LocalDateTime TIME = LocalDateTime.of(2024, 10, 10, 10, 10);
     private EvilCommenterAchievementHandler handler;
     @Mock
     private AchievementService achievementService;
     @Mock
     private AchievementRepository achievementRepository;
+    @Mock
+    private AchievementCache achievementCache;
     private Achievement achievement;
-    private CommentEventDto eventDto;
+    private NewCommentEventDto eventDto;
     private AchievementProgress achievementProgress;
     private UserAchievement userAchievement;
 
@@ -54,7 +56,7 @@ public class EvilCommenterAchievementHandlerTest {
                 .createdAt(TIME)
                 .updatedAt(TIME)
                 .build();
-        eventDto = CommentEventDto.builder()
+        eventDto = NewCommentEventDto.builder()
                 .commentAuthorId(AUTHOR_ID_ONE)
                 .build();
         userAchievement = UserAchievement.builder()
@@ -67,18 +69,17 @@ public class EvilCommenterAchievementHandlerTest {
     }
 
     @Test
-    @DisplayName("When commentEventDto passed then verify it")
+    @DisplayName("When newCommentEventDto passed then verify it")
     public void whenCommentDtoPassedThenVerifyIt() {
-        handler = new EvilCommenterAchievementHandler(achievementService, achievementRepository);
-        ReflectionTestUtils.setField(handler, "pointsToAchieve", 100);
-        when(achievementRepository.findById(ACHIEVEMENT_ID_NINE)).thenReturn(Optional.of(achievement));
+        handler = new EvilCommenterAchievementHandler(achievementService, achievementCache);
+        ReflectionTestUtils.setField(handler, "pointsToAchieve", CURRENT_POINTS);
+        ReflectionTestUtils.setField(handler, "evilCommenterAchievement", TITLE);
+        when(achievementCache.getAchievement(TITLE)).thenReturn(achievement);
         when(achievementService.hasAchievement(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(false);
-        when(achievementService.getProgress(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE)).thenReturn(achievementProgress);
+        when(achievementService.proceedAchievementProgress(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE))
+                .thenReturn(achievementProgress);
 
         handler.verifyAchievement(eventDto);
-
-        verify(achievementService).createProgressIfNecessary(AUTHOR_ID_ONE, ACHIEVEMENT_ID_NINE);
-        verify(achievementService).saveAchievementProgress(achievementProgress);
         verify(achievementService).giveAchievement(userAchievement);
     }
 }

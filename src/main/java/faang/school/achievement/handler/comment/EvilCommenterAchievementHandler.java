@@ -1,10 +1,10 @@
 package faang.school.achievement.handler.comment;
 
-import faang.school.achievement.dto.comment.CommentEventDto;
+import faang.school.achievement.config.cache.AchievementCache;
+import faang.school.achievement.dto.comment.NewCommentEventDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,36 +17,26 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Getter
 @Slf4j
-public class EvilCommenterAchievementHandler extends CommentEventHandler {
+public class EvilCommenterAchievementHandler extends NewCommentEventHandler {
 
-    @Value("${spring.achievements.achievements-title.evil-commenter}")
+    @Value("${achievements.achievements-title.evil-commenter}")
     private String evilCommenterAchievement;
-    @Value("${spring.achievements.achievement-points-needed.evil-commenter}")
+    @Value("${achievements.achievement-points-needed.evil-commenter}")
     private int pointsToAchieve;
 
     private final AchievementService achievementService;
-//    private final AchievementCache achievementCache;
-//      waiting for cache PR
-    private final AchievementRepository achievementRepository;
+    private final AchievementCache achievementCache;
 
     @Async
     @Override
-    public void verifyAchievement(CommentEventDto commentEventDto) {
-        //waiting for cache PR
-//        Achievement evilCommenter = achievementCache.get(evilCommenterAchievement);
-//        Achievement evilCommenter = new Achievement();
-        // ***
-        //made to pass test
-        Achievement evilCommenter = achievementRepository.findById(9L).orElseThrow();
-        // ***
-        long userId = commentEventDto.getCommentAuthorId();
+    public void verifyAchievement(NewCommentEventDto newCommentEventDto) {
+        Achievement evilCommenter = achievementCache.getAchievement(evilCommenterAchievement);
+        long userId = newCommentEventDto.getCommentAuthorId();
         long achievementId = evilCommenter.getId();
+
         if (!achievementService.hasAchievement(userId, achievementId)) {
-            achievementService.createProgressIfNecessary(userId, achievementId);
-            AchievementProgress progress = achievementService.getProgress(userId, achievementId);
-            long progressPoints = progress.getCurrentPoints();
-            progress.setCurrentPoints(progressPoints + 1);
-            achievementService.saveAchievementProgress(progress);
+            AchievementProgress progress = achievementService
+                    .proceedAchievementProgress(userId,achievementId);
             if (progress.getCurrentPoints() == pointsToAchieve) {
                 UserAchievement userAchievement = UserAchievement.builder()
                         .achievement(evilCommenter)

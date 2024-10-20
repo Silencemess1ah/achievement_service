@@ -1,8 +1,8 @@
 package faang.school.achievement.listener.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.dto.comment.CommentEventDto;
-import faang.school.achievement.handler.comment.CommentEventHandler;
+import faang.school.achievement.dto.comment.NewCommentEventDto;
+import faang.school.achievement.handler.comment.NewCommentEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,13 +30,13 @@ public class CommentEventListenerTest {
     @Mock
     private ObjectMapper objectMapper;
     @Mock
-    private List<CommentEventHandler> handlers;
+    private List<NewCommentEventHandler> handlers;
     private Message message;
-    private CommentEventDto commentEventDto;
+    private NewCommentEventDto newCommentEventDto;
 
     @BeforeEach
     void setUp() {
-        commentEventDto = CommentEventDto.builder().build();
+        newCommentEventDto = NewCommentEventDto.builder().build();
         message = mock(Message.class);
     }
 
@@ -44,9 +44,9 @@ public class CommentEventListenerTest {
     @DisplayName("When json object passed readValue, and pass for all handlers")
     public void whenJsonPassedThenPassItToAllHandlers() throws IOException {
         when(message.getBody()).thenReturn(new byte[0]);
-        when(objectMapper.readValue(any(byte[].class), eq(CommentEventDto.class))).thenReturn(commentEventDto);
+        when(objectMapper.readValue(any(byte[].class), eq(NewCommentEventDto.class))).thenReturn(newCommentEventDto);
         commentEventListener.onMessage(message, null);
-        verify(objectMapper).readValue(any(byte[].class), eq(CommentEventDto.class));
+        verify(objectMapper).readValue(any(byte[].class), eq(NewCommentEventDto.class));
         verify(handlers).forEach(any());
     }
 
@@ -54,7 +54,7 @@ public class CommentEventListenerTest {
     @DisplayName("If IOException while reading then throw exception")
     void whenIOExceptionOccursThenThrowsException() throws Exception {
         when(message.getBody()).thenReturn(new byte[0]);
-        when(objectMapper.readValue(any(byte[].class), eq(CommentEventDto.class))).thenThrow(new IOException());
+        when(objectMapper.readValue(any(byte[].class), eq(NewCommentEventDto.class))).thenThrow(new IOException());
         assertThrows(RuntimeException.class, () -> commentEventListener.onMessage(message, null));
     }
 }

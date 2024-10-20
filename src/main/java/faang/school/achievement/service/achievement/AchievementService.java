@@ -46,6 +46,7 @@ public class AchievementService {
                 .orElseThrow(() -> new EntityNotFoundException("There are no achievement progress with id " +
                         achievementId + " for user " + userId + " found!"));
     }
+
     @Transactional
     public void giveAchievement(UserAchievement achievement) {
         log.info("User {} has achieved {}!", achievement.getUserId(), achievement.getAchievement().getTitle());
@@ -56,9 +57,18 @@ public class AchievementService {
         log.debug("Published achievement {} to {}", achievement.getAchievement().getTitle(),
                 userAchievementPublisher.getAchievementChannelTopic());
     }
+
     @Transactional
-    public void saveAchievementProgress(AchievementProgress achievementProgress) {
+    public AchievementProgress saveAchievementProgress(AchievementProgress achievementProgress) {
         log.debug("Saving achievement progress... {}", achievementProgress.getAchievement().getTitle());
-        achievementProgressRepository.save(achievementProgress);
+        return achievementProgressRepository.save(achievementProgress);
+    }
+
+    public AchievementProgress proceedAchievementProgress(long userId, long achievementId) {
+        createProgressIfNecessary(userId, achievementId);
+        AchievementProgress progress = getProgress(userId, achievementId);
+        long progressPoints = progress.getCurrentPoints();
+        progress.setCurrentPoints(progressPoints + 1);
+        return saveAchievementProgress(progress);
     }
 }
