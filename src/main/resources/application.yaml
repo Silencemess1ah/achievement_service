@@ -24,10 +24,13 @@ spring:
       channel:
         achievement-channel:
           name: achievement_channel
+          title: Recursion-recursion
         follower-channel:
           name: follower_channel
         like-channel:
           name: like_channel
+      publisher:
+        delay: 5000
 
 achievements:
   like-achievements:
