@@ -25,6 +25,12 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
+    kafka:
+      host: localhost
+      port: 9092
+      group: group
+      channels:
+        post_channel: post_channel
 
 server:
   port: 8085
