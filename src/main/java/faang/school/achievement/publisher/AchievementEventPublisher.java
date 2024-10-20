@@ -13,17 +13,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class AchievementEventPublisher {
-    private final KafkaTemplate<byte[], byte[]> kafkaTemplate;
+    private final KafkaTemplate<Integer, String> kafkaTemplate;
+    private final ObjectMapper mapper;
+
     @Value("${spring.kafka.topics.achievement-received.name}")
     private String topic;
-    private final ObjectMapper mapper;
 
     public void sendMessage(AchievementEvent message) {
         log.info("try to send {} to topic named {}", message, topic);
         try {
-            kafkaTemplate.send(topic, mapper.writeValueAsBytes(message));
+            kafkaTemplate.send(topic, mapper.writeValueAsString(message));
         } catch (JsonProcessingException e) {
-            log.error("cannot write {} as byte array", message, e);
+            log.error("cannot convert obj {} to json", message, e);
         }
     }
 }
