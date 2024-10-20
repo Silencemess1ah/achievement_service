@@ -40,3 +40,6 @@ project-service:
 achievement:
   writer:
     points: 100
+
+thread-pool:
+  size: 10

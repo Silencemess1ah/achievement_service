@@ -27,9 +27,4 @@ public class AchievementServiceApp {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
-
-    @Bean
-    ExecutorService threadPool() {
-        return Executors.newFixedThreadPool(10);
-    }
 }
