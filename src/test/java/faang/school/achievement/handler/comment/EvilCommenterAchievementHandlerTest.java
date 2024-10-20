@@ -6,7 +6,6 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.Rarity;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +31,8 @@ public class EvilCommenterAchievementHandlerTest {
     private static final String DESCRIPTION = "For 100 comments";
     private static final int CURRENT_POINTS = 100;
     private static final LocalDateTime TIME = LocalDateTime.of(2024, 10, 10, 10, 10);
-    private EvilCommenterAchievementHandler handler;
     @Mock
     private AchievementService achievementService;
-    @Mock
-    private AchievementRepository achievementRepository;
     @Mock
     private AchievementCache achievementCache;
     private Achievement achievement;
@@ -71,7 +67,8 @@ public class EvilCommenterAchievementHandlerTest {
     @Test
     @DisplayName("When newCommentEventDto passed then verify it")
     public void whenCommentDtoPassedThenVerifyIt() {
-        handler = new EvilCommenterAchievementHandler(achievementService, achievementCache);
+        EvilCommenterAchievementHandler handler =
+                new EvilCommenterAchievementHandler(achievementService, achievementCache);
         ReflectionTestUtils.setField(handler, "pointsToAchieve", CURRENT_POINTS);
         ReflectionTestUtils.setField(handler, "evilCommenterAchievement", TITLE);
         when(achievementCache.getAchievement(TITLE)).thenReturn(achievement);
