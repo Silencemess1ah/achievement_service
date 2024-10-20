@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class CommentEventListenerTest {
 
     @Spy
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper;
 
     @Mock
     private EventDispatcher eventDispatcher;
