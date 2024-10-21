@@ -7,6 +7,7 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.cache.AchievementCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class BusinessmanAchievementHandler implements AchievementHandler<ProjectEvent> {
+    private final AchievementCacheService achievementCacheService;
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
@@ -26,7 +28,7 @@ public class BusinessmanAchievementHandler implements AchievementHandler<Project
     @Async("taskExecutor")
     public void handleAchievement(ProjectEvent event) {
         log.info("Handling achievement for event: {}", event);
-        Achievement businessman = achievementRepository.findByTitle("Businessman");
+        Achievement businessman = achievementCacheService.getAchievementByTitle("Businessman");
         if (!hasAchievement(event, businessman)) {
             achievementProgressRepository.createProgressIfNecessary(event.getAuthorId(), businessman.getId());
         }
