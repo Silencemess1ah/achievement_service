@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.retry:spring-retry")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation ("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
+    implementation("org.springframework.kafka:spring-kafka:3.1.1")
 
     /**
      * Database
@@ -44,6 +45,7 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.3.Final")
+    implementation("org.springframework.kafka:spring-kafka:3.1.1")
 
     /**
      * Test containers
