@@ -7,6 +7,7 @@ import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.cache.AchievementCacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,11 +22,13 @@ public class BusinessmanAchievementHandlerTest {
     @Mock
     private AchievementRepository achievementRepository;
     @Mock
-    private UserAchievementRepository userAchievementRepository;
+    private AchievementCacheService achievementCacheService;
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
     private AchievementService achievementService;
+    @Mock
+    private UserAchievementRepository userAchievementRepository;
     @InjectMocks
     private BusinessmanAchievementHandler businessmanAchievementHandler;
     private ProjectEvent event;
@@ -46,8 +49,10 @@ public class BusinessmanAchievementHandlerTest {
 
     @Test
     void handleAchievementTest() {
-        when(achievementRepository.findByTitle("Businessman")).thenReturn(businessman);
+        when(achievementCacheService.getAchievementByTitle("Businessman")).thenReturn(businessman);
         when(achievementService.getProgress(event.getAuthorId(), businessman.getId())).thenReturn(progress);
+        when(userAchievementRepository
+                .existsByUserIdAndAchievementId(event.getAuthorId(), businessman.getId())).thenReturn(false);
 
         businessmanAchievementHandler.handleAchievement(event);
 

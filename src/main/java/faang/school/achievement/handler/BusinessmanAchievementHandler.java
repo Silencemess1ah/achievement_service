@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BusinessmanAchievementHandler implements AchievementHandler<ProjectEvent> {
     private final AchievementCacheService achievementCacheService;
-    private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementService achievementService;
