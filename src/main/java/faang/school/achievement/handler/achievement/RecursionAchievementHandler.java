@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RecursionAchievementHandler extends AchievementEventHandler {
 
-    @Value("${spring.data.redis.channel.achievement-channel.title}")
+    @Value("${achievements.recursion.title}")
     String title;
 
     public RecursionAchievementHandler(AchievementService achievementService,
