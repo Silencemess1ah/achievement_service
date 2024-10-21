@@ -43,6 +43,8 @@ achievements:
   like-achievements:
     ALL_LOVE:
       name: ALL LOVE
+  recursion:
+    title: Recursion-recursion
 
 retryable:
   max-attempts: 5
