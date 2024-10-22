@@ -48,30 +48,35 @@ public class RedisConfig {
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(postListener, postListenerTopic());
-        container.addMessageListener(likeListener, likeListenerTopic());
+        container.addMessageListener(postListener, postTopic());
+        container.addMessageListener(likeListener, likeTopic());
 
         return container;
     }
 
     @Bean
-    public MessageListenerAdapter postListener(PostEventListener postEventListener){
+    public MessageListenerAdapter postListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
-    public MessageListenerAdapter likeListener(LikeEventListener likeEventListener){
+    public MessageListenerAdapter likeListener(LikeEventListener likeEventListener) {
         return new MessageListenerAdapter(likeEventListener);
     }
 
     @Bean
-    public ChannelTopic likeListenerTopic(){
+    public ChannelTopic likeTopic() {
         return new ChannelTopic(redisProperties.channels().get("like"));
     }
 
     @Bean
-    public ChannelTopic postListenerTopic(){
+    public ChannelTopic postTopic() {
         return new ChannelTopic(redisProperties.channels().get("post"));
+    }
+
+    @Bean
+    public ChannelTopic achievementTopic() {
+        return new ChannelTopic(redisProperties.channels().get("achievement"));
     }
 
     @Bean
