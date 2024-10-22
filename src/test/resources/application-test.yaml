@@ -32,3 +32,5 @@ spring:
         name: achievement_topic
         num-partitions: 3
         replication-factor: 1
+server:
+  name: Achievement Service
