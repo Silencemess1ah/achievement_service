@@ -41,7 +41,8 @@ VALUES ('COLLECTOR', 'For 100 goals', 3, 15, CURRENT_TIMESTAMP, CURRENT_TIMESTAM
        ('MANAGER', 'For 10 teams', 2, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('CELEBRITY', 'For 1 000 000 subscribers', 4, 20, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        ('WRITER', 'For 100 posts published', 2, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('HANDSOME', 'For uploaded profile photo', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+       ('HANDSOME', 'For uploaded profile photo', 0, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('RECURSION-RECURSION', 'For 30 achievements', 4, 30, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO user_achievement (user_id, achievement_id, created_at, updated_at)
 VALUES (1, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

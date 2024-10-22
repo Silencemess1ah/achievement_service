@@ -182,7 +182,7 @@ public class AchievementControllerIntegrationTest {
         AchievementDto[] resultArray = objectMapper.readValue(jsonResult, AchievementDto[].class);
         AchievementDto result = resultArray[2];
 
-        assertEquals(6, resultArray.length);
+        assertEquals(7, resultArray.length);
         assertEquals(correctResult, result);
     }
 }

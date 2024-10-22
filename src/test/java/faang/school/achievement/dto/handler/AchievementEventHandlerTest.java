@@ -1,6 +1,7 @@
 package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.Event;
+import faang.school.achievement.handler.AchievementEventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;

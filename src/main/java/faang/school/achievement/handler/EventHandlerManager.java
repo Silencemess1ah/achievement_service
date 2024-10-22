@@ -1,4 +1,4 @@
-package faang.school.achievement.dto.handler;
+package faang.school.achievement.handler;
 
 public interface EventHandlerManager<T> {
 

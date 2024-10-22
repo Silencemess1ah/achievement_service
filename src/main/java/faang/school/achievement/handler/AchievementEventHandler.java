@@ -1,4 +1,4 @@
-package faang.school.achievement.dto.handler;
+package faang.school.achievement.handler;
 
 import faang.school.achievement.dto.Event;
 import faang.school.achievement.model.Achievement;

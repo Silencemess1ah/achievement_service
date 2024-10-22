@@ -3,7 +3,7 @@ package faang.school.achievement.listener;
 import com.google.protobuf.InvalidProtocolBufferException;
 import faang.school.achievement.dto.Event;
 import faang.school.achievement.dto.FollowerEvent;
-import faang.school.achievement.dto.handler.EventHandlerManager;
+import faang.school.achievement.handler.EventHandlerManager;
 import faang.school.achievement.mapper.FollowerEventMapper;
 import faang.school.achievement.protobuf.generate.FollowerEventProto;
 import lombok.RequiredArgsConstructor;

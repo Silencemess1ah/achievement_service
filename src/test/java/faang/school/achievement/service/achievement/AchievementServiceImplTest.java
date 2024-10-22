@@ -1,12 +1,14 @@
 package faang.school.achievement.service.achievement;
 
 import faang.school.achievement.dto.AchievementDto;
+import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.filter.AchievementFilter;
 import faang.school.achievement.mapper.AchievementMapperImpl;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.AchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
@@ -57,6 +59,9 @@ class AchievementServiceImplTest {
     @Mock
     private CacheService<Achievement> cacheService;
 
+    @Mock
+    private AchievementPublisher achievementPublisher;
+
     @Spy
     private AchievementMapperImpl achievementMapper;
 
@@ -74,6 +79,9 @@ class AchievementServiceImplTest {
 
     @Captor
     private ArgumentCaptor<UserAchievement> userAchievementCaptor;
+
+    @Captor
+    private ArgumentCaptor<AchievementEvent> achievementEventCaptor;
 
     private final long userId = 1L;
     private final long achievementId = 2L;
@@ -166,7 +174,9 @@ class AchievementServiceImplTest {
 
     @Test
     void giveAchievement_shouldSaveUserAchievement() {
-        Achievement achievement = new Achievement();
+        Achievement achievement = Achievement.builder()
+                .id(achievementId)
+                .build();
         UserAchievement correctUserAchievement = UserAchievement.builder()
                 .userId(userId)
                 .achievement(achievement)
@@ -176,6 +186,11 @@ class AchievementServiceImplTest {
 
         verify(achievementUserRepository).save(userAchievementCaptor.capture());
         assertEquals(correctUserAchievement, userAchievementCaptor.getValue());
+        verify(achievementPublisher).publish(achievementEventCaptor.capture());
+
+        AchievementEvent capturedEvent = achievementEventCaptor.getValue();
+        assertEquals(userId, capturedEvent.getUserId());
+        assertEquals(achievementId, capturedEvent.getAchievementId());
     }
 
     @Test
