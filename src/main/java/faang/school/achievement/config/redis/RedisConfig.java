@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import lombok.RequiredArgsConstructor;
@@ -40,11 +41,15 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                                   MessageListenerAdapter postListener) {
+    public RedisMessageListenerContainer container(
+            RedisConnectionFactory connectionFactory,
+            MessageListenerAdapter postListener,
+            MessageListenerAdapter likeListener
+    ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(postListener, postListenerTopic());
+        container.addMessageListener(likeListener, likeListenerTopic());
 
         return container;
     }
@@ -52,6 +57,16 @@ public class RedisConfig {
     @Bean
     public MessageListenerAdapter postListener(PostEventListener postEventListener){
         return new MessageListenerAdapter(postEventListener);
+    }
+
+    @Bean
+    public MessageListenerAdapter likeListener(LikeEventListener likeEventListener){
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
+    public ChannelTopic likeListenerTopic(){
+        return new ChannelTopic(redisProperties.channels().get("like"));
     }
 
     @Bean
@@ -69,8 +84,10 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheConfiguration redisCacheConfiguration(ObjectMapper objectMapper) {
+
         Jackson2JsonRedisSerializer<AchievementRedisDto> serializer =
                 new Jackson2JsonRedisSerializer<>(objectMapper, AchievementRedisDto.class);
+
         return RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofHours(1))
                 .disableCachingNullValues()
