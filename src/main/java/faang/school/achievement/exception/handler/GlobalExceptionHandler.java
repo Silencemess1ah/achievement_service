@@ -17,14 +17,14 @@ public class GlobalExceptionHandler {
     private String serviceName;
 
     @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException exception) {
         String message = exception.getMessage();
         log.error(message, exception);
 
         return ErrorResponse.builder()
                 .serviceName(serviceName)
-                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .errorCode(HttpStatus.NOT_FOUND.value())
                 .globalMessage(message)
                 .build();
     }
