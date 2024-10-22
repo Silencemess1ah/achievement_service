@@ -1,13 +1,10 @@
 package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.AchievementEvent;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.AchievementService;
-import faang.school.achievement.service.CacheService;
+import faang.school.achievement.handler.RecursionAchievementHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
