@@ -35,7 +35,7 @@ class AchievementEventHandlerTest {
 
     private Long userId;
     private Event testEvent;
-    private int achievementId;
+    private long achievementId;
     private AchievementProgress achievementProgress;
     private Achievement achievement;
 
@@ -55,7 +55,7 @@ class AchievementEventHandlerTest {
 
     @Test
     void handleEvent_userDoesNotHaveAchievement_createsProgressAndGivesAchievement() {
-        achievement.setPoints(5);
+        achievement.setPoints(5L);
         achievementProgress.setCurrentPoints(10);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);
@@ -78,7 +78,7 @@ class AchievementEventHandlerTest {
 
     @Test
     void handleEvent_userHasNotReachedPoints_doesNotGiveAchievement() {
-        achievement.setPoints(10);
+        achievement.setPoints(10L);
         achievementProgress.setCurrentPoints(5);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);

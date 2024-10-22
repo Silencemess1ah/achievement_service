@@ -160,9 +160,9 @@ public class AchievementControllerIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/achievement/{achievementId}", achievementId)
                         .header("x-user-id", 1L))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.serviceName").value(serviceName))
-                .andExpect(jsonPath("$.errorCode").value(400))
+                .andExpect(jsonPath("$.errorCode").value(404))
                 .andExpect(jsonPath("$.globalMessage").value(message));
     }
 

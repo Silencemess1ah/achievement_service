@@ -10,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -38,9 +39,9 @@ public class GlobalExceptionHandlerTest {
 
     @Test
     void testEntityNotFoundExceptionHandler() throws Exception {
-        int status = HttpStatus.BAD_REQUEST.value();
+        int status = HttpStatus.NOT_FOUND.value();
         mockMvc.perform(get("/test").accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.serviceName", is(serviceName)))
                 .andExpect(jsonPath("$.errorCode", is(status)))
                 .andExpect(jsonPath("$.globalMessage", is("Entity not found")));
