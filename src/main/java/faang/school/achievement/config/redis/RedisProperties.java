@@ -18,6 +18,7 @@ public class RedisProperties {
     protected static class Channels {
         private Channel followerEventChannel;
         private Channel achievementEventChannel;
+        private Channel comment;
 
         @Getter
         @Setter
