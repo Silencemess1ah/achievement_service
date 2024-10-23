@@ -3,6 +3,7 @@ package faang.school.achievement.service;
 import faang.school.achievement.model.entity.AchievementProgress;
 
 public interface AchievementService {
+
     boolean hasAchievement(long userId, long achievementId);
 
     void createProgress(long userId, long achievementId);

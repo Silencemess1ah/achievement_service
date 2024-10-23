@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
+        mentorship: mentorship_channel
     kafka:
       host: localhost
       port: 9092
@@ -45,6 +46,7 @@ project-service:
 
 achievement-titles:
   leader: LEADER
+  sensei: SENSEI
 
 thread-pool:
   fixed:

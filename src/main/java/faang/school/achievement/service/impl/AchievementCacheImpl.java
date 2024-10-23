@@ -1,10 +1,10 @@
-package faang.school.achievement.service;
-
+package faang.school.achievement.service.impl;
 
 import faang.school.achievement.mapper.AchievementMapper;
-import faang.school.achievement.model.entity.Achievement;
 import faang.school.achievement.model.dto.AchievementRedisDto;
+import faang.school.achievement.model.entity.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.service.AchievementCache;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class AchievementCacheImpl implements AchievementCache {
+
     private final AchievementRepository achievementRepository;
     private final CacheManager cacheManager;
     private final AchievementMapper mapper;

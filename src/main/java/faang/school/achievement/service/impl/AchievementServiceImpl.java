@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AchievementServiceImpl implements AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
-    private final AchievementProgressRepository progressRepository;
+    private final AchievementProgressRepository achievementProgressRepository;
     private final AchievementRepository achievementRepository;
 
     @Override
@@ -29,13 +29,13 @@ public class AchievementServiceImpl implements AchievementService {
     @Override
     @Transactional
     public void createProgress(long userId, long achievementId) {
-        progressRepository.createProgressIfNecessary(userId, achievementId);
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
     }
 
     @Override
     @Transactional(readOnly = true)
     public AchievementProgress getProgress(long userId, long achievementId) {
-        return progressRepository.findByUserIdAndAchievementId(userId, achievementId)
+        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(() -> new EntityNotFoundException("Achievement with id %s does not exist for user with id %s"
                         .formatted(userId, achievementId)));
     }
@@ -56,7 +56,8 @@ public class AchievementServiceImpl implements AchievementService {
     }
 
     @Override
+    @Transactional
     public void saveProgress(AchievementProgress progress) {
-        progressRepository.save(progress);
+        achievementProgressRepository.save(progress);
     }
 }

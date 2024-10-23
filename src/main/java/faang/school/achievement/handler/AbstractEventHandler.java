@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.Async;
 
 @RequiredArgsConstructor
 public abstract class AbstractEventHandler<T extends AuthorSearcher> implements EventHandler<T> {
+
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
     private final String achievementTitle;
-
 
     @Override
     @Async("fixedThreadPool")
@@ -21,7 +21,6 @@ public abstract class AbstractEventHandler<T extends AuthorSearcher> implements 
         AchievementRedisDto achievementRedisDto = achievementCache.getAchievementCache(achievementTitle);
         long userId = event.getAuthorForAchievements();
         long achievementId = achievementRedisDto.getId();
-
         if (!achievementService.hasAchievement(userId, achievementId)) {
             achievementService.createProgress(userId, achievementId);
             AchievementProgress progress = achievementService.getProgress(userId, achievementId);

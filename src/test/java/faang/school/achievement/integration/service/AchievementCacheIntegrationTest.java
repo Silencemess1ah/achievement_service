@@ -4,7 +4,7 @@ import faang.school.achievement.integration.config.ConfigurationRedisTest;
 import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.service.AchievementCacheImpl;
+import faang.school.achievement.service.impl.AchievementCacheImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
