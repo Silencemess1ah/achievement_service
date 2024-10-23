@@ -10,13 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import java.util.Map;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -39,36 +37,24 @@ public class RedisConfig {
     }
 
     @Bean
-    MessageListenerAdapter likeEventAdapter(LikeEventListener likeEventListener) {
-        return new MessageListenerAdapter(likeEventListener);
+    ChannelListenerAdapter likeChannelListenerAdapter(LikeEventListener likeEventListener,
+                                                      @Value("${spring.data.redis.channel.like-channel.name}") String likeChannelName) {
+        return new ChannelListenerAdapter(likeEventListener, likeChannelName);
     }
 
     @Bean
-    public MessageListenerAdapter achievementEventAdapter(AchievementEventListener achievementEventListener) {
-        return new MessageListenerAdapter(achievementEventListener);
-    }
-
-    @Bean(value = "likeChannelTopic")
-    ChannelTopic likeChannelTopic(@Value("${spring.data.redis.channel.like-channel.name}") String likeChannelName) {
-        return new ChannelTopic(likeChannelName);
-    }
-
-    @Bean(value = "achievementChannelTopic")
-    public ChannelTopic achievementChannelTopic(
-            @Value("${spring.data.redis.channel.achievement-channel.name}") String achievementChannelName) {
-        return new ChannelTopic(achievementChannelName);
+    ChannelListenerAdapter achievementChannelListener(AchievementEventListener achievementEventListener,
+                                                      @Value("${spring.data.redis.channel.achievement-channel.name}")
+                                                      String achievementChannelName) {
+        return new ChannelListenerAdapter(achievementEventListener, achievementChannelName);
     }
 
     @Bean
-    RedisMessageListenerContainer redisMessageListenerContainer(
-            Map<String, MessageListenerAdapter> listenerAdapters,
-            Map<String, ChannelTopic> channelTopics) {
+    public RedisMessageListenerContainer container(List<ChannelListenerAdapter> channelListenerAdapters) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
-        container.addMessageListener(listenerAdapters.get("likeEventAdapter"),
-                channelTopics.get("likeChannelTopic"));
-        container.addMessageListener(listenerAdapters.get("achievementEventAdapter"),
-                channelTopics.get("achievementChannelTopic"));
+        channelListenerAdapters.forEach(
+                listener -> container.addMessageListener(listener.getListenerAdapter(), listener.getTopic()));
         return container;
     }
 }

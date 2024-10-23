@@ -16,10 +16,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class AbstractEventListener<T> implements MessageListener {
 
-    protected final List<AbstractEventHandler<T>> handlers;
+    private final List<AbstractEventHandler<T>> handlers;
     private final ObjectMapper objectMapper;
 
-    public T handleEvent(Message message, Class<T> eventClass) {
+    public void processEvent(Message message, Class<T> eventClass) {
+        T event = handleEvent(message, eventClass);
+        handlers.forEach(handler -> handler.handle(event));
+    }
+
+    private T handleEvent(Message message, Class<T> eventClass) {
         try {
             return objectMapper.readValue(message.getBody(), eventClass);
         } catch (IOException e) {

@@ -18,7 +18,6 @@ public class AchievementEventListener extends AbstractEventListener<AchievementE
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        AchievementEvent achievementEvent = handleEvent(message, AchievementEvent.class);
-        handlers.forEach(handler -> handler.handle(achievementEvent));
+        processEvent(message, AchievementEvent.class);
     }
 }
