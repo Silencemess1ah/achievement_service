@@ -21,13 +21,15 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
+      channels:
         achievement-channel:
           name: achievement_channel
         follower-channel:
           name: follower_channel
         like-channel:
           name: like_channel
+        comment-channel:
+          name: comment_channel
       publisher:
         delay: 5000
 
@@ -42,6 +44,9 @@ achievements:
   like-achievements:
     ALL_LOVE:
       name: ALL LOVE
+  comment-achievements:
+    expert:
+      name: EXPERT
   recursion:
     title: RECURSION-RECURSION
 

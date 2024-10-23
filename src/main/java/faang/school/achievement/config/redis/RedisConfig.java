@@ -1,5 +1,6 @@
 package faang.school.achievement.config.redis;
 
+import faang.school.achievement.listener.CommentEventListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.listener.AchievementEventListener;
@@ -37,9 +38,20 @@ public class RedisConfig {
     }
 
     @Bean
+    MessageListenerAdapter commentEventAdapter(CommentEventListener commentEventListener) {
+        return new MessageListenerAdapter(commentEventListener);
+    }
+
+    @Bean
     ChannelListenerAdapter likeChannelListenerAdapter(LikeEventListener likeEventListener,
-                                                      @Value("${spring.data.redis.channel.like-channel.name}") String likeChannelName) {
+                                                      @Value("${spring.data.redis.channels.like-channel.name}") String likeChannelName) {
         return new ChannelListenerAdapter(likeEventListener, likeChannelName);
+    }
+
+    @Bean(value = "commentChannelTopic")
+    ChannelTopic commentChannelTopic(
+            @Value("${spring.data.redis.channels.comment-channel.name}") String commentChannelName) {
+        return new ChannelTopic(commentChannelName);
     }
 
     @Bean
