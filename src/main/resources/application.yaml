@@ -24,7 +24,6 @@ spring:
       channel:
         achievement-channel:
           name: achievement_channel
-          title: Recursion-recursion
         follower-channel:
           name: follower_channel
         like-channel:
@@ -44,7 +43,7 @@ achievements:
     ALL_LOVE:
       name: ALL LOVE
   recursion:
-    title: Recursion-recursion
+    title: RECURSION-RECURSION
 
 retryable:
   max-attempts: 5
