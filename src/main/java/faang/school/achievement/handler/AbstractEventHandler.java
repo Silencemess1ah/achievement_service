@@ -25,7 +25,7 @@ public abstract class AbstractEventHandler<T extends AuthorSearcher> implements 
             achievementService.createProgress(userId, achievementId);
             AchievementProgress progress = achievementService.getProgress(userId, achievementId);
             progress.increment();
-            if (progress.getCurrentPoints() >= achievementRedisDto.getPoints()) {
+            if (progress.getCurrentPoints() == achievementRedisDto.getPoints()) {
                 achievementService.giveAchievement(userId, achievementId);
             }
             achievementService.saveProgress(progress);
