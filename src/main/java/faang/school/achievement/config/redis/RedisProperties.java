@@ -16,8 +16,14 @@ public class RedisProperties {
     @Getter
     @Setter
     protected static class Channels {
-        private String follower;
-        private String achievement;
-        private String comment;
+        private Channel followerEventChannel;
+        private Channel achievementEventChannel;
+        private Channel comment;
+
+        @Getter
+        @Setter
+        protected static class Channel {
+            private String name;
+        }
     }
 }
