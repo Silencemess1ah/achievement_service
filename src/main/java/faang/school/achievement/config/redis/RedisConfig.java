@@ -90,4 +90,9 @@ public class RedisConfig {
     public ChannelTopic mentorshipListenerTopic() {
         return new ChannelTopic(redisProperties.channels().get("mentorship"));
     }
+
+    @Bean
+    public ChannelTopic achievementTopic() {
+        return new ChannelTopic(redisProperties.channels().get("achievement"));
+    }
 }
