@@ -1,13 +1,10 @@
 package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.FollowerEvent;
-import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.achievement.AchievementService;
-import faang.school.achievement.service.CacheService;
+import faang.school.achievement.handler.BloggerAchievementHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -16,15 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class BloggerAchievementHandlerTest {
-
-    @Mock
-    private CacheService<String> cacheService;
-
-    @Mock
-    private CacheService<Achievement> achievementCacheService;
-
-    @Mock
-    private AchievementService achievementService;
 
     @InjectMocks
     private BloggerAchievementHandler bloggerAchievementHandler;

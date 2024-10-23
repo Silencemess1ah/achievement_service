@@ -53,8 +53,13 @@ spring:
         name: album-created_topic
         num-partitions: 3
         replication-factor: 1
+      achievement:
+        name: achievement_topic
+        num-partitions: 3
+        replication-factor: 1
 
 server:
+  name: Achievement Service
   main-thread-pool-size: 6
   port: 8085
 

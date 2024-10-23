@@ -1,17 +1,15 @@
-package faang.school.achievement.dto.handler;
+package faang.school.achievement.handler;
 
-import faang.school.achievement.dto.AlbumCreatedEvent;
+import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.achievement.AchievementService;
+import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
-public class LibrarianAchievementHandler extends AchievementEventHandler<AlbumCreatedEvent> {
+public class RecursionAchievementHandler extends AchievementEventHandler<AchievementEvent> {
 
-    public LibrarianAchievementHandler(CacheService<String> cacheService,
+    public RecursionAchievementHandler(CacheService<String> cacheService,
                                        CacheService<Achievement> achievementCacheService,
                                        AchievementService achievementService) {
         super(cacheService, achievementCacheService, achievementService);
@@ -19,17 +17,17 @@ public class LibrarianAchievementHandler extends AchievementEventHandler<AlbumCr
 
     @Override
     protected String getAchievementName() {
-        return "LIBRARIAN";
+        return "RECURSION-RECURSION";
     }
 
     @Override
-    protected long getUserIdFromEvent(AlbumCreatedEvent event) {
+    protected long getUserIdFromEvent(AchievementEvent event) {
         return event.getUserId();
     }
 
     @Override
-    protected Class<AlbumCreatedEvent> getEventClass() {
-        return AlbumCreatedEvent.class;
+    protected Class<AchievementEvent> getEventClass() {
+        return AchievementEvent.class;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.Event;
+import faang.school.achievement.handler.AchievementEventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.achievement.AchievementService;
@@ -35,7 +36,7 @@ class AchievementEventHandlerTest {
 
     private Long userId;
     private Event testEvent;
-    private int achievementId;
+    private long achievementId;
     private AchievementProgress achievementProgress;
     private Achievement achievement;
 
@@ -55,7 +56,7 @@ class AchievementEventHandlerTest {
 
     @Test
     void handleEvent_userDoesNotHaveAchievement_createsProgressAndGivesAchievement() {
-        achievement.setPoints(5);
+        achievement.setPoints(5L);
         achievementProgress.setCurrentPoints(10);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);
@@ -78,7 +79,7 @@ class AchievementEventHandlerTest {
 
     @Test
     void handleEvent_userHasNotReachedPoints_doesNotGiveAchievement() {
-        achievement.setPoints(10);
+        achievement.setPoints(10L);
         achievementProgress.setCurrentPoints(5);
         when(achievementService.hasAchievement(userId, achievementId)).thenReturn(false);
         when(achievementService.getProgress(userId, achievementId)).thenReturn(achievementProgress);

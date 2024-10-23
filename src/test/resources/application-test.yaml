@@ -1,0 +1,36 @@
+spring:
+  liquibase:
+    enabled: false
+
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      life-time-minutes: 120
+      retry:
+        max-attempts: 5
+        backoff: 1000
+      channels:
+        achievement: achievement_channel
+        follower: follower_channel
+
+  kafka:
+    pool-size: 3
+    consumer:
+      group-id: "group"
+      auto-offset-reset: earliest
+    topics:
+      follower:
+        name: follower_topic
+        num-partitions: 3
+        replication-factor: 1
+      album-created:
+        name: album-created_topic
+        num-partitions: 3
+        replication-factor: 1
+      achievement:
+        name: achievement_topic
+        num-partitions: 3
+        replication-factor: 1
+server:
+  name: Achievement Service
