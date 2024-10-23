@@ -4,7 +4,6 @@ import faang.school.achievement.dto.ProjectEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
-import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.cache.AchievementCacheService;
@@ -31,11 +30,13 @@ public class BusinessmanAchievementHandler implements AchievementHandler<Project
         if (!hasAchievement(event, businessman)) {
             achievementProgressRepository.createProgressIfNecessary(event.getAuthorId(), businessman.getId());
         }
-        AchievementProgress achievementProgress = achievementService.getProgress(event.getAuthorId(), businessman.getId());
-        achievementProgress.increment();
-        achievementProgressRepository.save(achievementProgress);
-        if (achievementProgress.getCurrentPoints() >= businessman.getPoints()) {
-            achievementService.giveAchievement(event.getAuthorId(), businessman);
+        if (!hasAchievement(event, businessman)) {
+            AchievementProgress achievementProgress = achievementService.getProgress(event.getAuthorId(), businessman.getId());
+            achievementProgress.increment();
+            achievementProgressRepository.save(achievementProgress);
+            if (achievementProgress.getCurrentPoints() >= businessman.getPoints()) {
+                achievementService.giveAchievement(event.getAuthorId(), businessman);
+            }
         }
     }
 

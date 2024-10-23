@@ -23,15 +23,14 @@ public class ProjectEventListener implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         log.info("Received message from channel: {}", message.toString());
         try {
-            String body = new String(message.getBody());
-            log.info("reading message {}", body);
             ProjectEvent event = objectMapper.readValue(message.getBody(), ProjectEvent.class);
             eventDispatcher.dispatchEvent(event);
-        } catch (JsonProcessingException exception) {
-            log.error("message was not downloaded {}", exception.getMessage());
-            throw new RuntimeException(exception);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (JsonProcessingException jsonProcessingException) {
+            log.error("Failed to map message to ProjectEvent: {}", jsonProcessingException.getMessage());
+            throw new RuntimeException("Mapping error: " + jsonProcessingException.getMessage());
+        } catch (IOException ioException) {
+            log.error("I/O error occurred while processing message: {}", ioException.getMessage());
+            throw new RuntimeException("I/O error while processing message: " + ioException.getMessage());
         }
     }
 }
