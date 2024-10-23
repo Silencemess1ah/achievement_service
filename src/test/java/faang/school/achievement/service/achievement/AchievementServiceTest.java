@@ -1,12 +1,10 @@
 package faang.school.achievement.service.achievement;
 
 import faang.school.achievement.dto.achievement.AchievementProgressDto;
-import faang.school.achievement.dto.achievement.UserAchievementDto;
 import faang.school.achievement.mapper.achievement.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.achievement.UserAchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,13 +38,10 @@ public class AchievementServiceTest {
     private UserAchievementRepository userAchievementRepository;
     @Mock
     private AchievementMapper achievementMapper;
-    @Mock
-    private UserAchievementPublisher userAchievementPublisher;
     private Achievement achievement;
     private AchievementProgressDto achievementProgressDto;
     private AchievementProgress achievementProgress;
     private UserAchievement userAchievement;
-    private UserAchievementDto userAchievementDto;
 
 
     @BeforeEach
@@ -65,11 +60,6 @@ public class AchievementServiceTest {
                 .build();
         userAchievement = UserAchievement.builder()
                 .achievement(achievement)
-                .userId(USER_ID_ONE)
-                .build();
-        userAchievementDto = UserAchievementDto.builder()
-                .achievementTitle(TITLE)
-                .achievementId(ACHIEVEMENT_ID_ONE)
                 .userId(USER_ID_ONE)
                 .build();
     }
@@ -109,10 +99,8 @@ public class AchievementServiceTest {
     @Test
     @DisplayName("Saves given achievement to DB and publish it to achievement_channel")
     public void whenAchievementPassedThenSaveItToDbAndPublish() {
-        when(achievementMapper.toUserAchievementDto(userAchievement)).thenReturn(userAchievementDto);
         achievementService.giveAchievement(userAchievement);
         verify(userAchievementRepository).save(userAchievement);
-        verify(userAchievementPublisher).publish(userAchievementDto);
     }
 
     @Test
@@ -125,14 +113,14 @@ public class AchievementServiceTest {
 
     @Test
     @DisplayName("When ids passed, createProgress if needed give it plus one point, save and return it")
-    public void whenIdsPassedCreateProgressIfNeededGetItFromDbThenGiveItPlusOnePointAndSaveIt(){
+    public void whenIdsPassedCreateProgressIfNeededGetItFromDbThenGiveItPlusOnePointAndSaveIt() {
         when(achievementProgressRepository
                 .findByUserIdAndAchievementId(USER_ID_ONE, ACHIEVEMENT_ID_ONE))
                 .thenReturn(Optional.of(achievementProgress));
         when(achievementService.saveAchievementProgress(achievementProgress)).thenReturn(achievementProgress);
-        AchievementProgress result = achievementService.proceedAchievementProgress(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+        AchievementProgress result = achievementService.proceedAchievementProgress(USER_ID_ONE, ACHIEVEMENT_ID_ONE);
 
-        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID_ONE,ACHIEVEMENT_ID_ONE);
+        verify(achievementProgressRepository).createProgressIfNecessary(USER_ID_ONE, ACHIEVEMENT_ID_ONE);
         assertEquals(100, result.getCurrentPoints());
     }
 }

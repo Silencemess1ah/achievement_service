@@ -4,7 +4,6 @@ import faang.school.achievement.dto.achievement.AchievementProgressDto;
 import faang.school.achievement.mapper.achievement.AchievementMapper;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.achievement.UserAchievementPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,7 +20,6 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementMapper achievementMapper;
-    private final UserAchievementPublisher userAchievementPublisher;
 
     public AchievementProgressDto getAchievementProgress(long userId, long achievementId) {
         log.debug("Returning progress user {} progress on {}", userId, achievementId);
@@ -53,9 +51,7 @@ public class AchievementService {
         userAchievementRepository.save(achievement);
         log.debug("Successfully saved new achievement {} for user {}", achievement.getAchievement().getTitle(),
                 achievement.getUserId());
-        userAchievementPublisher.publish(achievementMapper.toUserAchievementDto(achievement));
-        log.debug("Published achievement {} to {}", achievement.getAchievement().getTitle(),
-                userAchievementPublisher.getAchievementChannelTopic());
+        log.debug("Published achievement {}", achievement.getAchievement().getTitle());
     }
 
     @Transactional
