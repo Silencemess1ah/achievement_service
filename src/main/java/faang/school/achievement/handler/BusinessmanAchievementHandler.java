@@ -5,7 +5,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.cache.AchievementCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

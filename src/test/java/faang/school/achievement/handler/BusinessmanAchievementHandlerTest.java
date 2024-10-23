@@ -6,7 +6,7 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.cache.AchievementCacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -2,7 +2,7 @@ package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.FollowerEvent;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.CacheService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -2,7 +2,7 @@ package faang.school.achievement.dto.handler;
 
 import faang.school.achievement.dto.AlbumCreatedEvent;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.service.achievement.AchievementService;
 import faang.school.achievement.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
