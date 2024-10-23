@@ -35,8 +35,8 @@ public class EvilCommenterAchievementHandler extends NewCommentEventHandler {
         long achievementId = evilCommenter.getId();
 
         if (!achievementService.hasAchievement(userId, achievementId)) {
-            AchievementProgress progress = achievementService
-                    .proceedAchievementProgress(userId,achievementId);
+            AchievementProgress progress = achievementService.
+                    proceedAchievementProgress(userId, achievementId);
             if (progress.getCurrentPoints() == pointsToAchieve) {
                 UserAchievement userAchievement = UserAchievement.builder()
                         .achievement(evilCommenter)

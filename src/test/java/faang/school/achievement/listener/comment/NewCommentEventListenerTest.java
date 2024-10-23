@@ -23,10 +23,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CommentEventListenerTest {
+public class NewCommentEventListenerTest {
 
     @InjectMocks
-    private CommentEventListener commentEventListener;
+    private NewCommentEventListener newCommentEventListener;
     @Mock
     private ObjectMapper objectMapper;
     @Mock
@@ -45,7 +45,7 @@ public class CommentEventListenerTest {
     public void whenJsonPassedThenPassItToAllHandlers() throws IOException {
         when(message.getBody()).thenReturn(new byte[0]);
         when(objectMapper.readValue(any(byte[].class), eq(NewCommentEventDto.class))).thenReturn(newCommentEventDto);
-        commentEventListener.onMessage(message, null);
+        newCommentEventListener.onMessage(message, null);
         verify(objectMapper).readValue(any(byte[].class), eq(NewCommentEventDto.class));
         verify(handlers).forEach(any());
     }
@@ -55,6 +55,6 @@ public class CommentEventListenerTest {
     void whenIOExceptionOccursThenThrowsException() throws Exception {
         when(message.getBody()).thenReturn(new byte[0]);
         when(objectMapper.readValue(any(byte[].class), eq(NewCommentEventDto.class))).thenThrow(new IOException());
-        assertThrows(RuntimeException.class, () -> commentEventListener.onMessage(message, null));
+        assertThrows(RuntimeException.class, () -> newCommentEventListener.onMessage(message, null));
     }
 }
