@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.NiceGuyEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import lombok.RequiredArgsConstructor;
@@ -41,10 +42,12 @@ public class RedisConfig {
 
     @Bean
     public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                                   MessageListenerAdapter postListener) {
+                                                   MessageListenerAdapter postListener,
+                                                   MessageListenerAdapter niceGuyAchievementListener) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         container.addMessageListener(postListener, postListenerTopic());
+        container.addMessageListener(niceGuyAchievementListener, niceGuyAchievementListenerTopic());
 
         return container;
     }
@@ -53,7 +56,12 @@ public class RedisConfig {
     public MessageListenerAdapter postListener(PostEventListener postEventListener){
         return new MessageListenerAdapter(postEventListener);
     }
-
+    @Bean
+    public MessageListenerAdapter niceGuyAchievementListener(NiceGuyEventListener niceGuyEventListener){
+        return new MessageListenerAdapter(niceGuyEventListener);
+    }
+    @Bean
+    public ChannelTopic niceGuyAchievementListenerTopic() { return new ChannelTopic( redisProperties.channels().get("recommendation")); }
     @Bean
     public ChannelTopic postListenerTopic(){
         return new ChannelTopic(redisProperties.channels().get("post"));
