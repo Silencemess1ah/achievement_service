@@ -26,7 +26,7 @@ public class AchievementEventPublisher {
         publish(achievementEventDto, achievementEventChannelName);
     }
 
-    private void publish(Object message, String likeEventChannel) {
+    private void publish(Object message, String achievementEventChannelName) {
         String valueAsString;
         try {
             valueAsString = objectMapper.writeValueAsString(message);
@@ -34,7 +34,7 @@ public class AchievementEventPublisher {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        redisTemplate.convertAndSend(likeEventChannel, valueAsString);
-        log.info("Send LikeEvent to Brokers channel: {} , message: {}", message, likeEventChannel);
+        redisTemplate.convertAndSend(achievementEventChannelName, valueAsString);
+        log.info("Send achievementEvent to Brokers channel: {} , message: {}", message, achievementEventChannelName);
     }
 }
