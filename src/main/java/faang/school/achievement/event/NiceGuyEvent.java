@@ -7,7 +7,7 @@ import lombok.Builder;
 public record NiceGuyEvent(
         Long authorId,
         Long receiverId,
-        String text
+        Long recommendationId
 ) implements AuthorSearcher {
     @Override
     public long getAuthorForAchievements() {

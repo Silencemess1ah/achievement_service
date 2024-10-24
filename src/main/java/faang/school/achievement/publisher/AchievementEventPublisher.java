@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 public class AchievementEventPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ChannelTopic achievementTopic;
+    private final ChannelTopic niceGuyAchievementListenerTopic;
 
     public void publish(AchievementEvent event) {
-        redisTemplate.convertAndSend(achievementTopic.getTopic(), event);
+        redisTemplate.convertAndSend(niceGuyAchievementListenerTopic.getTopic(), event);
     }
 }
