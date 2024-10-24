@@ -10,6 +10,5 @@ import org.springframework.stereotype.Component;
 public class NiceGuyAchievementHandler extends AbstractEventHandler<NiceGuyEvent>{
     public NiceGuyAchievementHandler(AchievementCache achievementCache, AchievementService achievementService,@Value("${achievement-titles.nice-guy}") String achievementTitle) {
         super(achievementCache, achievementService, achievementTitle);
-        System.out.println("NiceGuyAchievementHandler");
     }
 }
