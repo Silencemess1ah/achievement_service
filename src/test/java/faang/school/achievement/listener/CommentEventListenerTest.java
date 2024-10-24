@@ -65,7 +65,7 @@ class CommentEventListenerTest {
     @Test
     @DisplayName("Handle event with exception")
     void commentEventListenerTest_handleEventWithException() throws IOException {
-        doThrow(new IOException()).when(objectMapper).readValue(message.getBody(), CommentEventDto.class);
+        doThrow(new IOException("error")).when(objectMapper).readValue(message.getBody(), CommentEventDto.class);
 
         assertThrows(RuntimeException.class, () -> listener.onMessage(message, null));
     }

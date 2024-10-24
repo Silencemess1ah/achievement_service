@@ -38,27 +38,24 @@ public class RedisConfig {
     }
 
     @Bean
-    MessageListenerAdapter commentEventAdapter(CommentEventListener commentEventListener) {
-        return new MessageListenerAdapter(commentEventListener);
-    }
-
-    @Bean
     ChannelListenerAdapter likeChannelListenerAdapter(LikeEventListener likeEventListener,
-                                                      @Value("${spring.data.redis.channels.like-channel.name}") String likeChannelName) {
+                                                      @Value("${spring.data.redis.channels.like-channel.name}")
+                                                      String likeChannelName) {
         return new ChannelListenerAdapter(likeEventListener, likeChannelName);
     }
 
-    @Bean(value = "commentChannelTopic")
-    ChannelTopic commentChannelTopic(
-            @Value("${spring.data.redis.channels.comment-channel.name}") String commentChannelName) {
-        return new ChannelTopic(commentChannelName);
+    @Bean
+    ChannelListenerAdapter achievementChannelListenerAdapter(AchievementEventListener achievementEventListener,
+                                                      @Value("${spring.data.redis.channels.achievement-channel.name}")
+                                                      String achievementChannelName) {
+        return new ChannelListenerAdapter(achievementEventListener, achievementChannelName);
     }
 
     @Bean
-    ChannelListenerAdapter achievementChannelListener(AchievementEventListener achievementEventListener,
-                                                      @Value("${spring.data.redis.channel.achievement-channel.name}")
-                                                      String achievementChannelName) {
-        return new ChannelListenerAdapter(achievementEventListener, achievementChannelName);
+    ChannelListenerAdapter commentChannelListenerAdapter(CommentEventListener commentEventListener,
+                                                         @Value("${spring.data.redis.channels.comment-channel.name}")
+                                                         String commentChannelName) {
+        return new ChannelListenerAdapter(commentEventListener, commentChannelName);
     }
 
     @Bean

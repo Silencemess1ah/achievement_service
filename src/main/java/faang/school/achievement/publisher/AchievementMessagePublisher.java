@@ -16,7 +16,7 @@ public class AchievementMessagePublisher implements MessagePublisher<Achievement
 
     private final RedisTemplate<String, AchievementEvent> redisTemplate;
 
-    @Value("${spring.data.redis.channel.achievement-channel.name}")
+    @Value("${spring.data.redis.channels.achievement-channel.name}")
     private String achievementChannelName;
 
     @Retryable(retryFor = {RuntimeException.class},
