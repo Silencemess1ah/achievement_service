@@ -2,6 +2,7 @@ package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.CommentEventDto;
+import faang.school.achievement.handler.AbstractEventHandler;
 import faang.school.achievement.handler.comment.CommentEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,7 @@ class CommentEventListenerTest {
     @Spy
     private ObjectMapper objectMapper;
 
-    private List<CommentEventHandler> handlers;
+    private List<AbstractEventHandler<CommentEventDto>> handlers;
 
     private CommentEventListener listener;
 
