@@ -1,9 +1,9 @@
 package faang.school.achievement.config.redis;
 
-import faang.school.achievement.listener.CommentEventListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.listener.AchievementEventListener;
+import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.LikeEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,23 +38,23 @@ public class RedisConfig {
     }
 
     @Bean
-    ChannelListenerAdapter likeChannelListenerAdapter(LikeEventListener likeEventListener,
-                                                      @Value("${spring.data.redis.channels.like-channel.name}")
-                                                      String likeChannelName) {
+    ChannelListenerAdapter likeChannelListenerAdapter(
+            LikeEventListener likeEventListener,
+            @Value("${spring.data.redis.channels.like-channel.name}") String likeChannelName) {
         return new ChannelListenerAdapter(likeEventListener, likeChannelName);
     }
 
     @Bean
-    ChannelListenerAdapter achievementChannelListenerAdapter(AchievementEventListener achievementEventListener,
-                                                      @Value("${spring.data.redis.channels.achievement-channel.name}")
-                                                      String achievementChannelName) {
+    ChannelListenerAdapter achievementChannelListenerAdapter(
+            AchievementEventListener achievementEventListener,
+            @Value("${spring.data.redis.channels.achievement-channel.name}") String achievementChannelName) {
         return new ChannelListenerAdapter(achievementEventListener, achievementChannelName);
     }
 
     @Bean
-    ChannelListenerAdapter commentChannelListenerAdapter(CommentEventListener commentEventListener,
-                                                         @Value("${spring.data.redis.channels.comment-channel.name}")
-                                                         String commentChannelName) {
+    ChannelListenerAdapter commentChannelListenerAdapter(
+            CommentEventListener commentEventListener,
+            @Value("${spring.data.redis.channels.comment-channel.name}") String commentChannelName) {
         return new ChannelListenerAdapter(commentEventListener, commentChannelName);
     }
 
