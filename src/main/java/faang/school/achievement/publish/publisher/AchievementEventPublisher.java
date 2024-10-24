@@ -27,14 +27,13 @@ public class AchievementEventPublisher {
     }
 
     private void publish(Object message, String achievementEventChannelName) {
-        String valueAsString;
         try {
-            valueAsString = objectMapper.writeValueAsString(message);
+            String valueAsString = objectMapper.writeValueAsString(message);
+            redisTemplate.convertAndSend(achievementEventChannelName, valueAsString);
+            log.info("Send achievementEvent to Brokers channel: {} , message: {}", message, achievementEventChannelName);
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        redisTemplate.convertAndSend(achievementEventChannelName, valueAsString);
-        log.info("Send achievementEvent to Brokers channel: {} , message: {}", message, achievementEventChannelName);
     }
 }
