@@ -22,6 +22,8 @@ spring:
       port: 6379
       host: localhost
       channel:
+        mentorship-channel:
+          name: mentorship_channel
         achievement-channel:
           name: achievement_channel
         follower-channel:
@@ -30,6 +32,9 @@ spring:
           name: like_channel
 
 achievements:
+  mentorship-achievement:
+    SENSEI:
+      name: SENSEI
   like-achievements:
     ALL_LOVE:
       name: ALL LOVE
