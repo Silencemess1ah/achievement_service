@@ -7,6 +7,8 @@ import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.MentorshipEventListener;
 import lombok.RequiredArgsConstructor;
+import faang.school.achievement.listener.ProfileEventListener;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +38,23 @@ public class RedisConfig {
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapper, AchievementEvent.class));
         return template;
+    MessageListenerAdapter likeEventAdapter(LikeEventListener likeEventListener) {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
+    MessageListenerAdapter profileEventAdapter(ProfileEventListener profileEventListener) {
+        return new MessageListenerAdapter(profileEventListener);
+    }
+
+    @Bean(value = "likeChannelTopic")
+    ChannelTopic likeChannelTopic(@Value("${spring.data.redis.channel.like-channel.name}") String likeChannelName) {
+        return new ChannelTopic(likeChannelName);
+    }
+
+    @Bean(value = "profileChannelTopic")
+    ChannelTopic profileChannelTopic(@Value("${spring.data.redis.channel.profile-channel.name}") String profilePicChannelName) {
+        return new ChannelTopic(profilePicChannelName);
     }
 
     @Bean
@@ -68,10 +87,15 @@ public class RedisConfig {
 
     @Bean
     public RedisMessageListenerContainer container(List<ChannelListenerAdapter> channelListenerAdapters) {
+            ProfileEventListener profileEventListener,
+            @Qualifier("likeChannelTopic") ChannelTopic likeChannelTopic,
+            @Qualifier("profileChannelTopic") ChannelTopic profileChannelTopic) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
         channelListenerAdapters.forEach(
                 listener -> container.addMessageListener(listener.getListenerAdapter(), listener.getTopic()));
+        container.addMessageListener(likeEventListener, likeChannelTopic);
+        container.addMessageListener(profileEventListener, profileChannelTopic);
         return container;
     }
 }
