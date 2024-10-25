@@ -1,9 +1,8 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.listener.MentorshipStartEventListener;
+import faang.school.achievement.listener.mentorship.MentorshipStartEventListener;
 import faang.school.achievement.listener.comment.NewCommentEventListener;
-import faang.school.achievement.listener.MentorshipStartEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,10 +21,6 @@ public class RedisConfiguration {
     private final RedisProperties redisProperties;
     private final ObjectMapper objectMapper;
 
-    @Bean
-    ChannelTopic achievementEventTopic() {
-        return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
-    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
@@ -52,7 +47,7 @@ public class RedisConfiguration {
     }
 
     @Bean
-    ChannelTopic commentChannelTopic() {
+    public ChannelTopic commentChannelTopic() {
         return new ChannelTopic(redisProperties.getChannels().getComment().getName());
     }
 
@@ -63,11 +58,16 @@ public class RedisConfiguration {
 
     @Bean
     public ChannelTopic mentorshipStartEventTopic() {
-        return new ChannelTopic(redisProperties.getChannels().getMentorshipStartEvent());
+        return new ChannelTopic(redisProperties.getChannels().getMentorshipStartEvent().getName());
     }
 
     @Bean
     MessageListenerAdapter mentorshipStartEvent(MentorshipStartEventListener mentorshipStartEventListener) {
         return new MessageListenerAdapter(mentorshipStartEventListener);
+    }
+
+    @Bean
+    public ChannelTopic achievementEventTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
     }
 }

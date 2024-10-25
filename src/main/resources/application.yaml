@@ -49,3 +49,7 @@ achievements:
   achievement-points-needed:
     evil-commenter: 100
     sensei: 30
+
+executor:
+  threads:
+    count: 5

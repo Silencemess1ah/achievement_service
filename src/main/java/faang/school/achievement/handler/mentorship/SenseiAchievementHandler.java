@@ -1,10 +1,12 @@
-package faang.school.achievement.handler;
+package faang.school.achievement.handler.mentorship;
 
 import faang.school.achievement.config.cache.AchievementCache;
 import faang.school.achievement.dto.event.MentorshipStartEvent;
+import faang.school.achievement.handler.EventHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
-import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.service.achievement.AchievementService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +19,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
 
-    @Value("${achievement.name.sensei}")
+    @Value("${achievements.achievements-title.sensei}")
     private String achievementName;
 
-    @Value("${achievement.points.sensei}")
+    @Value("${achievements.achievement-points-needed.sensei}")
     private int achievementPoints;
 
     private final AchievementCache achievementCache;
@@ -42,7 +44,12 @@ public class SenseiAchievementHandler implements EventHandler<MentorshipStartEve
             progress.increment();
 
             if (progress.getCurrentPoints() == achievementPoints) {
-                achievementService.giveAchievement(event.getMentorId(), achievement);
+                UserAchievement userAchievement = UserAchievement.builder()
+                        .achievement(achievement)
+                        .userId(event.getMentorId())
+                        .build();
+
+                achievementService.giveAchievement(userAchievement);
                 log.info("User with id - {} has achieved - {}", event.getMentorId(), achievement.getTitle());
             }
         }

@@ -1,8 +1,9 @@
-package faang.school.achievement.listener;
+package faang.school.achievement.listener.mentorship;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.dto.event.MentorshipStartEvent;
 import faang.school.achievement.handler.EventHandler;
+import faang.school.achievement.listener.AbstractEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.stereotype.Component;

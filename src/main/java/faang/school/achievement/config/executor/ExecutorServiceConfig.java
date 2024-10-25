@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 @Configuration
 public class ExecutorServiceConfig {
 
-    @Value("${achievement.executor.threads.count}")
+    @Value("${executor.threads.count}")
     private int threadCount;
 
     @Bean
