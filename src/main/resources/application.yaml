@@ -30,6 +30,10 @@ achievement:
   executor:
     threads:
       count: 5
+  name:
+    sensei: SENSEI
+  points:
+    sensei: 30
 
 server:
   port: 8085

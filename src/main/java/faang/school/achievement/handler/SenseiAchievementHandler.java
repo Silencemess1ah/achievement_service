@@ -8,16 +8,21 @@ import faang.school.achievement.service.AchievementService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class SenseyAchievementHandler implements EventHandler<MentorshipStartEvent> {
+public class SenseiAchievementHandler implements EventHandler<MentorshipStartEvent> {
 
-    private static final String ACHIEVEMENT_NAME = "SENSEI";
+    @Value("${achievement.name.sensei}")
+    private String achievementName;
+
+    @Value("${achievement.points.sensei}")
+    private int achievementPoints;
+
     private final AchievementCache achievementCache;
     private final AchievementService achievementService;
 
@@ -25,8 +30,8 @@ public class SenseyAchievementHandler implements EventHandler<MentorshipStartEve
     @Transactional
     @Override
     public void handleEvent(MentorshipStartEvent event) {
-        log.info("Thread name - {}", Thread.currentThread().getName());
-        Achievement achievement = achievementCache.getAchievement(ACHIEVEMENT_NAME);
+        log.info("handleEvent in SenseiAchievementHandler - start");
+        Achievement achievement = achievementCache.getAchievement(achievementName);
         boolean hasAchievement = achievementService
                 .hasAchievement(event.getMentorId(), achievement.getId());
 
@@ -36,9 +41,12 @@ public class SenseyAchievementHandler implements EventHandler<MentorshipStartEve
             AchievementProgress progress = achievementService.getProgress(event.getMentorId(), achievement.getId());
             progress.increment();
 
-            if (progress.getCurrentPoints() >= achievement.getPoints()) {
+            if (progress.getCurrentPoints() == achievementPoints) {
                 achievementService.giveAchievement(event.getMentorId(), achievement);
+                log.info("User with id - {} has achieved - {}", event.getMentorId(), achievement.getTitle());
             }
         }
+
+        log.info("handleEvent in SenseiAchievementHandler - finish");
     }
 }

@@ -35,7 +35,6 @@ public class AchievementService {
         UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(achievement)
                 .userId(userId)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         userAchievementRepository.save(userAchievement);
