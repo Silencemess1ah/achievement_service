@@ -22,18 +22,14 @@ spring:
       port: 6379
       host: localhost
       channels:
-        achievement: achievement_channel
-        follower: follower_channel
-        mentorshipStartEvent: mentorship_start_event_channel
-
-achievement:
-  executor:
-    threads:
-      count: 5
-  name:
-    sensei: SENSEI
-  points:
-    sensei: 30
+        followerEventChannel:
+          name: follower_channel
+        achievementEventChannel:
+          name: achievement_channel
+        comment:
+          name: comment_channel
+        mentorshipStartEvent:
+          name: mentorship_start_event_channel
 
 server:
   port: 8085
@@ -45,3 +41,11 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  achievements-title:
+    evil-commenter: "EVIL COMMENTER"
+    sensei: "SENSEI"
+  achievement-points-needed:
+    evil-commenter: 100
+    sensei: 30
