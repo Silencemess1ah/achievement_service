@@ -41,6 +41,8 @@ project-service:
 achievement:
   writer:
     points: 100
+  evil_commenter:
+    points: 10
 
 thread-pool:
   size: 10
