@@ -5,6 +5,7 @@ import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -13,7 +14,7 @@ public class LibrarianAchievementHandler extends AchievementEventHandler<AlbumCr
 
     public LibrarianAchievementHandler(CacheService<String> cacheService,
                                        CacheService<Achievement> achievementCacheService,
-                                       AchievementService achievementService) {
+                                       @Qualifier("AchievementServiceImpl") AchievementService achievementService) {
         super(cacheService, achievementCacheService, achievementService);
     }
 

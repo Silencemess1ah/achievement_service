@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service("AchievementServiceImpl")
 @RequiredArgsConstructor
 public class AchievementServiceImpl implements AchievementService {
 

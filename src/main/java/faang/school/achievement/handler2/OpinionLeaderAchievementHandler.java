@@ -6,18 +6,25 @@ import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.service.CacheService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@RequiredArgsConstructor
 public class OpinionLeaderAchievementHandler extends EventHandler<PostEvent> {
     private static final String ACHIEVEMENT_NAME = "OPINION_LEADER";
 
     private final AchievementService achievementService;
 
     private final CacheService<Achievement> cacheService;
+
+    public OpinionLeaderAchievementHandler(@Qualifier("AchievementServiceImpl2") AchievementService achievementService,
+                                           CacheService<Achievement> cacheService) {
+        this.achievementService = achievementService;
+        this.cacheService = cacheService;
+    }
 
     @Transactional
     @Override
