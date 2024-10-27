@@ -44,7 +44,7 @@ spring:
 
 achievements:
   mentorship-achievement:
-    SENSEI:
+    sensei:
       name: SENSEI
   like-achievements:
     ALL_LOVE:

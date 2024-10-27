@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class SenseiAchievementHandler extends MentorshipEventHandler {
 
-    @Value("achievements.mentorship-achievement.SENSEI.name")
+    @Value("achievements.mentorship-achievement.sensei.name")
     private String achievement;
 
     public SenseiAchievementHandler(AchievementService achievementService, AchievementCache achievementCache, AchievementProgressHandler achievementProgressHandler) {
