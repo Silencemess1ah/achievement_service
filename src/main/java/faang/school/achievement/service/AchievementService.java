@@ -46,11 +46,11 @@ public class AchievementService {
     }
 
     @Transactional(readOnly = true)
-    public List<Achievement> getAchievementByFilters(AchievementFilterDto filter) {
-        log.info("Get achievements by filters: " + filter);
+    public List<Achievement> getAchievementByFilters(AchievementFilterDto filterDto) {
+        log.info("Get achievements by filters: " + filterDto);
         return achievementRepository.findAll()
                 .stream()
-                .filter(events -> isAllMatch(filter, events))
+                .filter(achievement -> isAllMatch(filterDto, achievement))
                 .toList();
     }
 
