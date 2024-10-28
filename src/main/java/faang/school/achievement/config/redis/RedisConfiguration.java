@@ -3,6 +3,7 @@ package faang.school.achievement.config.redis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.mentorship.MentorshipStartEventListener;
 import faang.school.achievement.listener.comment.NewCommentEventListener;
+import faang.school.achievement.listener.profile.ProfilePicEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,6 @@ public class RedisConfiguration {
     private final RedisProperties redisProperties;
     private final ObjectMapper objectMapper;
 
-
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
@@ -38,10 +38,12 @@ public class RedisConfiguration {
 
     @Bean
     RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent,
+                                                 MessageListenerAdapter profilePicEvent,
                                                  MessageListenerAdapter mentorshipStartEvent) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(commentEvent, commentChannelTopic());
+        container.addMessageListener(profilePicEvent, profilePicEventTopic());
         container.addMessageListener(mentorshipStartEvent, mentorshipStartEventTopic());
         return container;
     }
@@ -54,6 +56,16 @@ public class RedisConfiguration {
     @Bean
     MessageListenerAdapter commentEvent(NewCommentEventListener newCommentEventListener) {
         return new MessageListenerAdapter(newCommentEventListener);
+    }
+
+    @Bean
+    public ChannelTopic profilePicEventTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getProfilePicEventChannel().getName());
+    }
+
+    @Bean
+    MessageListenerAdapter profilePicEvent(ProfilePicEventListener profilePicEventListener) {
+        return new MessageListenerAdapter(profilePicEventListener);
     }
 
     @Bean
