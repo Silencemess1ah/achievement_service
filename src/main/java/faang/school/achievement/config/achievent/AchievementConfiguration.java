@@ -13,6 +13,7 @@ public class AchievementConfiguration {
 
     private AchievementProp handsome;
     private AchievementProp evilCommenter;
+    private AchievementProp sensei;
 
     @Getter
     @Setter

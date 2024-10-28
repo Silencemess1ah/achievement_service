@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.mentorship.MentorshipStartEventListener;
 import faang.school.achievement.listener.comment.NewCommentEventListener;
 import faang.school.achievement.listener.profile.ProfilePicEventListener;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,6 @@ public class RedisConfiguration {
     private final ObjectMapper objectMapper;
 
     @Bean
-    public ChannelTopic achievementEventTopic() {
-        return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
-    }
-
-    @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(jedisConnectionFactory());
@@ -42,12 +38,13 @@ public class RedisConfiguration {
 
     @Bean
     RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent,
-                                                 MessageListenerAdapter profilePicEvent) {
-        RedisMessageListenerContainer container
-                = new RedisMessageListenerContainer();
+                                                 MessageListenerAdapter profilePicEvent,
+                                                 MessageListenerAdapter mentorshipStartEvent) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(commentEvent, commentChannelTopic());
         container.addMessageListener(profilePicEvent, profilePicEventTopic());
+        container.addMessageListener(mentorshipStartEvent, mentorshipStartEventTopic());
         return container;
     }
 
@@ -69,5 +66,20 @@ public class RedisConfiguration {
     @Bean
     MessageListenerAdapter profilePicEvent(ProfilePicEventListener profilePicEventListener) {
         return new MessageListenerAdapter(profilePicEventListener);
+    }
+
+    @Bean
+    public ChannelTopic mentorshipStartEventTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getMentorshipStartEvent().getName());
+    }
+
+    @Bean
+    MessageListenerAdapter mentorshipStartEvent(MentorshipStartEventListener mentorshipStartEventListener) {
+        return new MessageListenerAdapter(mentorshipStartEventListener);
+    }
+
+    @Bean
+    public ChannelTopic achievementEventTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
     }
 }

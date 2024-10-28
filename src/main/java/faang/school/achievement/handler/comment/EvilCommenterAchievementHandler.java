@@ -17,7 +17,7 @@ public class EvilCommenterAchievementHandler extends AbstractEventHandler<NewCom
         super(achievementConfiguration, achievementService, achievementCache);
     }
 
-    @Async
+    @Async("executor")
     @Override
     public void handle(NewCommentEventDto newCommentEventDto) {
         handleAchievement(newCommentEventDto, achievementConfiguration.getEvilCommenter());

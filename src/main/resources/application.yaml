@@ -30,6 +30,8 @@ spring:
           name: comment_channel
         profilePicEventChannel:
           name: profile_pic_channel
+        mentorshipStartEvent:
+          name: mentorship_start_event_channel
 
 server:
   port: 8085
@@ -49,3 +51,10 @@ achievements:
   evilCommenter:
     title: "EVIL COMMENTER"
     pointsToAchieve: 100
+  sensei:
+    title: "SENSEI"
+    pointsToAchieve: 30
+
+executor:
+  threads:
+    count: 5

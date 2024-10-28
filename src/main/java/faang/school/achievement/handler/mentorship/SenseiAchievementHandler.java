@@ -1,17 +1,17 @@
-package faang.school.achievement.handler.picture;
+package faang.school.achievement.handler.mentorship;
 
 import faang.school.achievement.config.achievent.AchievementConfiguration;
 import faang.school.achievement.config.cache.AchievementCache;
-import faang.school.achievement.dto.achievement.profile.ProfilePicEvent;
+import faang.school.achievement.dto.achievement.mentorship.MentorshipStartEvent;
 import faang.school.achievement.handler.AbstractEventHandler;
 import faang.school.achievement.service.achievement.AchievementService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HandsomeAchievementHandler extends AbstractEventHandler<ProfilePicEvent> {
+public class SenseiAchievementHandler extends AbstractEventHandler<MentorshipStartEvent> {
 
-    public HandsomeAchievementHandler(AchievementConfiguration achievementConfiguration,
+    public SenseiAchievementHandler(AchievementConfiguration achievementConfiguration,
                                       AchievementService achievementService,
                                       AchievementCache achievementCache) {
         super(achievementConfiguration, achievementService, achievementCache);
@@ -19,12 +19,12 @@ public class HandsomeAchievementHandler extends AbstractEventHandler<ProfilePicE
 
     @Async("executor")
     @Override
-    public void handle(ProfilePicEvent profilePicEvent) {
-        handleAchievement(profilePicEvent, achievementConfiguration.getHandsome());
+    public void handle(MentorshipStartEvent event) {
+        handleAchievement(event, achievementConfiguration.getSensei());
     }
 
     @Override
     public Class<?> getInstance() {
-        return ProfilePicEvent.class;
+        return MentorshipStartEvent.class;
     }
 }
