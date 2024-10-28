@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.annotation.PublishAchievementEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.AchievementTitle;
@@ -25,6 +26,7 @@ public class AchievementService {
         return userAchievementRepository.hasAchievement(userId, title);
     }
 
+
     @Transactional
     public void updateProgress(Long userId, AchievementTitle title, Long requiredPoints) {
         AchievementProgress progress = achievementProgressRepository.getProgress(userId, title)
@@ -34,8 +36,7 @@ public class AchievementService {
             achievementProgressRepository.save(progress);
             log.info("User {} add point to {} achievement", userId, title);
         } else {
-            UserAchievement userAchievement = createUserAchievement(progress);
-            userAchievementRepository.save(userAchievement);
+            UserAchievement userAchievement = createAndSaveNewUserAchievement(progress);
             log.info("User {} get achievement {}", userId, title);
         }
     }
@@ -50,10 +51,13 @@ public class AchievementService {
                 .build();
     }
 
-    private UserAchievement createUserAchievement(AchievementProgress progress) {
-        return UserAchievement.builder()
+    @PublishAchievementEvent
+    private UserAchievement createAndSaveNewUserAchievement(AchievementProgress progress) {
+        UserAchievement userAchievement = UserAchievement.builder()
                 .achievement(progress.getAchievement())
                 .userId(progress.getUserId())
                 .build();
+        userAchievementRepository.save(userAchievement);
+        return userAchievement;
     }
 }

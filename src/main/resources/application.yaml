@@ -25,6 +25,9 @@ spring:
         achievement-service:
           achievement-event:
             name: achievement_event_channel
+        post-service:
+          post-event:
+            name: post_event_channel
 
 
 server:
