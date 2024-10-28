@@ -17,7 +17,7 @@ public class HandsomeAchievementHandler extends AbstractEventHandler<ProfilePicE
         super(achievementConfiguration, achievementService, achievementCache);
     }
 
-    @Async
+    @Async("executor")
     @Override
     public void handle(ProfilePicEvent profilePicEvent) {
         handleAchievement(profilePicEvent, achievementConfiguration.getHandsome());
