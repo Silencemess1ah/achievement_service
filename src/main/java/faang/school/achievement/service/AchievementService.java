@@ -18,14 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AchievementService {
     private final AchievementRepository achievementRepository;
-    private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
-
-    @Transactional(readOnly = true)
-    public boolean hasAchievement(Long userId, AchievementTitle title) {
-        return userAchievementRepository.hasAchievement(userId, title);
-    }
-
+    private final UserAchievementService userAchievementService;
 
     @Transactional
     public void updateProgress(Long userId, AchievementTitle title, Long requiredPoints) {
@@ -36,7 +30,7 @@ public class AchievementService {
             achievementProgressRepository.save(progress);
             log.info("User {} add point to {} achievement", userId, title);
         } else {
-            UserAchievement userAchievement = createAndSaveNewUserAchievement(progress);
+            UserAchievement userAchievement = userAchievementService.createAndSaveNewUserAchievement(progress);
             log.info("User {} get achievement {}", userId, title);
         }
     }
@@ -51,13 +45,5 @@ public class AchievementService {
                 .build();
     }
 
-    @PublishAchievementEvent
-    private UserAchievement createAndSaveNewUserAchievement(AchievementProgress progress) {
-        UserAchievement userAchievement = UserAchievement.builder()
-                .achievement(progress.getAchievement())
-                .userId(progress.getUserId())
-                .build();
-        userAchievementRepository.save(userAchievement);
-        return userAchievement;
-    }
+
 }
