@@ -23,12 +23,8 @@ public class AchievementService {
     private final AchievementRepository achievementRepository;
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final UserAchievementService userAchievementService;
     private final List<AchievementFilter> achievementFilters;
-
-    @Transactional(readOnly = true)
-    public boolean hasAchievement(Long userId, AchievementTitle title) {
-        return userAchievementRepository.hasAchievement(userId, title);
-    }
 
     @Transactional
     public void updateProgress(Long userId, AchievementTitle title, Long requiredPoints) {
@@ -39,8 +35,7 @@ public class AchievementService {
             achievementProgressRepository.save(progress);
             log.info("User {} add point to {} achievement", userId, title);
         } else {
-            UserAchievement userAchievement = createUserAchievement(progress);
-            userAchievementRepository.save(userAchievement);
+            UserAchievement userAchievement = userAchievementService.createAndSaveNewUserAchievement(progress);
             log.info("User {} get achievement {}", userId, title);
         }
     }

@@ -30,6 +30,5 @@ public class PostEventListener implements MessageListener {
             log.error("Error with mapping to PostEventDto");
             throw new IllegalArgumentException("Error with mapping to PostEventDto");
         }
-
     }
 }

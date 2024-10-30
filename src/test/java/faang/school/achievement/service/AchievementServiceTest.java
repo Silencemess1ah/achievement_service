@@ -1,13 +1,11 @@
 package faang.school.achievement.service;
 
-import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.AchievementTitle;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
-import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.filter.AchievementFilter;
 import faang.school.achievement.test_data.TestDataAchievement;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,13 +35,13 @@ class AchievementServiceTest {
     private AchievementRepository achievementRepository;
 
     @Mock
-    private UserAchievementRepository userAchievementRepository;
-
-    @Mock
     private AchievementProgressRepository achievementProgressRepository;
 
     @Mock
     private List<AchievementFilter> achievementFilters;
+
+    @Mock
+    private UserAchievementService userAchievementService;
 
     @InjectMocks
     private AchievementService achievementService;
@@ -73,19 +71,20 @@ class AchievementServiceTest {
 
     @Test
     void testHasAchievement_True() {
-        when(userAchievementRepository.hasAchievement(userId, title)).thenReturn(true);
 
-        boolean result = achievementService.hasAchievement(userId, title);
+        when(userAchievementService.hasAchievement(userId, title)).thenReturn(true);
+
+        boolean result = userAchievementService.hasAchievement(userId, title);
 
         assertTrue(result);
-        verify(userAchievementRepository, times(1)).hasAchievement(userId, title);
+        verify(userAchievementService, times(1)).hasAchievement(userId, title);
     }
 
     @Test
     void testHasAchievement_False() {
-        achievementService.hasAchievement(userId, title);
+        userAchievementService.hasAchievement(userId, title);
 
-        verify(userAchievementRepository, times(1)).hasAchievement(userId, title);
+        verify(userAchievementService, times(1)).hasAchievement(userId, title);
     }
 
     @Test
@@ -105,7 +104,7 @@ class AchievementServiceTest {
     void testUpdateProgress_Achieved() {
         when(achievementProgressRepository.getProgress(userId, title)).thenReturn(Optional.of(progress));
         when(achievementRepository.findByTitle(title)).thenReturn(Optional.of(achievement));
-
+        when(userAchievementService.createAndSaveNewUserAchievement(progress)).thenReturn(mock(UserAchievement.class));
         achievementService.updateProgress(userId, title, requiredPoints);
 
         assertEquals(10, progress.getCurrentPoints());
