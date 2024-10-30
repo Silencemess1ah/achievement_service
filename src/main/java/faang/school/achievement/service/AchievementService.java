@@ -35,7 +35,7 @@ public class AchievementService {
             achievementProgressRepository.save(progress);
             log.info("User {} add point to {} achievement", userId, title);
         } else {
-            UserAchievement userAchievement = userAchievementService.createAndSaveNewUserAchievement(progress);
+            userAchievementService.createAndSaveNewUserAchievement(progress);
             log.info("User {} get achievement {}", userId, title);
         }
     }

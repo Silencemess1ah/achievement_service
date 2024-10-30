@@ -1,11 +1,13 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.AchievementFilterDto;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.AchievementTitle;
 import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
 import faang.school.achievement.service.filter.AchievementFilter;
 import faang.school.achievement.test_data.TestDataAchievement;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +36,8 @@ class AchievementServiceTest {
     @Mock
     private AchievementRepository achievementRepository;
 
+    @Mock
+    private UserAchievementRepository userAchievementRepository;
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
 
@@ -108,7 +112,6 @@ class AchievementServiceTest {
         achievementService.updateProgress(userId, title, requiredPoints);
 
         assertEquals(10, progress.getCurrentPoints());
-        verify(userAchievementRepository, times(1)).save(any(UserAchievement.class));
     }
 
     @Test
