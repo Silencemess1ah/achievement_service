@@ -23,7 +23,7 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private int port;
 
-    @Value("${spring.data.redis.channel.post}")
+    @Value("${spring.data.redis.channels.post-service.post-event.name}")
     private String postEventChannelName;
 
     @Bean
