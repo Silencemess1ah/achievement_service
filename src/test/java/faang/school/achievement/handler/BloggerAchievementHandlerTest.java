@@ -1,7 +1,6 @@
-package faang.school.achievement.dto.handler;
+package faang.school.achievement.handler;
 
 import faang.school.achievement.dto.FollowerEvent;
-import faang.school.achievement.handler.BloggerAchievementHandler;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

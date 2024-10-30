@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-option java_outer_classname = "faang.school.achievement.protobuf.generate.AchievementEventProto";
+option java_outer_classname = "AchievementEventProto";
 
 message AchievementEvent {
   int64 user_id = 1;
