@@ -31,6 +31,7 @@ public class AchievementServiceImpl implements AchievementService {
 
     private static final String ACHIEVEMENTS_CACHE_NAME_BY_TITLE = "achievements-by-title";
     private static final String ACHIEVEMENTS_CACHE_NAME_BY_ID = "achievements-by-id";
+
     private final AchievementRepository achievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
     private final UserAchievementRepository achievementUserRepository;

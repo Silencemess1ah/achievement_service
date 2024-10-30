@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "spring.data.task.execution.pool")
 public class ExecutorProperties {
-    private int corePoolSize;
-    private int maxPoolSize;
+    private int coreSize;
+    private int maxSize;
     private int queueCapacity;
 }

@@ -19,18 +19,25 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class BusinessmanAchievementHandlerTest {
+
     @Mock
     private AchievementRepository achievementRepository;
+
     @Mock
     private AchievementCacheService achievementCacheService;
+
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
+
     @Mock
     private AchievementService achievementService;
+
     @Mock
     private UserAchievementRepository userAchievementRepository;
+
     @InjectMocks
     private BusinessmanAchievementHandler businessmanAchievementHandler;
+
     private ProjectEvent event;
     private Achievement businessman;
     private AchievementProgress progress;
@@ -41,6 +48,7 @@ public class BusinessmanAchievementHandlerTest {
         event.setAuthorId(1L);
         businessman = new Achievement();
         businessman.setId(2L);
+        businessman.setPoints(1L);
         progress = new AchievementProgress();
         progress.setId(3L);
         progress.setAchievement(businessman);
@@ -56,10 +64,10 @@ public class BusinessmanAchievementHandlerTest {
 
         businessmanAchievementHandler.handleAchievement(event);
 
-        verify(achievementProgressRepository,times(1))
+        verify(achievementProgressRepository, times(1))
                 .createProgressIfNecessary(event.getAuthorId(), businessman.getId());
-        verify(achievementProgressRepository,times(1)).save(progress);
-        verify(achievementService,times(1)).giveAchievement(event.getAuthorId(), businessman);
+        verify(achievementProgressRepository, times(1)).save(progress);
+        verify(achievementService, times(1)).giveAchievement(event.getAuthorId(), businessman);
 
     }
 }
