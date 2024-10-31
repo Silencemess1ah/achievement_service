@@ -3,6 +3,7 @@ package faang.school.achievement.config.redis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.mentorship.MentorshipStartEventListener;
 import faang.school.achievement.listener.comment.NewCommentEventListener;
+import faang.school.achievement.listener.goal.GoalSetEventListener;
 import faang.school.achievement.listener.profile.ProfilePicEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -39,12 +40,14 @@ public class RedisConfiguration {
     @Bean
     RedisMessageListenerContainer redisContainer(MessageListenerAdapter commentEvent,
                                                  MessageListenerAdapter profilePicEvent,
-                                                 MessageListenerAdapter mentorshipStartEvent) {
+                                                 MessageListenerAdapter mentorshipStartEvent,
+                                                 MessageListenerAdapter goalSetListenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(jedisConnectionFactory());
         container.addMessageListener(commentEvent, commentChannelTopic());
         container.addMessageListener(profilePicEvent, profilePicEventTopic());
         container.addMessageListener(mentorshipStartEvent, mentorshipStartEventTopic());
+        container.addMessageListener(goalSetListenerAdapter, goalSetTopic());
         return container;
     }
 
@@ -81,5 +84,15 @@ public class RedisConfiguration {
     @Bean
     public ChannelTopic achievementEventTopic() {
         return new ChannelTopic(redisProperties.getChannels().getAchievementEventChannel().getName());
+    }
+
+    @Bean
+    MessageListenerAdapter goalSetListenerAdapter(GoalSetEventListener goalSetEventListener) {
+        return new MessageListenerAdapter(goalSetEventListener);
+    }
+
+    @Bean
+    public ChannelTopic goalSetTopic() {
+        return new ChannelTopic(redisProperties.getChannels().getGoalSetChannel().getName());
     }
 }
