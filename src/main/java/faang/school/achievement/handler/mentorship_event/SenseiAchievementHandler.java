@@ -11,7 +11,9 @@ public class SenseiAchievementHandler extends MentorshipEventHandler {
     @Value("achievements.mentorship-achievement.sensei.name")
     private String achievement;
 
-    public SenseiAchievementHandler(AchievementService achievementService, AchievementCache achievementCache, AchievementProgressHandler achievementProgressHandler) {
+    public SenseiAchievementHandler(AchievementService achievementService,
+                                    AchievementCache achievementCache,
+                                    AchievementProgressHandler achievementProgressHandler) {
         super(achievementService, achievementCache, achievementProgressHandler);
     }
 

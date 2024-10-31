@@ -8,7 +8,9 @@ import faang.school.achievement.service.AchievementService;
 
 public abstract class MentorshipEventHandler extends AbstractEventHandler<MentorshipStartEventDto> {
 
-    public MentorshipEventHandler(AchievementService achievementService, AchievementCache achievementCache, AchievementProgressHandler achievementProgressHandler) {
+    public MentorshipEventHandler(AchievementService achievementService,
+                                  AchievementCache achievementCache,
+                                  AchievementProgressHandler achievementProgressHandler) {
         super(achievementService, achievementCache, achievementProgressHandler);
     }
 }
