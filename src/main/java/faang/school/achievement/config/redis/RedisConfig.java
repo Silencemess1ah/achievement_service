@@ -5,6 +5,7 @@ import faang.school.achievement.dto.AchievementEvent;
 import faang.school.achievement.listener.AchievementEventListener;
 import faang.school.achievement.listener.CommentEventListener;
 import faang.school.achievement.listener.LikeEventListener;
+import faang.school.achievement.listener.MentorshipEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +57,13 @@ public class RedisConfig {
             CommentEventListener commentEventListener,
             @Value("${spring.data.redis.channels.comment-channel.name}") String commentChannelName) {
         return new ChannelListenerAdapter(commentEventListener, commentChannelName);
+    }
+
+    @Bean
+    ChannelListenerAdapter mentorshipChannelListenerAdapter(
+            MentorshipEventListener mentorshipEventListener,
+            @Value("${spring.data.redis.channels.mentorship-channel.name}") String mentorshipChannelName) {
+        return new ChannelListenerAdapter(mentorshipEventListener, mentorshipChannelName);
     }
 
     @Bean
