@@ -16,7 +16,7 @@ public abstract class AbstractEventListener<T> {
     private final ObjectMapper objectMapper;
     private final List<EventHandler<T>> handlers;
 
-    public void handleEvent(Message message, Class<T> eventType){
+    public void handleEvent(Message message, Class<T> eventType) {
         try {
             T event = objectMapper.readValue(message.getBody(), eventType);
             handlers.forEach(handle -> handle.handle(event));

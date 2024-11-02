@@ -2,6 +2,7 @@ package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.listener.LikeEventListener;
+import faang.school.achievement.listener.MentorshipStartEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.model.dto.AchievementRedisDto;
 import lombok.RequiredArgsConstructor;
@@ -100,5 +101,20 @@ public class RedisConfig {
                         .fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
                         .fromSerializer(serializer));
+    }
+
+    @Bean
+    public MessageListenerAdapter mentorshipStartEventListenerAdapter(MentorshipStartEventListener mentorshipEventListener) {
+        return new MessageListenerAdapter(mentorshipEventListener);
+    }
+
+    @Bean
+    public ChannelTopic mentorshipListenerTopic() {
+        return new ChannelTopic(redisProperties.channels().get("mentorship"));
+    }
+
+    @Bean
+    public ChannelTopic achievementTopic() {
+        return new ChannelTopic(redisProperties.channels().get("achievement"));
     }
 }

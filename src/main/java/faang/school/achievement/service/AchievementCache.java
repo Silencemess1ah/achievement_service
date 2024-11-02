@@ -4,7 +4,7 @@ import faang.school.achievement.model.dto.AchievementRedisDto;
 
 public interface AchievementCache {
 
-    public void addAchievementCache();
+    void addAchievementCache();
 
-    public AchievementRedisDto getAchievementCache(String title);
+    AchievementRedisDto getAchievementCache(String title);
 }
