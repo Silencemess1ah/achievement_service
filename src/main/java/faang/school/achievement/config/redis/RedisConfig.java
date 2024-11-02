@@ -1,6 +1,7 @@
 package faang.school.achievement.config.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import faang.school.achievement.listener.LikeEventListener;
 import faang.school.achievement.listener.MentorshipStartEventListener;
 import faang.school.achievement.listener.PostEventListener;
 import faang.school.achievement.model.dto.AchievementRedisDto;
@@ -41,44 +42,42 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
-                                                   MessageListenerAdapter postListener) {
+    public RedisMessageListenerContainer container(
+            RedisConnectionFactory connectionFactory,
+            MessageListenerAdapter postListener,
+            MessageListenerAdapter likeListener
+    ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(postListener, postListenerTopic());
+        container.addMessageListener(postListener, postTopic());
+        container.addMessageListener(likeListener, likeTopic());
 
         return container;
     }
 
     @Bean
-    public MessageListenerAdapter postListener(PostEventListener postEventListener){
+    public MessageListenerAdapter postListener(PostEventListener postEventListener) {
         return new MessageListenerAdapter(postEventListener);
     }
 
     @Bean
-    public ChannelTopic postListenerTopic(){
+    public MessageListenerAdapter likeListener(LikeEventListener likeEventListener) {
+        return new MessageListenerAdapter(likeEventListener);
+    }
+
+    @Bean
+    public ChannelTopic likeTopic() {
+        return new ChannelTopic(redisProperties.channels().get("like"));
+    }
+
+    @Bean
+    public ChannelTopic postTopic() {
         return new ChannelTopic(redisProperties.channels().get("post"));
     }
 
     @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory,
-                                     RedisCacheConfiguration redisCacheConfiguration) {
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
-                .build();
-    }
-
-    @Bean
-    public RedisCacheConfiguration redisCacheConfiguration(ObjectMapper objectMapper) {
-        Jackson2JsonRedisSerializer<AchievementRedisDto> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, AchievementRedisDto.class);
-        return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(1))
-                .disableCachingNullValues()
-                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(serializer));
+    public ChannelTopic achievementTopic() {
+        return new ChannelTopic(redisProperties.channels().get("achievement"));
     }
 
     @Bean
@@ -92,7 +91,26 @@ public class RedisConfig {
     }
 
     @Bean
-    public ChannelTopic achievementTopic() {
-        return new ChannelTopic(redisProperties.channels().get("achievement"));
+    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory,
+                                     RedisCacheConfiguration redisCacheConfiguration) {
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(redisCacheConfiguration)
+                .build();
     }
+
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration(ObjectMapper objectMapper) {
+
+        Jackson2JsonRedisSerializer<AchievementRedisDto> serializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, AchievementRedisDto.class);
+
+        return RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(1))
+                .disableCachingNullValues()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(serializer));
+    }
+
 }

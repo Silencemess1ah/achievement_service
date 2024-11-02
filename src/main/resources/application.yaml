@@ -25,6 +25,7 @@ spring:
         achievement: achievement_channel
         follower: follower_channel
         post: post_channel
+        like: like-channel
         mentorship: mentorship_channel
     kafka:
       host: localhost
@@ -46,6 +47,7 @@ project-service:
 
 achievement-titles:
   leader: LEADER
+  all-love: ALL LOVE
   sensei: SENSEI
 
 thread-pool:
