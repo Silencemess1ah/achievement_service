@@ -81,6 +81,16 @@ public class RedisConfig {
     }
 
     @Bean
+    public MessageListenerAdapter mentorshipStartEventListenerAdapter(MentorshipStartEventListener mentorshipEventListener) {
+        return new MessageListenerAdapter(mentorshipEventListener);
+    }
+
+    @Bean
+    public ChannelTopic mentorshipListenerTopic() {
+        return new ChannelTopic(redisProperties.channels().get("mentorship"));
+    }
+
+    @Bean
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory,
                                      RedisCacheConfiguration redisCacheConfiguration) {
         return RedisCacheManager.builder(redisConnectionFactory)
@@ -103,18 +113,4 @@ public class RedisConfig {
                         .fromSerializer(serializer));
     }
 
-    @Bean
-    public MessageListenerAdapter mentorshipStartEventListenerAdapter(MentorshipStartEventListener mentorshipEventListener) {
-        return new MessageListenerAdapter(mentorshipEventListener);
-    }
-
-    @Bean
-    public ChannelTopic mentorshipListenerTopic() {
-        return new ChannelTopic(redisProperties.channels().get("mentorship"));
-    }
-
-    @Bean
-    public ChannelTopic achievementTopic() {
-        return new ChannelTopic(redisProperties.channels().get("achievement"));
-    }
 }
