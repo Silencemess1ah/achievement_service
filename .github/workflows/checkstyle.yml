@@ -1,0 +1,19 @@
+name: check code style
+on:
+  push:
+    branches:
+      - unicorn-master-stream6
+  pull_request:
+    branches:
+      - unicorn-master-stream6
+jobs:
+  checkstyle:
+    name: runner / checkstyle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dbelyaev/action-checkstyle@master
+        with:
+          reporter: github-pr-review
+          level: warning
+          checkstyle_config: .editorconfig
