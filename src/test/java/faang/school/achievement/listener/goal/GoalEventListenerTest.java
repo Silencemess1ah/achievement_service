@@ -17,7 +17,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GoalEventListenerTest {
@@ -55,7 +57,7 @@ class GoalEventListenerTest {
 
     @Test
     @DisplayName("Throw RuntimeException if IOException occurs during deserialization")
-    void whenIOExceptionOccursThenThrowsException() throws IOException {
+    void whenIoeExceptionOccursThenThrowsException() throws IOException {
         when(message.getBody()).thenReturn(new byte[0]);
         when(objectMapper.readValue(any(byte[].class), eq(GoalSetEventDto.class))).thenThrow(new IOException());
 

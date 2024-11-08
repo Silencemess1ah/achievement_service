@@ -41,8 +41,8 @@ public class AchievementService {
         log.debug("Getting user {} progress on achievement {}", userId, achievementId);
         return achievementProgressRepository
                 .findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(() -> new EntityNotFoundException("There are no achievement progress with id " +
-                        achievementId + " for user " + userId + " found!"));
+                .orElseThrow(() -> new EntityNotFoundException("There are no achievement progress with id "
+                        + achievementId + " for user " + userId + " found!"));
     }
 
     @Transactional
