@@ -1,5 +1,6 @@
 CREATE TABLE achievement (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE,
+    type VARCHAR(32) NOT NULL,
     title VARCHAR(128) NOT NULL UNIQUE,
     description VARCHAR(1024) NOT NULL UNIQUE,
     rarity smallint NOT NULL,

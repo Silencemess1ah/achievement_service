@@ -24,6 +24,9 @@ spring:
       channel:
         achievement: achievement_channel
         follower: follower_channel
+      topic:
+        post:
+          post-created: post_created_topic
 
 server:
   port: 8085
