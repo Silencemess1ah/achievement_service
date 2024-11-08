@@ -9,7 +9,7 @@ on:
       - unicorn-master-stream6
 
 jobs:
-  build_and_test:
+  build_test_and_checkstyle:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,6 +48,9 @@ jobs:
 
       - name: Build project
         run: ./gradlew build -x test -x check --no-daemon
+
+      - name: Checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Test project
         run: ./gradlew test --no-daemon --continue

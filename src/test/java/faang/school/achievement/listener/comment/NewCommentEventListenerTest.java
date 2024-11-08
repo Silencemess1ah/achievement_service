@@ -62,7 +62,7 @@ public class NewCommentEventListenerTest {
 
     @Test
     @DisplayName("If IOException while reading then throw exception")
-    void whenIOExceptionOccursThenThrowsException() throws IOException {
+    void whenIoeExceptionOccursThenThrowsException() throws IOException {
         when(objectMapper.readValue(message.getBody(), NewCommentEventDto.class))
                 .thenThrow(new IOException());
 

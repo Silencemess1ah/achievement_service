@@ -43,7 +43,7 @@ public class AchievementCacheTest {
 
     @Test
     @DisplayName("Init cache of 2 achievements given by DB")
-    public void whenInitMethodCalledThenFillUpCacheFromDB() {
+    public void whenInitMethodCalledThenFillUpCacheFromDb() {
         when(achievementRepository.findAll()).thenReturn(Arrays.asList(achievement1, achievement2));
         achievementCache.initCache();
 
