@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "728c906f-40b9-40ca-bdbb-91421dfd9cff",
+		"name": "achievement_service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3997404"
+	},
+	"item": [
+		{
+			"name": "Get Achievement by title",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-user-id",
+						"value": "1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/achievements/WRITER",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"achievements",
+						"WRITER"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
