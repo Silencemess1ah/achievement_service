@@ -30,8 +30,7 @@ dependencies {
      * Database
      */
     implementation("org.liquibase:liquibase-core")
-    implementation("org.springframework.data:spring-data-redis")
-    implementation("redis.clients:jedis")
+    implementation("redis.clients:jedis:4.3.2")
     runtimeOnly("org.postgresql:postgresql")
 
     /**
