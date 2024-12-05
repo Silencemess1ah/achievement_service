@@ -37,6 +37,7 @@ public class AchievementCache {
                 if (achievementFromDB.getTitle().equals(title)) {
                     achievement = achievementFromDB;
                     achievementsByTitle.put(achievement.getTitle(), achievement);
+                    break;
                 }
             }
         }
