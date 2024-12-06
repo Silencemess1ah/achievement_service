@@ -21,9 +21,19 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
-        achievement: achievement_channel
-        follower: follower_channel
+      channels:
+        followerEventChannel:
+          name: follower_channel
+        achievementEventChannel:
+          name: achievement_channel
+        comment:
+          name: comment_channel
+        profilePicEventChannel:
+          name: profile_pic_channel
+        mentorshipStartEvent:
+          name: mentorship_start_event_channel
+        goalSetChannel:
+          name: goal_set_channel
 
 server:
   port: 8085
@@ -35,3 +45,21 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+achievements:
+  handsome:
+    title: "HANDSOME"
+    pointsToAchieve: 1
+  evilCommenter:
+    title: "EVIL COMMENTER"
+    pointsToAchieve: 100
+  sensei:
+    title: "SENSEI"
+    pointsToAchieve: 30
+  collector:
+    title: "COLLECTOR"
+    pointsToAchieve: 100
+
+executor:
+  threads:
+    count: 5

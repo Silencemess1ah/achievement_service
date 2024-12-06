@@ -19,9 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest(
-        classes = {
-                AchievementServiceApp.class
-        }
+        classes = {AchievementServiceApp.class}
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
@@ -29,6 +27,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 @AutoConfigureMockMvc
 public class BaseContextTest {
+
     @Autowired
     protected MockMvc mockMvc;
 
